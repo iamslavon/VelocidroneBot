@@ -1,0 +1,13 @@
+.vs/
+.idea/
+*/bin/
+*/obj/
+/packages/
+riderModule.iml
+/_ReSharper.Caches/
+*.user
+*.pubxml
+*.DotSettings.user
+Veloci.Web/DB/*.db
+Veloci.Web/DB/*.db-shm
+Veloci.Web/DB/*.db-wal
