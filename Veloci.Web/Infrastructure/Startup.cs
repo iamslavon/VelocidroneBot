@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Veloci.Data;
+using Veloci.Web.Bot;
 using Veloci.Web.Infrastructure.Hangfire;
 
 namespace Veloci.Web.Infrastructure;
@@ -58,6 +59,7 @@ public class Startup
         services.AddHangfireServer();
         
         services.RegisterCustomServices();
+        BotService.Init(Configuration);
     }
 
     public void Configure(WebApplication app)
