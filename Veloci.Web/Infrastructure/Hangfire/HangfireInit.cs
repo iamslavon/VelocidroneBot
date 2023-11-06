@@ -1,5 +1,6 @@
 using Hangfire;
 using Hangfire.Storage;
+using Veloci.Web.Services;
 
 namespace Veloci.Web.Infrastructure.Hangfire;
 
@@ -15,6 +16,6 @@ public class HangfireInit
             }
         }
         
-        
+        RecurringJob.AddOrUpdate<ResultsFetcher>("Fetch results", x => x.FetchAsync(670), "*/3 * * * *");
     }
 }
