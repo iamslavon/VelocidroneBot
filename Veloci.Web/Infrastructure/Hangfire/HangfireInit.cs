@@ -1,6 +1,6 @@
 using Hangfire;
 using Hangfire.Storage;
-using Veloci.Web.Services;
+using Veloci.Logic.Services;
 
 namespace Veloci.Web.Infrastructure.Hangfire;
 

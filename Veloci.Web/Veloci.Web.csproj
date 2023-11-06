@@ -17,14 +17,11 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.9" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.9" />
         <PackageReference Include="RestSharp" Version="110.2.0" />
-        <PackageReference Include="Telegram.Bot" Version="19.0.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="DB\app.db">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      </None>
+      <ProjectReference Include="..\Veloci.Data\Veloci.Data.csproj" />
+      <ProjectReference Include="..\Veloci.Logic\Veloci.Logic.csproj" />
     </ItemGroup>
 
 </Project>

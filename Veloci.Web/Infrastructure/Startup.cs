@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Veloci.Web.Data;
+using Veloci.Data;
 using Veloci.Web.Infrastructure.Hangfire;
 
 namespace Veloci.Web.Infrastructure;

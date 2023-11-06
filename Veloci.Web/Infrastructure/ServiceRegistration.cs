@@ -1,5 +1,6 @@
+using Veloci.Logic;
+using Veloci.Logic.Services;
 using Veloci.Web.Bot;
-using Veloci.Web.Services;
 
 namespace Veloci.Web.Infrastructure;
 

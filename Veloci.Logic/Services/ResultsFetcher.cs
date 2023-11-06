@@ -1,15 +1,15 @@
 using System.Security.Cryptography;
 using System.Text;
 using Newtonsoft.Json;
-using Veloci.Web.Models;
+using Veloci.Logic.Dto;
 
-namespace Veloci.Web.Services;
+namespace Veloci.Logic.Services;
 
 public class ResultsFetcher
 {
     private static readonly HttpClient Client = new HttpClient();
     
-    public async Task<IList<TrackTime>?> FetchAsync(int trackId)
+    public async Task<IList<TrackTimeDto>?> FetchAsync(int trackId)
     {
         const string key = "BatCaveGGevaCtaB";
         var requestData = $"track_id={trackId}&sim_version=1.16&offset=0&count=1000&protected_track_value=1&race_mode=6";
@@ -24,7 +24,7 @@ public class ResultsFetcher
         response.EnsureSuccessStatusCode();
         var responseBody = await response.Content.ReadAsStringAsync();
         var decrypted = Decrypt(responseBody, key);
-        var results = JsonConvert.DeserializeObject<TrackResults>(decrypted);
+        var results = JsonConvert.DeserializeObject<TrackResultsDto>(decrypted);
 
         return results?.Tracktimes;
     }

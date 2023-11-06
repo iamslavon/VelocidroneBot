@@ -1,8 +1,8 @@
 using System.Text.Json.Serialization;
 
-namespace Veloci.Web.Models;
+namespace Veloci.Logic.Dto;
 
-public class TrackTime
+public class TrackTimeDto
 {
     [JsonPropertyName("lap_time")]
     public string LapTime { get; set; }

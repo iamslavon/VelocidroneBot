@@ -1,8 +1,8 @@
 using System.Text.Json.Serialization;
 
-namespace Veloci.Web.Models;
+namespace Veloci.Logic.Dto;
 
-public class TrackResults
+public class TrackResultsDto
 {
     [JsonPropertyName("success")]
     public bool Success { get; set; }
@@ -14,5 +14,5 @@ public class TrackResults
     public string Message { get; set; }
 
     [JsonPropertyName("tracktimes")]
-    public List<TrackTime>? Tracktimes { get; set; }
+    public List<TrackTimeDto>? Tracktimes { get; set; }
 }

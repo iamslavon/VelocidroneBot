@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Veloci.Web.Data;
+namespace Veloci.Data;
 
 public class ApplicationDbContext : IdentityDbContext
 {
