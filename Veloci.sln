@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Veloci.Logic", "Veloci.Logi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Veloci.Data", "Veloci.Data\Veloci.Data.csproj", "{63DDC215-09AC-4EE7-9C26-3B7CD82F4A01}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Veloci.Tests", "Veloci.Tests\Veloci.Tests.csproj", "{44510327-1548-4DF1-8766-6A2AB14245D0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{63DDC215-09AC-4EE7-9C26-3B7CD82F4A01}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{63DDC215-09AC-4EE7-9C26-3B7CD82F4A01}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{63DDC215-09AC-4EE7-9C26-3B7CD82F4A01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44510327-1548-4DF1-8766-6A2AB14245D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44510327-1548-4DF1-8766-6A2AB14245D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44510327-1548-4DF1-8766-6A2AB14245D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44510327-1548-4DF1-8766-6A2AB14245D0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

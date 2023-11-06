@@ -1,0 +1,23 @@
+namespace Veloci.Logic.Domain;
+
+public class TrackTime
+{
+    public TrackTime()
+    {
+    }
+
+    public TrackTime(int modelId, string name, int time)
+    {
+        ModelId = modelId;
+        PlayerName = name;
+        Time = time;
+    }
+
+    public string Id { get; set; }
+    public int Time { get; set; }
+    public string PlayerName { get; set; }
+    public int ModelId { get; set; }
+    
+    public int Rank { get; set; }
+    public int LocalRank { get; set; }
+}
