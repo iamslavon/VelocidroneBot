@@ -18,6 +18,6 @@ public class TrackTime
     public string PlayerName { get; set; }
     public int ModelId { get; set; }
     
-    public int Rank { get; set; }
+    public int GlobalRank { get; set; }
     public int LocalRank { get; set; }
 }

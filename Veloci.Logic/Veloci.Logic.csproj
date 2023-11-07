@@ -7,13 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    </ItemGroup>
-
-    <ItemGroup>
       <Reference Include="Microsoft.Extensions.Configuration.Abstractions">
         <HintPath>..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\7.0.9\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
       </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Riok.Mapperly" Version="3.2.0" />
     </ItemGroup>
 
 </Project>

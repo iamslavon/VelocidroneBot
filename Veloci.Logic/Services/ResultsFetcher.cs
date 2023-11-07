@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
-using Newtonsoft.Json;
+using System.Text.Json;
 using Veloci.Logic.Dto;
 
 namespace Veloci.Logic.Services;
@@ -24,7 +24,7 @@ public class ResultsFetcher
         response.EnsureSuccessStatusCode();
         var responseBody = await response.Content.ReadAsStringAsync();
         var decrypted = Decrypt(responseBody, key);
-        var results = JsonConvert.DeserializeObject<TrackResultsDto>(decrypted);
+        var results = JsonSerializer.Deserialize<TrackResultsDto>(decrypted);
 
         return results?.Tracktimes;
     }
