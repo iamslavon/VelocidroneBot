@@ -1,6 +1,6 @@
 namespace Veloci.Logic.Domain;
 
-public class TrackGroup
+public class TrackMap
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();
     

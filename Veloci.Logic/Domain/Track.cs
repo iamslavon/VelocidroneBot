@@ -10,9 +10,9 @@ public class Track
     
     public string Name { get; set; }
     
-    public virtual TrackGroup Group { get; set; }
-    public string GroupId { get; set; }
+    public virtual TrackMap Map { get; set; }
+    public string MapId { get; set; }
 
     [NotMapped]
-    public string FullName => $"{Group.Name} - {Name}";
+    public string FullName => $"{Map.Name} - {Name}";
 }

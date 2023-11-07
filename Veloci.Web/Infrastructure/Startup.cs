@@ -57,9 +57,8 @@ public class Startup
             .UseRecommendedSerializerSettings()
         );
         services.AddHangfireServer();
-        
         services.RegisterCustomServices();
-        BotService.Init(Configuration);
+        TelegramBot.Init(Configuration, services);
     }
 
     public void Configure(WebApplication app)
