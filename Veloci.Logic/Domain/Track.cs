@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Veloci.Logic.Domain;
 
 public class Track
@@ -7,4 +9,10 @@ public class Track
     public int TrackId { get; set; }
     
     public string Name { get; set; }
+    
+    public virtual TrackGroup Group { get; set; }
+    public string GroupId { get; set; }
+
+    [NotMapped]
+    public string FullName => $"{Group.Name} - {Name}";
 }
