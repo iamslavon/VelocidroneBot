@@ -13,7 +13,7 @@ public class TrackTime
         Time = time;
     }
 
-    public string Id { get; set; }
+    public string Id { get; set; } = Guid.NewGuid().ToString();
     public int Time { get; set; }
     public string PlayerName { get; set; }
     public int ModelId { get; set; }

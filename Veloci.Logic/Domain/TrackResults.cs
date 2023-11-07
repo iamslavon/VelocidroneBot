@@ -4,5 +4,5 @@ public class TrackResults
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();
 
-    public virtual List<TrackTime> Times { get; set; } = new List<TrackTime>();
+    public virtual List<TrackTime> Times { get; set; } = new();
 }
