@@ -7,6 +7,8 @@ namespace Veloci.Tests;
 
 public class ResponseConverterTests
 {
+    private readonly RaceResultsConverter _converter = new();
+
     [Fact]
     public void can_calculate_ranks()
     {
@@ -16,40 +18,31 @@ public class ResponseConverterTests
                                           "lap_time": "56.055",
                                           "playername": "SWEEPER",
                                           "model_id": 59,
-                                          "country": "UA",
-                                          "sim_version": "1.16",
-                                          "device_type": 0
+                                          "country": "UA"
                                         },
                                         {
                                           "lap_time": "56.300",
                                           "playername": "APX - BURAK",
                                           "model_id": 33,
-                                          "country": "UA",
-                                          "sim_version": "1.16",
-                                          "device_type": 0
+                                          "country": "UA"
                                         },
                                         {
                                           "lap_time": "61.145",
                                           "playername": "Sarah",
                                           "model_id": 27,
-                                          "country": "NL",
-                                          "sim_version": "1.16",
-                                          "device_type": 0
+                                          "country": "NL"
                                         },
                                         {
                                           "lap_time": "61.818",
                                           "playername": "FPV FPV",
                                           "model_id": 104,
-                                          "country": "UA",
-                                          "sim_version": "1.16",
-                                          "device_type": 0
+                                          "country": "UA"
                                         }
                                     ]
                                     """;
         var data = JsonSerializer.Deserialize<List<TrackTimeDto>>(json);
-        var converter = new RaceResultsConverter();
 
-        var times = converter.ConvertTrackTimes(data);
+        var times = _converter.ConvertTrackTimes(data);
 
         times.Should().HaveCount(3);
         
@@ -69,7 +62,7 @@ public class ResponseConverterTests
         third.GlobalRank.Should().Be(4);
     }
     
-        [Fact]
+    [Fact]
     public void can_parse_time()
     {
         var json = /*language:json*/"""
@@ -78,18 +71,52 @@ public class ResponseConverterTests
                                           "lap_time": "56.055",
                                           "playername": "SWEEPER",
                                           "model_id": 59,
-                                          "country": "UA",
-                                          "sim_version": "1.16",
-                                          "device_type": 0
+                                          "country": "UA"
                                         }
                                     ]
                                     """;
         var data = JsonSerializer.Deserialize<List<TrackTimeDto>>(json);
-        var converter = new RaceResultsConverter();
 
-        var times = converter.ConvertTrackTimes(data);
+        var times = _converter.ConvertTrackTimes(data);
 
         var first = times[0];
         first.Time.Should().Be(56055);
+    }
+
+    [Fact]
+    public void fastest_time_from_two_models_is_considered()
+    {
+        var json = /*language:json*/"""
+                                    [
+                                        {
+                                          "lap_time": "56.055",
+                                          "playername": "SWEEPER",
+                                          "model_id": 59,
+                                          "country": "UA"
+                                        },
+                                        {
+                                          "lap_time": "56.300",
+                                          "playername": "SWEEPER",
+                                          "model_id": 33,
+                                          "country": "UA"
+                                        },
+                                        {
+                                          "lap_time": "61.818",
+                                          "playername": "FPV FPV",
+                                          "model_id": 104,
+                                          "country": "UA"
+                                        }
+                                    ]
+                                    """;
+        var data = JsonSerializer.Deserialize<List<TrackTimeDto>>(json);
+
+        var times = _converter.ConvertTrackTimes(data);
+
+        times.Should().HaveCount(2);
+
+        var first = times[0];
+
+        first.Time.Should().Be(56055);
+        first.PlayerName.Should().Be("SWEEPER");
     }
 }
