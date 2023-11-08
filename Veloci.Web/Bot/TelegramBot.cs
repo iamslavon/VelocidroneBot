@@ -11,11 +11,12 @@ public class TelegramBot
 {
     private static TelegramSettings _telegramSettings;
     private static TelegramBotClient _client;
-    private static IServiceProvider _serviceProvider;
+    private static CompetitionService _competitionService;
 
     public static void Init(IConfiguration configuration, IServiceCollection serviceCollection)
     {
-        _serviceProvider = serviceCollection.BuildServiceProvider();
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+        _competitionService = serviceProvider.GetService<CompetitionService>();
         _telegramSettings = configuration.GetSection("Telegram").Get<TelegramSettings>();
         _client = new TelegramBotClient(_telegramSettings.BotToken);
         
@@ -39,23 +40,16 @@ public class TelegramBot
         if (update.Message is null)
             return;
 
-        var message = update.Message;
+        var text = update.Message.Text;
 
-        if (string.IsNullOrEmpty(message.Text))
+        if (string.IsNullOrEmpty(text))
             return;
         
-        if (MessageParser.IsStartCompetition(message.Text))
-        {
-            // start
-            var trackName = MessageParser.GetTrackName(message.Text);
-            var trackId = MessageParser.GetTrackId(message.Text);
-            //await _client.SendTextMessageAsync(message.Chat, $"Id: {trackId} Name: {trackName}", cancellationToken: cancellationToken);
-        }
+        if (MessageParser.IsStartCompetition(text))
+            await _competitionService.StartNewAsync(text, update.Message.Chat.Id);
 
-        if (MessageParser.IsStopCompetition(message.Text))
-        {
-            // stop
-        }
+        if (MessageParser.IsStopCompetition(text))
+            await _competitionService.StopAsync(text, update.Message.Chat.Id);
     }
 
     private static async Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)

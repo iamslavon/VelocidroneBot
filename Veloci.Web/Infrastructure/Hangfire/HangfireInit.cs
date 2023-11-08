@@ -16,6 +16,6 @@ public class HangfireInit
             }
         }
         
-        RecurringJob.AddOrUpdate<ResultsFetcher>("Fetch results", x => x.FetchAsync(670), "*/3 * * * *");
+        RecurringJob.AddOrUpdate<CompetitionService>("Update results", x => x.UpdateResultsAsync(), "*/5 * * * *");
     }
 }

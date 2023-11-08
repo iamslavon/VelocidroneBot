@@ -8,7 +8,7 @@ public class RaceResultsConverter
 {
     private static readonly DtoMapper _mapper = new();
 
-    public List<TrackTime> ConvertTrackTimes(List<TrackTimeDto> timesDtos)
+    public List<TrackTime> ConvertTrackTimes(IEnumerable<TrackTimeDto> timesDtos)
     {
         
         return timesDtos
