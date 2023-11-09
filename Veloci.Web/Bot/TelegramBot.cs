@@ -7,7 +7,7 @@ using Veloci.Logic.Services;
 
 namespace Veloci.Web.Bot;
 
-public class TelegramBot
+public static class TelegramBot
 {
     private static TelegramSettings _telegramSettings;
     private static TelegramBotClient _client;
@@ -60,12 +60,12 @@ public class TelegramBot
         }
     }
     
-    public async Task SendMessageAsync(string message)
+    public static async Task SendMessageAsync(string message, long chatId)
     {
         try
         {
             var result = await _client.SendTextMessageAsync(
-                chatId: _telegramSettings.ChannelId,
+                chatId: chatId,
                 text: Isolate(message),
                 parseMode: ParseMode.MarkdownV2);
         }
@@ -75,6 +75,9 @@ public class TelegramBot
         }
     }
     
-    private string Isolate(string message) => message.Replace(".", "\\.").Replace("!", "\\!").Replace("-", "\\-");
+    private static string Isolate(string message) => message
+        .Replace(".", "\\.")
+        .Replace("!", "\\!")
+        .Replace("-", "\\-");
 }
 
