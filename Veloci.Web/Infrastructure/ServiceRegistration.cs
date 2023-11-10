@@ -10,6 +10,7 @@ public static class ServiceRegistration
         services.AddTransient<CompetitionService>();
         services.AddTransient<RaceResultsConverter>();
         services.AddTransient<MessageComposer>();
+        services.AddTransient<RaceResultDeltaAnalyzer>();
         
         return services;
     }

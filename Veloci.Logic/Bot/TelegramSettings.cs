@@ -1,4 +1,4 @@
-namespace Veloci.Web.Bot;
+namespace Veloci.Logic.Bot;
 
 public class TelegramSettings
 {

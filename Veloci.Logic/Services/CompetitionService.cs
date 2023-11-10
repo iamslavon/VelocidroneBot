@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Veloci.Data.Repositories;
+using Veloci.Logic.Bot;
 using Veloci.Logic.Domain;
 
 namespace Veloci.Logic.Services;
@@ -11,19 +12,25 @@ public class CompetitionService
     private readonly IRepository<TrackMap> _maps;
     private readonly ResultsFetcher _resultsFetcher;
     private readonly RaceResultsConverter _resultsConverter;
+    private readonly RaceResultDeltaAnalyzer _analyzer;
+    private readonly MessageComposer _messageComposer;
 
     public CompetitionService(
         IRepository<Competition> competitions, 
         ResultsFetcher resultsFetcher, 
         RaceResultsConverter resultsConverter, 
         IRepository<Track> tracks, 
-        IRepository<TrackMap> maps)
+        IRepository<TrackMap> maps, 
+        RaceResultDeltaAnalyzer analyzer, 
+        MessageComposer messageComposer)
     {
         _competitions = competitions;
         _resultsFetcher = resultsFetcher;
         _resultsConverter = resultsConverter;
         _tracks = tracks;
         _maps = maps;
+        _analyzer = analyzer;
+        _messageComposer = messageComposer;
     }
 
     public async Task UpdateResultsAsync()
@@ -37,23 +44,31 @@ public class CompetitionService
         
         foreach (var competition in activeCompetitions)
         {
-            await UpdateResults(competition);
+            await UpdateResultsAsync(competition);
         }
     }
 
-    private async Task UpdateResults(Competition competition)
+    private async Task UpdateResultsAsync(Competition competition)
     {
         var resultsDto = await _resultsFetcher.FetchAsync(competition.Track.TrackId);
-        var results = _resultsConverter.ConvertTrackTimes(resultsDto);
-
-        // calculate deltas, send message
-        
-        competition.CurrentResults = new TrackResults
+        var times = _resultsConverter.ConvertTrackTimes(resultsDto);
+        var results = new TrackResults
         {
-            Times = results
+            Times = times
         };
+
+        var deltas = _analyzer.CompareResults(competition.CurrentResults, results);
+
+        if (!deltas.Any())
+            return;
+
+        competition.CurrentResults = results;
+        competition.TimeDeltas.AddRange(deltas);
+        await _competitions.SaveChangesAsync();
+        var message = _messageComposer.TimeUpdateMessage(deltas);
+        await TelegramBot.SendMessageAsync(message, competition.ChatId);
     }
-    
+
     public async Task StartNewAsync(string message, long chatId)
     {
         var activeComp = await GetActiveCompetitionAsync(chatId);

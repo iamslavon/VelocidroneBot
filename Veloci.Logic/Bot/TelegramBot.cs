@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
@@ -5,11 +7,11 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Veloci.Logic.Services;
 
-namespace Veloci.Web.Bot;
+namespace Veloci.Logic.Bot;
 
 public static class TelegramBot
 {
-    private static TelegramSettings _telegramSettings;
+    private static string _botToken;
     private static TelegramBotClient _client;
     private static CompetitionService _competitionService;
 
@@ -17,8 +19,8 @@ public static class TelegramBot
     {
         var serviceProvider = serviceCollection.BuildServiceProvider();
         _competitionService = serviceProvider.GetService<CompetitionService>();
-        _telegramSettings = configuration.GetSection("Telegram").Get<TelegramSettings>();
-        _client = new TelegramBotClient(_telegramSettings.BotToken);
+        _botToken = configuration.GetSection("Telegram:BotToken").Value;
+        _client = new TelegramBotClient(_botToken);
         
         var cts = new CancellationTokenSource();
         var cancellationToken = cts.Token;

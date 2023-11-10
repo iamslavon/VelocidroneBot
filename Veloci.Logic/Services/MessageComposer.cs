@@ -11,7 +11,13 @@ public class MessageComposer
         return string.Join($"{Environment.NewLine}", messages);
     }
 
-    private string TimeUpdateMessage(TrackTimeDelta delta) =>
-        $"{delta.PlayerName} - {MsToSec(delta.TrackTime)}s ({MsToSec(delta.TimeChange.Value)}s) / #{delta.Rank} (#{delta.RankOld})";
+    private string TimeUpdateMessage(TrackTimeDelta delta)
+    {
+        var timeChangePart = delta.TimeChange.HasValue ? $" ({MsToSec(delta.TimeChange.Value)}s)" : string.Empty;
+        var rankOldPart = delta.RankOld.HasValue ? $" (#{delta.RankOld})" : string.Empty;
+        
+        return $"{delta.PlayerName} - {MsToSec(delta.TrackTime)}s{timeChangePart} / #{delta.Rank}{rankOldPart}";
+    }
+        
     private string MsToSec(int ms) => (ms / 1000.0).ToString(CultureInfo.InvariantCulture);
 }

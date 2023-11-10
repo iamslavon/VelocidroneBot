@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Veloci.Data;
-using Veloci.Web.Bot;
+using Veloci.Logic.Bot;
 using Veloci.Web.Infrastructure.Hangfire;
 
 namespace Veloci.Web.Infrastructure;
