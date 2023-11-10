@@ -12,6 +12,6 @@ public class MessageComposer
     }
 
     private string TimeUpdateMessage(TrackTimeDelta delta) =>
-        $"{delta.PlayerName} - {MsToSec(delta.TrackTime)}s ({MsToSec(delta.TimeChange)}s) / #{delta.Rank} (#{delta.RankOld})";
+        $"{delta.PlayerName} - {MsToSec(delta.TrackTime)}s ({MsToSec(delta.TimeChange.Value)}s) / #{delta.Rank} (#{delta.RankOld})";
     private string MsToSec(int ms) => (ms / 1000.0).ToString(CultureInfo.InvariantCulture);
 }

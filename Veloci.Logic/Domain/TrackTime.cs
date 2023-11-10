@@ -6,9 +6,9 @@ public class TrackTime
     {
     }
 
-    public TrackTime(int modelId, string name, int time)
+    public TrackTime(int globalRank, string name, int time)
     {
-        ModelId = modelId;
+        GlobalRank = globalRank;
         PlayerName = name;
         Time = time;
     }

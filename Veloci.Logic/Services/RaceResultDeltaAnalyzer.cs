@@ -6,6 +6,40 @@ public class RaceResultDeltaAnalyzer
 {
     public List<TrackTimeDelta> CompareResults(TrackResults a, TrackResults b)
     {
-        throw new NotImplementedException();
+        var deltas = new List<TrackTimeDelta>();
+        
+        foreach (var trackTime in b.Times)
+        {
+            var existingTime = a.Times.FirstOrDefault(t => t.PlayerName == trackTime.PlayerName);
+
+            if (existingTime is null)
+            {
+                deltas.Add(new TrackTimeDelta
+                {
+                    PlayerName = trackTime.PlayerName,
+                    LocalRank = trackTime.LocalRank,
+                    Rank = trackTime.GlobalRank,
+                    TrackTime = trackTime.Time
+                });
+                
+                continue;
+            }
+
+            if (existingTime.Time == trackTime.Time)
+                continue;
+            
+            deltas.Add(new TrackTimeDelta
+            {
+                PlayerName = trackTime.PlayerName,
+                LocalRank = trackTime.LocalRank,
+                LocalRankOld = existingTime.LocalRank,
+                Rank = trackTime.GlobalRank,
+                RankOld = existingTime.GlobalRank,
+                TrackTime = trackTime.Time,
+                TimeChange = trackTime.Time - existingTime.Time
+            });
+        }
+
+        return deltas;
     }
 }
