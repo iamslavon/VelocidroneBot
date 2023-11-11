@@ -1,5 +1,5 @@
 ﻿using System.Globalization;
-using Veloci.Logic.Domain;
+using Veloci.Data.Domain;
 using Veloci.Logic.Dto;
 
 namespace Veloci.Logic.Services;

@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using Veloci.Data.Domain;
 using Veloci.Data.Repositories;
 using Veloci.Logic.Bot;
-using Veloci.Logic.Domain;
 
 namespace Veloci.Logic.Services;
 

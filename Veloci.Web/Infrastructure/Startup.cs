@@ -31,6 +31,7 @@ public class Startup
 
         services.AddDbContext<ApplicationDbContext>(options =>
             options
+                .UseLazyLoadingProxies()
                 .UseSqlite(connectionString));
 
         services.AddDatabaseDeveloperPageExceptionFilter();

@@ -1,4 +1,4 @@
-namespace Veloci.Logic.Domain;
+namespace Veloci.Data.Domain;
 
 public class TrackTime
 {

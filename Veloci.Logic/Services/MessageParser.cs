@@ -4,7 +4,7 @@ namespace Veloci.Logic.Services;
 
 public static class MessageParser
 {
-    public static bool IsStartCompetition(string message) => message.Contains("Трек дня");
+    public static bool IsStartCompetition(string message) => message.Contains("Ласкаво просимо");
     
     public static bool IsStopCompetition(string message) => message.Contains("Результати дня");
     
@@ -23,12 +23,12 @@ public static class MessageParser
 
     public static int GetTrackId(string text)
     {
-        const string pattern = @"https://www.velocidrone.com/leaderboard/16/(\d+)/All";
+        const string pattern = @"https://www.velocidrone.com/leaderboard/(\d+)/(\d+)/All";
         var match = Regex.Match(text, pattern);
 
         if (match.Success)
         {
-            var idString = match.Groups[1].Value;
+            var idString = match.Groups[2].Value;
 
             if (int.TryParse(idString, out var id))
             {

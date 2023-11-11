@@ -1,5 +1,5 @@
 ﻿using Riok.Mapperly.Abstractions;
-using Veloci.Logic.Domain;
+using Veloci.Data.Domain;
 using Veloci.Logic.Dto;
 
 namespace Veloci.Logic.Services;

@@ -1,5 +1,5 @@
 using FluentAssertions;
-using Veloci.Logic.Domain;
+using Veloci.Data.Domain;
 using Veloci.Logic.Services;
 
 namespace Veloci.Tests;

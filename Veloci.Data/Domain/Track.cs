@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Veloci.Logic.Domain;
+namespace Veloci.Data.Domain;
 
 public class Track
 {

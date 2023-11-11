@@ -21,7 +21,12 @@ public static class TelegramBot
         _competitionService = serviceProvider.GetService<CompetitionService>();
         _botToken = configuration.GetSection("Telegram:BotToken").Value;
         _client = new TelegramBotClient(_botToken);
-        
+
+        StartReceiving();
+    }
+
+    private static void StartReceiving()
+    {
         var cts = new CancellationTokenSource();
         var cancellationToken = cts.Token;
         var receiverOptions = new ReceiverOptions
@@ -34,7 +39,7 @@ public static class TelegramBot
             HandleErrorAsync,
             receiverOptions,
             cancellationToken
-            );
+        );
     }
     
     private static async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
@@ -46,20 +51,35 @@ public static class TelegramBot
 
         if (string.IsNullOrEmpty(text))
             return;
-        
+
         if (MessageParser.IsStartCompetition(text))
-            await _competitionService.StartNewAsync(text, update.Message.Chat.Id);
+        {
+            try
+            {
+                await _competitionService.StartNewAsync(text, update.Message.Chat.Id);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
 
         if (MessageParser.IsStopCompetition(text))
-            await _competitionService.StopAsync(text, update.Message.Chat.Id);
+        {
+            try
+            {
+                await _competitionService.StopAsync(text, update.Message.Chat.Id);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
     }
 
     private static async Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
     {
-        if (exception is ApiRequestException apiRequestException)
-        {
-            
-        }
+        StartReceiving();
     }
     
     public static async Task SendMessageAsync(string message, long chatId)
@@ -80,6 +100,9 @@ public static class TelegramBot
     private static string Isolate(string message) => message
         .Replace(".", "\\.")
         .Replace("!", "\\!")
-        .Replace("-", "\\-");
+        .Replace("-", "\\-")
+        .Replace(")", "\\)")
+        .Replace("(", "\\(")
+        .Replace("#", "\\#");
 }
 
