@@ -18,4 +18,6 @@ public class Competition
     public virtual TrackResults CurrentResults { get; set; }
     
     public virtual List<TrackTimeDelta> TimeDeltas { get; set; }
+    
+    public bool ResultsPosted { get; set; }
 }

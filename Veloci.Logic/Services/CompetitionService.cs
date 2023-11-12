@@ -64,8 +64,9 @@ public class CompetitionService
 
         competition.CurrentResults = results;
         competition.TimeDeltas.AddRange(deltas);
+        competition.ResultsPosted = false;
         await _competitions.SaveChangesAsync();
-        var message = _messageComposer.TimeUpdateMessage(deltas);
+        var message = _messageComposer.TimeUpdate(deltas);
         await TelegramBot.SendMessageAsync(message, competition.ChatId);
     }
 
@@ -117,6 +118,45 @@ public class CompetitionService
         await _competitions.SaveChangesAsync();
     }
 
+    public async Task PublishCurrentResultsAsync()
+    {
+        var activeCompetitions = await _competitions
+            .GetAll(c => c.State == CompetitionState.Started)
+            .ToListAsync();
+
+        foreach (var activeCompetition in activeCompetitions)
+        {
+            await PublishCurrentResultsAsync(activeCompetition);
+        }
+    }
+
+    private async Task PublishCurrentResultsAsync(Competition competition)
+    {
+        if (!competition.TimeDeltas.Any() || competition.ResultsPosted)
+            return;
+
+        var localTop = GetLocalTop(competition);
+        var message = _messageComposer.TimeTable(localTop);
+        await TelegramBot.SendMessageAsync(message, competition.ChatId);
+        
+        competition.ResultsPosted = true;
+        await _competitions.SaveChangesAsync();
+    }
+
+    public IEnumerable<TrackTimeDelta> GetLocalTop(Competition competition)
+    {
+        return competition.TimeDeltas
+            .GroupBy(d => d.PlayerName)
+            .Select(d => d.MinBy(x => x.TrackTime))
+            .OrderBy(d => d.TrackTime)
+            .Select((x, i) =>
+            {
+                x.LocalRank = i + 1;
+                return x;
+            })
+            .ToList();
+    }
+    
     private async Task<Competition?> GetActiveCompetitionAsync(long chatId)
     {
         return await _competitions
