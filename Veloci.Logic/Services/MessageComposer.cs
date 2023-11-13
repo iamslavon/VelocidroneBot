@@ -19,7 +19,7 @@ public class MessageComposer
         return $"{delta.PlayerName} - {MsToSec(delta.TrackTime)}s{timeChangePart} / #{delta.Rank}{rankOldPart}";
     }
 
-    public string TimeTable(IEnumerable<TrackTimeDelta> deltas)
+    public string Leaderboard(IEnumerable<TrackTimeDelta> deltas)
     {
         var rows = deltas.Select(TimeRow);
         return string.Join($"{Environment.NewLine}", rows);

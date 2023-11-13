@@ -118,7 +118,7 @@ public class CompetitionService
         await _competitions.SaveChangesAsync();
     }
 
-    public async Task PublishCurrentResultsAsync()
+    public async Task PublishCurrentLeaderboardAsync()
     {
         var activeCompetitions = await _competitions
             .GetAll(c => c.State == CompetitionState.Started)
@@ -126,24 +126,28 @@ public class CompetitionService
 
         foreach (var activeCompetition in activeCompetitions)
         {
-            await PublishCurrentResultsAsync(activeCompetition);
+            await PublishCurrentLeaderboardAsync(activeCompetition);
         }
     }
 
-    private async Task PublishCurrentResultsAsync(Competition competition)
+    private async Task PublishCurrentLeaderboardAsync(Competition competition)
     {
         if (!competition.TimeDeltas.Any() || competition.ResultsPosted)
             return;
 
-        var localTop = GetLocalTop(competition);
-        var message = _messageComposer.TimeTable(localTop);
+        var leaderboard = GetLocalLeaderboard(competition);
+
+        if (leaderboard.Count < 2)
+            return;
+
+        var message = _messageComposer.Leaderboard(leaderboard);
         await TelegramBot.SendMessageAsync(message, competition.ChatId);
         
         competition.ResultsPosted = true;
         await _competitions.SaveChangesAsync();
     }
 
-    public IEnumerable<TrackTimeDelta> GetLocalTop(Competition competition)
+    public List<TrackTimeDelta> GetLocalLeaderboard(Competition competition)
     {
         return competition.TimeDeltas
             .GroupBy(d => d.PlayerName)
