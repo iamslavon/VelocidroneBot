@@ -16,7 +16,7 @@ public class MessageComposer
         var timeChangePart = delta.TimeChange.HasValue ? $" ({MsToSec(delta.TimeChange.Value)}s)" : string.Empty;
         var rankOldPart = delta.RankOld.HasValue ? $" (#{delta.RankOld})" : string.Empty;
         
-        return $"{delta.PlayerName} - {MsToSec(delta.TrackTime)}s{timeChangePart} / #{delta.Rank}{rankOldPart}";
+        return $"⏱ *{delta.PlayerName}* - {MsToSec(delta.TrackTime)}s{timeChangePart} / #{delta.Rank}{rankOldPart}";
     }
 
     public string Leaderboard(IEnumerable<TrackTimeDelta> deltas)
@@ -27,7 +27,7 @@ public class MessageComposer
 
     private string TimeRow(TrackTimeDelta time)
     {
-        return $"{time.LocalRank} - {time.PlayerName} ({MsToSec(time.TrackTime)}s)";
+        return $"{time.LocalRank} - *{time.PlayerName}* ({MsToSec(time.TrackTime)}s)";
     } 
     
     private string MsToSec(int ms) => (ms / 1000.0).ToString(CultureInfo.InvariantCulture);

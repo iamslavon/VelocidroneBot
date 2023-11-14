@@ -79,7 +79,7 @@ public static class TelegramBot
 
     private static async Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
     {
-        StartReceiving();
+        Console.WriteLine(exception);
     }
     
     public static async Task SendMessageAsync(string message, long chatId)
