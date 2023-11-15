@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 using Telegram.Bot;
-using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -9,40 +8,45 @@ using Veloci.Logic.Services;
 
 namespace Veloci.Logic.Bot;
 
-public static class TelegramBot
+public class TelegramBot
 {
     private static string _botToken;
     private static TelegramBotClient _client;
     private static CompetitionService _competitionService;
+    private CancellationTokenSource _cts;
 
-    public static void Init(IConfiguration configuration, IServiceCollection serviceCollection)
+    public TelegramBot(CompetitionService competitionService, IConfiguration configuration)
     {
-        var serviceProvider = serviceCollection.BuildServiceProvider();
-        _competitionService = serviceProvider.GetService<CompetitionService>();
+        _competitionService = competitionService;
         _botToken = configuration.GetSection("Telegram:BotToken").Value;
-        _client = new TelegramBotClient(_botToken);
-
-        StartReceiving();
     }
 
-    private static void StartReceiving()
+    public void Init()
     {
-        var cts = new CancellationTokenSource();
-        var cancellationToken = cts.Token;
+        _client = new TelegramBotClient(_botToken);
+        _cts = new CancellationTokenSource();
+        var cancellationToken = _cts.Token;
+
+        StartReceiving(cancellationToken);
+    }
+
+    private static void StartReceiving(CancellationToken ct)
+    {
         var receiverOptions = new ReceiverOptions
         {
-            AllowedUpdates = {} // receive all update types
+            AllowedUpdates = { } // receive all update types
         };
-        
+
         _client.StartReceiving(
             HandleUpdateAsync,
             HandleErrorAsync,
             receiverOptions,
-            cancellationToken
+            ct
         );
     }
-    
-    private static async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
+
+    private static async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update,
+        CancellationToken cancellationToken)
     {
         if (update.Message is null)
             return;
@@ -77,11 +81,12 @@ public static class TelegramBot
         }
     }
 
-    private static async Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
+    private static async Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception,
+        CancellationToken cancellationToken)
     {
-        Console.WriteLine(exception);
+        Log.Error(exception, "Error in telegram bot");
     }
-    
+
     public static async Task SendMessageAsync(string message, long chatId)
     {
         try
@@ -93,10 +98,10 @@ public static class TelegramBot
         }
         catch (Exception ex)
         {
-            //Log.Error(ex, "Telegram. Failed to send a message '{Message}'", message);
+            Log.Error(ex, "Telegram. Failed to send a message '{Message}'", message);
         }
     }
-    
+
     private static string Isolate(string message) => message
         .Replace(".", "\\.")
         .Replace("!", "\\!")
@@ -104,5 +109,9 @@ public static class TelegramBot
         .Replace(")", "\\)")
         .Replace("(", "\\(")
         .Replace("#", "\\#");
-}
 
+    public void Stop()
+    {
+        _cts.Cancel();
+    }
+}

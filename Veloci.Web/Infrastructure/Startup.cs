@@ -4,6 +4,12 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Serilog;
+using Serilog.Events;
+using Serilog.Exceptions;
+using Serilog.Formatting.Elasticsearch;
+using Serilog.Sinks.Elasticsearch;
 using Veloci.Data;
 using Veloci.Logic.Bot;
 using Veloci.Web.Infrastructure.Hangfire;
@@ -21,6 +27,7 @@ public class Startup
     
     public void ConfigureBuilder(WebApplicationBuilder builder)
     {
+        ConfigureLogging(builder);
     }
 
     public void ConfigureServices(IServiceCollection services)
@@ -40,6 +47,8 @@ public class Startup
             .AddEntityFrameworkStores<ApplicationDbContext>();
 
         services.AddControllersWithViews();
+        
+        services.Configure<LoggerConfig>(Configuration.GetSection("Logger"));
 
         services.Configure<IdentityOptions>(options =>
         {
@@ -59,7 +68,7 @@ public class Startup
         );
         services.AddHangfireServer();
         services.RegisterCustomServices();
-        TelegramBot.Init(Configuration, services);
+        services.UserTelegramBotService();
     }
 
     public void Configure(WebApplication app)
@@ -105,6 +114,53 @@ public class Startup
         app.MapHangfireDashboard(new DashboardOptions
         {
             Authorization = new[] { new HangfireAuthorizationFilter() },
+        });
+    }
+    
+    private static void ConfigureLogging(WebApplicationBuilder builder)
+    {
+        builder.Host.UseSerilog((context, provider, configuration) =>
+        {
+            var logconfig = provider.GetService<IOptions<LoggerConfig>>();
+
+            var logger = configuration
+                .MinimumLevel.Debug()
+                
+                .MinimumLevel.Override("Hangfire.Processing.BackgroundExecution", LogEventLevel.Warning)
+                .MinimumLevel.Override("Hangfire.Storage.SQLite.ExpirationManager", LogEventLevel.Warning)
+                .MinimumLevel.Override("Hangfire.Storage.SQLite.CountersAggregator", LogEventLevel.Warning)
+                .MinimumLevel.Override("Hangfire.Server.ServerHeartbeatProcess", LogEventLevel.Warning)
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+                .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", LogEventLevel.Warning)
+                .Enrich.FromLogContext()
+                .Enrich.WithExceptionDetails();
+
+            if (!builder.Environment.IsDevelopment())
+            {
+                logger.MinimumLevel.Override("Microsoft.AspNetCore.ResponseCaching.ResponseCachingMiddleware", LogEventLevel.Warning);
+            }
+
+            if (logconfig?.Value?.Path != null)
+            {
+                configuration.WriteTo.File(Path.Join(logconfig.Value.Path, "log.log"), rollingInterval: RollingInterval.Day, buffered: true);
+            }
+
+            if (!string.IsNullOrEmpty(logconfig?.Value.SematextToken))
+            {
+                var token = logconfig?.Value.SematextToken;
+                configuration.WriteTo.Elasticsearch(
+                    new ElasticsearchSinkOptions(new Uri($@"https://logsene-receiver.eu.sematext.com/{token}/_doc/"))
+                    {
+                        AutoRegisterTemplate = true,
+                        AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv6,
+                        CustomFormatter = new ElasticsearchJsonFormatter()
+                    });
+            }
+
+            logger.WriteTo.Console();
+            //Use following line to get correct source if we need them. Could be usefull to create new ignore settings.
+            //logger.WriteTo.Console(LogEventLevel.Debug, "[{Timestamp:HH:mm:ss} {Level:u3}] ({SourceContext}.{Method}) {Message:lj}{NewLine}{Exception}");
         });
     }
 }

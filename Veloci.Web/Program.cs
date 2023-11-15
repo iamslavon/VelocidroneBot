@@ -1,4 +1,16 @@
+using Serilog;
+using Serilog.Events;
+using Serilog.Exceptions;
+using Veloci.Logic.Bot;
 using Veloci.Web.Infrastructure;
+
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+    .Enrich.FromLogContext()
+    .Enrich.WithExceptionDetails()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 var startup = new Startup(builder.Configuration);
@@ -12,12 +24,10 @@ startup.Configure(app);
 try
 {
     await DefaultInit.InitializeAsync(builder.Configuration, app);
+    Log.Information("Application started.");
     app.Run();
 }
 catch (Exception ex)
 {
-    // ignored
-}
-finally
-{
+    Log.Error(ex, "Failed to start application");
 }

@@ -1,4 +1,5 @@
 using Veloci.Data.Repositories;
+using Veloci.Logic.Bot;
 using Veloci.Logic.Services;
 
 namespace Veloci.Web.Infrastructure;
@@ -13,6 +14,7 @@ public static class ServiceRegistration
         services.AddTransient<RaceResultsConverter>();
         services.AddTransient<MessageComposer>();
         services.AddTransient<RaceResultDeltaAnalyzer>();
+        services.AddTransient<TelegramBot>();
         
         return services;
     }
