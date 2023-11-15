@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using Veloci.Data.Domain;
 using Veloci.Data.Repositories;
 using Veloci.Logic.Bot;
@@ -50,6 +51,8 @@ public class CompetitionService
 
     private async Task UpdateResultsAsync(Competition competition)
     {
+        Log.Debug($"Starting updating results for competition {competition.Id}");
+
         var resultsDto = await _resultsFetcher.FetchAsync(competition.Track.TrackId);
         var times = _resultsConverter.ConvertTrackTimes(resultsDto);
         var results = new TrackResults
@@ -72,6 +75,8 @@ public class CompetitionService
 
     public async Task StartNewAsync(string message, long chatId)
     {
+        Log.Debug("Starting a new competition");
+
         var activeComp = await GetActiveCompetitionAsync(chatId);
 
         if (activeComp is not null)
@@ -106,6 +111,8 @@ public class CompetitionService
 
     public async Task StopAsync(string message, long chatId)
     {
+        Log.Debug("Stopping a competition");
+
         var competition = await GetActiveCompetitionAsync(chatId);
 
         if (competition is null)
@@ -139,6 +146,8 @@ public class CompetitionService
 
         if (leaderboard.Count < 2)
             return;
+
+        Log.Debug($"Publishing current leaderboard for competition {competition.Id}");
 
         var message = _messageComposer.Leaderboard(leaderboard);
         await TelegramBot.SendMessageAsync(message, competition.ChatId);

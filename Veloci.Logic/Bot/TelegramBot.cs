@@ -64,7 +64,7 @@ public class TelegramBot
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Log.Error(e, "Failed to start competition");
             }
         }
 
@@ -76,7 +76,7 @@ public class TelegramBot
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Log.Error(e, "Failed to stop competition");
             }
         }
     }
