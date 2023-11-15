@@ -68,7 +68,7 @@ public class Startup
         );
         services.AddHangfireServer();
         services.RegisterCustomServices();
-        services.UserTelegramBotService();
+        services.UseTelegramBotService();
     }
 
     public void Configure(WebApplication app)
