@@ -11,3 +11,4 @@ riderModule.iml
 Veloci.Data/DB/*.db
 Veloci.Data/DB/*.db-shm
 Veloci.Data/DB/*.db-wal
+appsettings.Development.json
