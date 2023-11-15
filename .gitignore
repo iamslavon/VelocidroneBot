@@ -8,7 +8,7 @@ riderModule.iml
 *.user
 *.pubxml
 *.DotSettings.user
-Veloci.Data/DB/*.db
-Veloci.Data/DB/*.db-shm
-Veloci.Data/DB/*.db-wal
+Veloci.Web/DB/*.db
+Veloci.Web/DB/*.db-shm
+Veloci.Web/DB/*.db-wal
 appsettings.Development.json
