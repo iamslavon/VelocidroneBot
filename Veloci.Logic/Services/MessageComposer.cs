@@ -29,13 +29,13 @@ public class MessageComposer
     public string Leaderboard(IEnumerable<TrackTimeDelta> deltas)
     {
         var rows = deltas.Select(TimeRow);
-        return $"Проміжний лідерборд:{Environment.NewLine}{Environment.NewLine}{string.Join($"{Environment.NewLine}", rows)}";
+        return $"👀 Проміжні результати:{Environment.NewLine}{Environment.NewLine}{string.Join($"{Environment.NewLine}", rows)}";
     }
 
     private string TimeRow(TrackTimeDelta time)
     {
         return $"{time.LocalRank} - *{time.PlayerName}* ({MsToSec(time.TrackTime)}s)";
-    } 
-    
+    }
+
     private string MsToSec(int ms) => (ms / 1000.0).ToString(CultureInfo.InvariantCulture);
 }

@@ -21,10 +21,12 @@ public class TelegramUpdateHandler : ITelegramUpdateHandler
 
     public async Task OnUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
     {
-        if (update.Message is null)
+        var message = update.Message ?? update.ChannelPost;
+
+        if (message is null)
             return;
 
-        var text = update.Message.Text;
+        var text = message.Text;
 
         if (string.IsNullOrEmpty(text))
             return;
@@ -33,7 +35,7 @@ public class TelegramUpdateHandler : ITelegramUpdateHandler
         {
             try
             {
-                await _competitionService.StartNewAsync(text, update.Message.Chat.Id);
+                await _competitionService.StartNewAsync(text, message.Chat.Id);
             }
             catch (Exception e)
             {
@@ -45,7 +47,7 @@ public class TelegramUpdateHandler : ITelegramUpdateHandler
         {
             try
             {
-                await _competitionService.StopAsync(text, update.Message.Chat.Id);
+                await _competitionService.StopAsync(text, message.Chat.Id);
             }
             catch (Exception e)
             {
