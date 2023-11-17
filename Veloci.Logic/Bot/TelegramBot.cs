@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
@@ -10,14 +11,15 @@ namespace Veloci.Logic.Bot;
 
 public class TelegramBot
 {
+    private readonly IServiceProvider _sp;
     private static string _botToken;
     private static TelegramBotClient _client;
     private static CompetitionService _competitionService;
     private CancellationTokenSource _cts;
 
-    public TelegramBot(CompetitionService competitionService, IConfiguration configuration)
+    public TelegramBot(IConfiguration configuration, IServiceProvider sp)
     {
-        _competitionService = competitionService;
+        _sp = sp;
         _botToken = configuration.GetSection("Telegram:BotToken").Value;
     }
 
@@ -30,7 +32,7 @@ public class TelegramBot
         StartReceiving(cancellationToken);
     }
 
-    private static void StartReceiving(CancellationToken ct)
+    private void StartReceiving(CancellationToken ct)
     {
         var receiverOptions = new ReceiverOptions
         {
@@ -45,40 +47,12 @@ public class TelegramBot
         );
     }
 
-    private static async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update,
+    private async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update,
         CancellationToken cancellationToken)
     {
-        if (update.Message is null)
-            return;
-
-        var text = update.Message.Text;
-
-        if (string.IsNullOrEmpty(text))
-            return;
-
-        if (MessageParser.IsStartCompetition(text))
-        {
-            try
-            {
-                await _competitionService.StartNewAsync(text, update.Message.Chat.Id);
-            }
-            catch (Exception e)
-            {
-                Log.Error(e, "Failed to start competition");
-            }
-        }
-
-        if (MessageParser.IsStopCompetition(text))
-        {
-            try
-            {
-                await _competitionService.StopAsync(text, update.Message.Chat.Id);
-            }
-            catch (Exception e)
-            {
-                Log.Error(e, "Failed to stop competition");
-            }
-        }
+        using var scope = _sp.CreateScope();
+        var updater = scope.ServiceProvider.GetRequiredService<ITelegramUpdateHandler>();
+        await updater.OnUpdateAsync(botClient, update, cancellationToken);
     }
 
     private static async Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception,
