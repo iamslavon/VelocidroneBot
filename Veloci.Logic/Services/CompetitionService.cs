@@ -1,3 +1,4 @@
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Veloci.Data.Domain;
@@ -17,12 +18,12 @@ public class CompetitionService
     private readonly MessageComposer _messageComposer;
 
     public CompetitionService(
-        IRepository<Competition> competitions, 
-        ResultsFetcher resultsFetcher, 
-        RaceResultsConverter resultsConverter, 
-        IRepository<Track> tracks, 
-        IRepository<TrackMap> maps, 
-        RaceResultDeltaAnalyzer analyzer, 
+        IRepository<Competition> competitions,
+        ResultsFetcher resultsFetcher,
+        RaceResultsConverter resultsConverter,
+        IRepository<Track> tracks,
+        IRepository<TrackMap> maps,
+        RaceResultDeltaAnalyzer analyzer,
         MessageComposer messageComposer)
     {
         _competitions = competitions;
@@ -34,6 +35,7 @@ public class CompetitionService
         _messageComposer = messageComposer;
     }
 
+    [DisableConcurrentExecution("Competition", 60)]
     public async Task UpdateResultsAsync()
     {
         var activeCompetitions = await _competitions
@@ -42,7 +44,7 @@ public class CompetitionService
 
         if (!activeCompetitions.Any())
             return;
-        
+
         foreach (var competition in activeCompetitions)
         {
             await UpdateResultsAsync(competition);
@@ -87,7 +89,7 @@ public class CompetitionService
 
         var track = await _tracks
             .GetAll()
-            .FirstOrDefaultAsync(t => t.TrackId == trackId) 
+            .FirstOrDefaultAsync(t => t.TrackId == trackId)
                     ?? await CreateNewTrackAsync(mapTrackName.map, mapTrackName.track, trackId);
 
         var resultsDto = await _resultsFetcher.FetchAsync(track.TrackId);
@@ -96,7 +98,7 @@ public class CompetitionService
         {
             Times = results
         };
-        
+
         var competition = new Competition
         {
             TrackId = track.Id,
@@ -117,7 +119,7 @@ public class CompetitionService
 
         if (competition is null)
             throw new Exception("There are no active competitions for this chat");
-        
+
         if (!message.Contains(competition.Track.FullName))
             throw new Exception("Can not stop competition. Active one is on another track");
 
@@ -125,6 +127,7 @@ public class CompetitionService
         await _competitions.SaveChangesAsync();
     }
 
+    [DisableConcurrentExecution("Competition", 60)]
     public async Task PublishCurrentLeaderboardAsync()
     {
         var activeCompetitions = await _competitions
@@ -151,7 +154,7 @@ public class CompetitionService
 
         var message = _messageComposer.Leaderboard(leaderboard);
         await TelegramBot.SendMessageAsync(message, competition.ChatId);
-        
+
         competition.ResultsPosted = true;
         await _competitions.SaveChangesAsync();
     }
@@ -169,7 +172,7 @@ public class CompetitionService
             })
             .ToList();
     }
-    
+
     private async Task<Competition?> GetActiveCompetitionAsync(long chatId)
     {
         return await _competitions
@@ -181,7 +184,7 @@ public class CompetitionService
     {
         var dbMap = await _maps
             .GetAll()
-            .FirstOrDefaultAsync(m => m.Name == mapName) 
+            .FirstOrDefaultAsync(m => m.Name == mapName)
                     ?? await CreateNewMapAsync(mapName);
 
         var track = new Track

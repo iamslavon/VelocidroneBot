@@ -24,7 +24,7 @@ public class Startup
     {
         Configuration = configuration;
     }
-    
+
     public void ConfigureBuilder(WebApplicationBuilder builder)
     {
         ConfigureLogging(builder);
@@ -47,7 +47,7 @@ public class Startup
             .AddEntityFrameworkStores<ApplicationDbContext>();
 
         services.AddControllersWithViews();
-        
+
         services.Configure<LoggerConfig>(Configuration.GetSection("Logger"));
 
         services.Configure<IdentityOptions>(options =>
@@ -60,13 +60,16 @@ public class Startup
             options.Password.RequiredLength = 6;
             options.User.RequireUniqueEmail = true;
         });
-        
+
         services.AddHangfire(config => config
             .UseSQLiteStorage(new SqliteConnectionStringBuilder(connectionString).DataSource)
             .UseSimpleAssemblyNameTypeSerializer()
             .UseRecommendedSerializerSettings()
         );
-        services.AddHangfireServer();
+        services.AddHangfireServer(o =>
+        {
+            o.WorkerCount = 1;
+        });
         services.RegisterCustomServices();
         services.UseTelegramBotService();
     }
@@ -88,7 +91,7 @@ public class Startup
                     context.Database.Migrate();
                 }
             }
-            
+
             app.UseExceptionHandler("/Home/Error");
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
@@ -98,7 +101,7 @@ public class Startup
         {
             ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
         });
-        
+
         app.UseHttpsRedirection();
         app.UseStaticFiles();
 
@@ -109,14 +112,14 @@ public class Startup
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
-        
+
         app.MapRazorPages();
         app.MapHangfireDashboard(new DashboardOptions
         {
             Authorization = new[] { new HangfireAuthorizationFilter() },
         });
     }
-    
+
     private static void ConfigureLogging(WebApplicationBuilder builder)
     {
         builder.Host.UseSerilog((context, provider, configuration) =>
@@ -125,7 +128,7 @@ public class Startup
 
             var logger = configuration
                 .MinimumLevel.Debug()
-                
+
                 .MinimumLevel.Override("Hangfire.Processing.BackgroundExecution", LogEventLevel.Warning)
                 .MinimumLevel.Override("Hangfire.Storage.SQLite.ExpirationManager", LogEventLevel.Warning)
                 .MinimumLevel.Override("Hangfire.Storage.SQLite.CountersAggregator", LogEventLevel.Warning)
