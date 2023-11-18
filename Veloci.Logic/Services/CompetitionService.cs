@@ -210,4 +210,11 @@ public class CompetitionService
 
         return map;
     }
+
+    public IQueryable<Competition> GetCurrentCompetitions()
+    {
+        return _competitions
+            .GetAll(c => c.State == CompetitionState.Started)
+            .OrderByDescending(x => x.StartedOn);
+    }
 }
