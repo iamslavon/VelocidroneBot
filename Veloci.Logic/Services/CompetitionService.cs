@@ -10,8 +10,6 @@ namespace Veloci.Logic.Services;
 public class CompetitionService
 {
     private readonly IRepository<Competition> _competitions;
-    private readonly IRepository<Track> _tracks;
-    private readonly IRepository<TrackMap> _maps;
     private readonly ResultsFetcher _resultsFetcher;
     private readonly RaceResultsConverter _resultsConverter;
     private readonly RaceResultDeltaAnalyzer _analyzer;
@@ -21,16 +19,12 @@ public class CompetitionService
         IRepository<Competition> competitions,
         ResultsFetcher resultsFetcher,
         RaceResultsConverter resultsConverter,
-        IRepository<Track> tracks,
-        IRepository<TrackMap> maps,
         RaceResultDeltaAnalyzer analyzer,
         MessageComposer messageComposer)
     {
         _competitions = competitions;
         _resultsFetcher = resultsFetcher;
         _resultsConverter = resultsConverter;
-        _tracks = tracks;
-        _maps = maps;
         _analyzer = analyzer;
         _messageComposer = messageComposer;
     }
@@ -75,59 +69,6 @@ public class CompetitionService
         await TelegramBot.SendMessageAsync(message, competition.ChatId);
     }
 
-    public async Task StartNewAsync(string message, long chatId)
-    {
-        Log.Debug("Starting a new competition");
-
-        var activeComp = await GetActiveCompetitionAsync(chatId);
-
-        if (activeComp is not null)
-            throw new Exception("Competition for this chat is already started");
-
-        var trackId = MessageParser.GetTrackId(message);
-        var mapTrackName = MessageParser.GetTrackName(message);
-
-        var track = await _tracks
-            .GetAll()
-            .FirstOrDefaultAsync(t => t.TrackId == trackId)
-                    ?? await CreateNewTrackAsync(mapTrackName.map, mapTrackName.track, trackId);
-
-        var resultsDto = await _resultsFetcher.FetchAsync(track.TrackId);
-        var results = _resultsConverter.ConvertTrackTimes(resultsDto);
-        var trackResults = new TrackResults
-        {
-            Times = results
-        };
-
-        var competition = new Competition
-        {
-            TrackId = track.Id,
-            State = CompetitionState.Started,
-            ChatId = chatId,
-            InitialResults = trackResults,
-            CurrentResults = trackResults
-        };
-
-        await _competitions.AddAsync(competition);
-    }
-
-    public async Task StopAsync(string message, long chatId)
-    {
-        Log.Debug("Stopping a competition");
-
-        var competition = await GetActiveCompetitionAsync(chatId);
-
-        if (competition is null)
-            throw new Exception("There are no active competitions for this chat");
-
-        if (!message.Contains(competition.Track.FullName))
-            throw new Exception("Can not stop competition. Active one is on another track");
-
-        competition.State = CompetitionState.Closed;
-        competition.CompetitionResults = GetLocalLeaderboard(competition);
-        await _competitions.SaveChangesAsync();
-    }
-
     [DisableConcurrentExecution("Competition", 60)]
     public async Task PublishCurrentLeaderboardAsync()
     {
@@ -153,14 +94,14 @@ public class CompetitionService
 
         Log.Debug($"Publishing current leaderboard for competition {competition.Id}");
 
-        var message = _messageComposer.Leaderboard(leaderboard);
+        var message = _messageComposer.TempLeaderboard(leaderboard);
         await TelegramBot.SendMessageAsync(message, competition.ChatId);
 
         competition.ResultsPosted = true;
         await _competitions.SaveChangesAsync();
     }
 
-    private List<CompetitionResults> GetLocalLeaderboard(Competition competition)
+    public List<CompetitionResults> GetLocalLeaderboard(Competition competition)
     {
         return competition.TimeDeltas
             .GroupBy(d => d.PlayerName)
@@ -204,44 +145,6 @@ public class CompetitionService
             20 => 2,
             _ => 1
         };
-    }
-
-    private async Task<Competition?> GetActiveCompetitionAsync(long chatId)
-    {
-        return await _competitions
-            .GetAll(c => c.State == CompetitionState.Started)
-            .FirstOrDefaultAsync(c => c.ChatId == chatId);
-    }
-
-    private async Task<Track> CreateNewTrackAsync(string mapName, string trackName, int trackId)
-    {
-        var dbMap = await _maps
-            .GetAll()
-            .FirstOrDefaultAsync(m => m.Name == mapName)
-                    ?? await CreateNewMapAsync(mapName);
-
-        var track = new Track
-        {
-            MapId = dbMap.Id,
-            Name = trackName,
-            TrackId = trackId
-        };
-
-        await _tracks.AddAsync(track);
-
-        return track;
-    }
-
-    private async Task<TrackMap> CreateNewMapAsync(string name)
-    {
-        var map = new TrackMap
-        {
-            Name = name
-        };
-
-        await _maps.AddAsync(map);
-
-        return map;
     }
 
     public IQueryable<Competition> GetCurrentCompetitions()

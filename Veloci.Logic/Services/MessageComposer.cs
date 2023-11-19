@@ -11,6 +11,22 @@ public class MessageComposer
         return string.Join($"{Environment.NewLine}", messages);
     }
 
+    public string TempLeaderboard(IEnumerable<CompetitionResults> results)
+    {
+        var rows = results.Select(TempLeaderboardRow);
+        return $"🏆 Проміжні результати:{Environment.NewLine}{Environment.NewLine}{string.Join($"{Environment.NewLine}", rows)}";
+    }
+
+    public string Leaderboard(IEnumerable<CompetitionResults> results, string trackName)
+    {
+        var rows = results.Select(LeaderboardRow);
+        return $"🏆 Результати дня:{Environment.NewLine}" +
+               $"Трек: {trackName}{Environment.NewLine}{Environment.NewLine}" +
+               $"{string.Join($"{Environment.NewLine}", rows)}";
+    }
+
+    #region Private
+
     private string TimeUpdate(TrackTimeDelta delta)
     {
         var timeChangePart = delta.TimeChange.HasValue ? $" ({MsToSec(delta.TimeChange.Value)}s)" : string.Empty;
@@ -26,16 +42,25 @@ public class MessageComposer
         return $"{icon} *{delta.PlayerName}* - {MsToSec(delta.TrackTime)}s{timeChangePart} / #{delta.Rank}{rankOldPart}";
     }
 
-    public string Leaderboard(IEnumerable<CompetitionResults> results)
-    {
-        var rows = results.Select(TimeRow);
-        return $"👀 Проміжні результати:{Environment.NewLine}{Environment.NewLine}{string.Join($"{Environment.NewLine}", rows)}";
-    }
-
-    private string TimeRow(CompetitionResults time)
+    private string TempLeaderboardRow(CompetitionResults time)
     {
         return $"{time.LocalRank} - *{time.PlayerName}* ({MsToSec(time.TrackTime)}s)";
     }
 
-    private string MsToSec(int ms) => (ms / 1000.0).ToString(CultureInfo.InvariantCulture);
+    private string LeaderboardRow(CompetitionResults time)
+    {
+        var icon = time.LocalRank switch
+        {
+            1 => "🥇",
+            2 => "🥈",
+            3 => "🥉",
+            _ => $"{time.LocalRank}"
+        };
+
+        return $"{icon} - *{time.PlayerName}* ({MsToSec(time.TrackTime)}s) / *Балів: {time.Points}*";
+    }
+
+    private static string MsToSec(int ms) => (ms / 1000.0).ToString(CultureInfo.InvariantCulture);
+
+    #endregion
 }
