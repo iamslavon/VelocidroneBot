@@ -124,6 +124,7 @@ public class CompetitionService
             throw new Exception("Can not stop competition. Active one is on another track");
 
         competition.State = CompetitionState.Closed;
+        competition.CompetitionResults = GetLocalLeaderboard(competition);
         await _competitions.SaveChangesAsync();
     }
 
@@ -159,18 +160,50 @@ public class CompetitionService
         await _competitions.SaveChangesAsync();
     }
 
-    public List<TrackTimeDelta> GetLocalLeaderboard(Competition competition)
+    private List<CompetitionResults> GetLocalLeaderboard(Competition competition)
     {
         return competition.TimeDeltas
             .GroupBy(d => d.PlayerName)
             .Select(d => d.MinBy(x => x.TrackTime))
             .OrderBy(d => d.TrackTime)
-            .Select((x, i) =>
+            .Select((x, i) => new CompetitionResults
             {
-                x.LocalRank = i + 1;
-                return x;
+                CompetitionId = x.CompetitionId,
+                PlayerName = x.PlayerName,
+                TrackTime = x.TrackTime,
+                LocalRank = i + 1,
+                GlobalRank = x.Rank,
+                Points = PointsByRank(i + 1)
             })
             .ToList();
+    }
+
+    private int PointsByRank(int rank)
+    {
+        return rank switch
+        {
+            1 => 85,
+            2 => 72,
+            3 => 66,
+            4 => 60,
+            5 => 54,
+            6 => 49,
+            7 => 44,
+            8 => 39,
+            9 => 35,
+            10 => 31,
+            11 => 27,
+            12 => 23,
+            13 => 19,
+            14 => 16,
+            15 => 13,
+            16 => 10,
+            17 => 7,
+            18 => 5,
+            19 => 3,
+            20 => 2,
+            _ => 1
+        };
     }
 
     private async Task<Competition?> GetActiveCompetitionAsync(long chatId)

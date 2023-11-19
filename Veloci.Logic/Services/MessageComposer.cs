@@ -26,13 +26,13 @@ public class MessageComposer
         return $"{icon} *{delta.PlayerName}* - {MsToSec(delta.TrackTime)}s{timeChangePart} / #{delta.Rank}{rankOldPart}";
     }
 
-    public string Leaderboard(IEnumerable<TrackTimeDelta> deltas)
+    public string Leaderboard(IEnumerable<CompetitionResults> results)
     {
-        var rows = deltas.Select(TimeRow);
+        var rows = results.Select(TimeRow);
         return $"👀 Проміжні результати:{Environment.NewLine}{Environment.NewLine}{string.Join($"{Environment.NewLine}", rows)}";
     }
 
-    private string TimeRow(TrackTimeDelta time)
+    private string TimeRow(CompetitionResults time)
     {
         return $"{time.LocalRank} - *{time.PlayerName}* ({MsToSec(time.TrackTime)}s)";
     }
