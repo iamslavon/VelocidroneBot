@@ -20,8 +20,8 @@ public class MessageComposer
     public string Leaderboard(IEnumerable<CompetitionResults> results, string trackName)
     {
         var rows = results.Select(LeaderboardRow);
-        return $"🏆 Результати дня:{Environment.NewLine}" +
-               $"Трек: {trackName}{Environment.NewLine}{Environment.NewLine}" +
+        return $"🏆 РЕЗУЛЬТАТИ ДНЯ{Environment.NewLine}" +
+               $"Трек: *{trackName}*{Environment.NewLine}{Environment.NewLine}" +
                $"{string.Join($"{Environment.NewLine}", rows)}";
     }
 
@@ -31,15 +31,8 @@ public class MessageComposer
     {
         var timeChangePart = delta.TimeChange.HasValue ? $" ({MsToSec(delta.TimeChange.Value)}s)" : string.Empty;
         var rankOldPart = delta.RankOld.HasValue ? $" (#{delta.RankOld})" : string.Empty;
-        var icon = delta.Rank switch
-        {
-            1 => "🥇",
-            2 => "🥈",
-            3 => "🥉",
-            _ => "⏱"
-        };
 
-        return $"{icon} *{delta.PlayerName}* - {MsToSec(delta.TrackTime)}s{timeChangePart} / #{delta.Rank}{rankOldPart}";
+        return $"⏱ *{delta.PlayerName}* - {MsToSec(delta.TrackTime)}s{timeChangePart} / #{delta.Rank}{rankOldPart}";
     }
 
     private string TempLeaderboardRow(CompetitionResults time)
@@ -57,7 +50,7 @@ public class MessageComposer
             _ => $"{time.LocalRank}"
         };
 
-        return $"{icon} - *{time.PlayerName}* ({MsToSec(time.TrackTime)}s) / *Балів: {time.Points}*";
+        return $"{icon} - *{time.PlayerName}* ({MsToSec(time.TrackTime)}s) / Балів: *{time.Points}*";
     }
 
     private static string MsToSec(int ms) => (ms / 1000.0).ToString(CultureInfo.InvariantCulture);
