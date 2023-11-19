@@ -25,6 +25,8 @@ public class TelegramBot
 
     public void Init()
     {
+        if (string.IsNullOrEmpty(_botToken)) return;
+
         _client = new TelegramBotClient(_botToken);
         _cts = new CancellationTokenSource();
         var cancellationToken = _cts.Token;
