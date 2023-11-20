@@ -11,6 +11,7 @@ public static class ServiceRegistration
         services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
         services.AddTransient<ResultsFetcher>();
         services.AddTransient<CompetitionService>();
+        services.AddTransient<CompetitionConductor>();
         services.AddTransient<RaceResultsConverter>();
         services.AddTransient<MessageComposer>();
         services.AddTransient<RaceResultDeltaAnalyzer>();

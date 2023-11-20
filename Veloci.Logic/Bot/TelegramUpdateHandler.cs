@@ -12,11 +12,11 @@ public interface ITelegramUpdateHandler
 
 public class TelegramUpdateHandler : ITelegramUpdateHandler
 {
-    private readonly CompetitionService _competitionService;
+    private readonly CompetitionConductor _competitionConductor;
 
-    public TelegramUpdateHandler(CompetitionService competitionService)
+    public TelegramUpdateHandler(CompetitionConductor competitionConductor)
     {
-        _competitionService = competitionService;
+        _competitionConductor = competitionConductor;
     }
 
     public async Task OnUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
@@ -35,7 +35,7 @@ public class TelegramUpdateHandler : ITelegramUpdateHandler
         {
             try
             {
-                await _competitionService.StartNewAsync(text, message.Chat.Id);
+                await _competitionConductor.StartNewAsync(text, message.Chat.Id);
             }
             catch (Exception e)
             {
@@ -47,11 +47,35 @@ public class TelegramUpdateHandler : ITelegramUpdateHandler
         {
             try
             {
-                await _competitionService.StopAsync(text, message.Chat.Id);
+                await _competitionConductor.StopAsync(text, message.Chat.Id, message.MessageId);
             }
             catch (Exception e)
             {
                 Log.Error(e, "Failed to stop competition");
+            }
+        }
+
+        if (MessageParser.IsTempSeasonResults(text))
+        {
+            try
+            {
+                await _competitionConductor.TempSeasonResultsAsync(message.Chat.Id, message.MessageId);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Failed to post temp season results");
+            }
+        }
+
+        if (MessageParser.IsStopSeason(text))
+        {
+            try
+            {
+                await _competitionConductor.StopSeasonAsync(message.Chat.Id, message.MessageId);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Failed to stop season");
             }
         }
     }

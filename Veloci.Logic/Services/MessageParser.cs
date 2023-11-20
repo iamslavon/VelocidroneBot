@@ -5,9 +5,13 @@ namespace Veloci.Logic.Services;
 public static class MessageParser
 {
     public static bool IsStartCompetition(string message) => message.Contains("Ласкаво просимо");
-    
+
     public static bool IsStopCompetition(string message) => message.Contains("Результати дня");
-    
+
+    public static bool IsTempSeasonResults(string message) => message.Contains("Проміжні результати місяця");
+
+    public static bool IsStopSeason(string message) => message.Contains("#velocibotmonthlyfinal");
+
     public static (string map, string track) GetTrackName(string text)
     {
         var lines = text.Split('\n');

@@ -78,6 +78,22 @@ public class TelegramBot
         }
     }
 
+    public static async Task EditMessageAsync(string message, long chatId, int messageId)
+    {
+        try
+        {
+            var result = await _client.EditMessageTextAsync(
+                chatId: chatId,
+                messageId: messageId,
+                parseMode: ParseMode.MarkdownV2,
+                text: Isolate(message));
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Telegram. Failed to edit a message '{Message}'", message);
+        }
+    }
+
     private static string Isolate(string message) => message
         .Replace(".", "\\.")
         .Replace("!", "\\!")
