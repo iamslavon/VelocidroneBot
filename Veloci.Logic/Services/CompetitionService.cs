@@ -119,6 +119,29 @@ public class CompetitionService
             .ToList();
     }
 
+    public async Task<List<SeasonResult>> GetSeasonResultsAsync(long chatId, DateTime from, DateTime to)
+    {
+        var results = await _competitions
+            .GetAll(comp => comp.ChatId == chatId)
+            .Where(comp => comp.StartedOn >= from && comp.StartedOn <= to)
+            .SelectMany(comp => comp.CompetitionResults)
+            .GroupBy(result => result.PlayerName)
+            .Select(group => new SeasonResult
+            {
+                PlayerName = group.Key,
+                Points = group.Sum(r => r.Points)
+            })
+            .OrderByDescending(result => result.Points)
+            .ToListAsync();
+
+        for (var i = 0; i < results.Count; i++)
+        {
+            results[i].Rank = i + 1;
+        }
+
+        return results;
+    }
+
     private int PointsByRank(int rank)
     {
         return rank switch

@@ -14,7 +14,8 @@ public class MessageComposer
     public string TempLeaderboard(IEnumerable<CompetitionResults> results)
     {
         var rows = results.Select(TempLeaderboardRow);
-        return $"🏆 Проміжні результати:{Environment.NewLine}{Environment.NewLine}{string.Join($"{Environment.NewLine}", rows)}";
+        return $"🧐 Проміжні результати:{Environment.NewLine}{Environment.NewLine}" +
+               $"{string.Join($"{Environment.NewLine}", rows)}";
     }
 
     public string Leaderboard(IEnumerable<CompetitionResults> results, string trackName)
@@ -23,6 +24,20 @@ public class MessageComposer
         return $"🏆 РЕЗУЛЬТАТИ ДНЯ{Environment.NewLine}" +
                $"Трек: *{trackName}*{Environment.NewLine}{Environment.NewLine}" +
                $"{string.Join($"{Environment.NewLine}", rows)}";
+    }
+
+    public string TempSeasonResults(IEnumerable<SeasonResult> results)
+    {
+        var rows = results.Select(TempSeasonResultsRow);
+        return $"🗓 Проміжні результати місяця{Environment.NewLine}{Environment.NewLine}" +
+               $"{string.Join(Environment.NewLine, rows)}";
+    }
+
+    public string SeasonResults(IEnumerable<SeasonResult> results)
+    {
+        var rows = results.Select(SeasonResultsRow);
+        return $"🏁 Фінальні результати місяця{Environment.NewLine}{Environment.NewLine}" +
+               $"{string.Join(Environment.NewLine, rows)}";
     }
 
     #region Private
@@ -51,6 +66,24 @@ public class MessageComposer
         };
 
         return $"{icon} - *{time.PlayerName}* ({MsToSec(time.TrackTime)}s) / Балів: *{time.Points}*";
+    }
+
+    private string TempSeasonResultsRow(SeasonResult result)
+    {
+        return $"{result.Rank} - *{result.PlayerName}* - {result.Points} балів";
+    }
+
+    private string SeasonResultsRow(SeasonResult result)
+    {
+        var icon = result.Rank switch
+        {
+            1 => "🥇",
+            2 => "🥈",
+            3 => "🥉",
+            _ => $"{result.Rank}"
+        };
+
+        return $"{icon} - *{result.PlayerName}* - {result.Points} балів";
     }
 
     private static string MsToSec(int ms) => (ms / 1000.0).ToString(CultureInfo.InvariantCulture);

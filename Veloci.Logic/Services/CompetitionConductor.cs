@@ -90,6 +90,31 @@ public class CompetitionConductor
         await TelegramBot.EditMessageAsync(resultsMessage, chatId, messageId);
     }
 
+    public async Task TempSeasonResultsAsync(long chatId, int messageId)
+    {
+        var today = DateTime.Now;
+        var firstDayOfMonth = new DateTime(today.Year, today.Month, 1);
+        var results = await _competitionService.GetSeasonResultsAsync(chatId, firstDayOfMonth, today);
+        var message = _messageComposer.TempSeasonResults(results);
+
+        // TODO: Uncomment in the next month
+        //await TelegramBot.EditMessageAsync(message, chatId, messageId);
+    }
+
+    public async Task StopSeasonAsync(long chatId, int messageId)
+    {
+        var today = DateTime.Now;
+        var firstDayOfPreviousMonth = new DateTime(today.Year, today.Month, 1).AddMonths(-1);
+        var firstDayOfCurrentMonth = new DateTime(today.Year, today.Month, 1);
+
+        var results =
+            await _competitionService.GetSeasonResultsAsync(chatId, firstDayOfPreviousMonth, firstDayOfCurrentMonth);
+        var message = _messageComposer.SeasonResults(results);
+
+        // TODO: Uncomment in the next month
+        //await TelegramBot.EditMessageAsync(message, chatId, messageId);
+    }
+
     private async Task<Competition?> GetActiveCompetitionAsync(long chatId)
     {
         return await _competitions

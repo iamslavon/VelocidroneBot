@@ -54,5 +54,29 @@ public class TelegramUpdateHandler : ITelegramUpdateHandler
                 Log.Error(e, "Failed to stop competition");
             }
         }
+
+        if (MessageParser.IsTempSeasonResults(text))
+        {
+            try
+            {
+                await _competitionConductor.TempSeasonResultsAsync(message.Chat.Id, message.MessageId);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Failed to post temp season results");
+            }
+        }
+
+        if (MessageParser.IsStopSeason(text))
+        {
+            try
+            {
+                await _competitionConductor.StopSeasonAsync(message.Chat.Id, message.MessageId);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Failed to stop season");
+            }
+        }
     }
 }
