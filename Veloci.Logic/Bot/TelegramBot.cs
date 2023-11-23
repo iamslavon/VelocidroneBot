@@ -94,6 +94,22 @@ public class TelegramBot
         }
     }
 
+    public static async Task SendPhotoAsync(long chatId, string fileUrl, string caption)
+    {
+        try
+        {
+            var result = await _client.SendPhotoAsync(
+                chatId: chatId,
+                caption: Isolate(caption),
+                photo: new InputFileUrl(fileUrl)
+            );
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Telegram. Failed to send a photo");
+        }
+    }
+
     private static string Isolate(string message) => message
         .Replace(".", "\\.")
         .Replace("!", "\\!")

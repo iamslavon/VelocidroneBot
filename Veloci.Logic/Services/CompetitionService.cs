@@ -84,8 +84,14 @@ public class CompetitionService
 
     private async Task PublishCurrentLeaderboardAsync(Competition competition)
     {
-        if (!competition.TimeDeltas.Any() || competition.ResultsPosted)
+        if (competition.ResultsPosted)
             return;
+
+        if (competition.TimeDeltas.Count == 0)
+        {
+            await SendCheerUpMessageAsync(competition.ChatId, TelegramMessageType.NobodyFlying);
+            return;
+        }
 
         var leaderboard = GetLocalLeaderboard(competition);
 
@@ -168,6 +174,31 @@ public class CompetitionService
             20 => 2,
             _ => 1
         };
+    }
+
+    private async Task SendCheerUpMessageAsync(long chatId, TelegramMessageType type)
+    {
+        var now = DateTime.Now;
+        var isDontDisturbTime = now.Hour is < 7 or > 22;
+
+        if (isDontDisturbTime)
+            return;
+
+        var cheerUpMessage = TelegramMessages.GetRandomByType(type);
+
+        if (cheerUpMessage is null)
+            return;
+
+        if (cheerUpMessage.FileUrl is null && cheerUpMessage.Text is not null)
+        {
+            await TelegramBot.SendMessageAsync(cheerUpMessage.Text, chatId);
+            return;
+        }
+
+        if (cheerUpMessage.FileUrl is not null)
+        {
+            await TelegramBot.SendPhotoAsync(chatId, cheerUpMessage.FileUrl, cheerUpMessage.Text);
+        }
     }
 
     public IQueryable<Competition> GetCurrentCompetitions()
