@@ -94,19 +94,47 @@ public class TelegramBot
         }
     }
 
-    public static async Task SendPhotoAsync(long chatId, string fileUrl, string caption)
+    public static async Task SendPhotoAsync(long chatId, string fileUrl, string? message = null)
     {
+        if (message is not null)
+            message = Isolate(message);
+
         try
         {
             var result = await _client.SendPhotoAsync(
                 chatId: chatId,
-                caption: Isolate(caption),
+                caption: message,
                 photo: new InputFileUrl(fileUrl)
             );
         }
         catch (Exception ex)
         {
             Log.Error(ex, "Telegram. Failed to send a photo");
+        }
+    }
+
+    public static async Task SendPhotoAsync(long chatId, Stream file, string? message = null)
+    {
+        file.Position = 0; // Weird fix. It throws an exception without
+
+        if (message is not null)
+            message = Isolate(message);
+
+        try
+        {
+            var result = await _client.SendPhotoAsync(
+                chatId: chatId,
+                photo: new InputFileStream(file),
+                caption: message
+            );
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Telegram. Failed to send a photo");
+        }
+        finally
+        {
+            await file.DisposeAsync();
         }
     }
 

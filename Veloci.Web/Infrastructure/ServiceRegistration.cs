@@ -17,6 +17,7 @@ public static class ServiceRegistration
         services.AddTransient<RaceResultDeltaAnalyzer>();
         services.AddTransient<TelegramBot>();
         services.AddTransient<ITelegramUpdateHandler, TelegramUpdateHandler>();
+        services.AddTransient<ImageService>();
 
         return services;
     }

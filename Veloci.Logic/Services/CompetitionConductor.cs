@@ -15,6 +15,7 @@ public class CompetitionConductor
     private readonly RaceResultsConverter _resultsConverter;
     private readonly CompetitionService _competitionService;
     private readonly MessageComposer _messageComposer;
+    private readonly ImageService _imageService;
 
     public CompetitionConductor(
         IRepository<Competition> competitions,
@@ -23,7 +24,8 @@ public class CompetitionConductor
         ResultsFetcher resultsFetcher,
         RaceResultsConverter resultsConverter,
         CompetitionService competitionService,
-        MessageComposer messageComposer)
+        MessageComposer messageComposer,
+        ImageService imageService)
     {
         _competitions = competitions;
         _tracks = tracks;
@@ -32,6 +34,7 @@ public class CompetitionConductor
         _resultsConverter = resultsConverter;
         _competitionService = competitionService;
         _messageComposer = messageComposer;
+        _imageService = imageService;
     }
 
     public async Task StartNewAsync(string message, long chatId)
@@ -109,10 +112,20 @@ public class CompetitionConductor
 
         var results =
             await _competitionService.GetSeasonResultsAsync(chatId, firstDayOfPreviousMonth, firstDayOfCurrentMonth);
+
+        if (results.Count == 0)
+            return;
+
         var message = _messageComposer.SeasonResults(results);
+
 
         // TODO: Uncomment in the next month
         //await TelegramBot.EditMessageAsync(message, chatId, messageId);
+
+        // var seasonName = firstDayOfPreviousMonth.ToString("MMMM yyyy");
+        // var winnerName = results.FirstOrDefault().PlayerName;
+        // var imageStream = await _imageService.CreateWinnerImageAsync(seasonName, winnerName);
+        // await TelegramBot.SendPhotoAsync(chatId, imageStream);
     }
 
     private async Task<Competition?> GetActiveCompetitionAsync(long chatId)
