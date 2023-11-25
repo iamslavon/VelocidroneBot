@@ -142,6 +142,7 @@ public class TelegramBot
         .Replace(".", "\\.")
         .Replace("!", "\\!")
         .Replace("-", "\\-")
+        .Replace("_", "\\_")
         .Replace(")", "\\)")
         .Replace("(", "\\(")
         .Replace("#", "\\#");
