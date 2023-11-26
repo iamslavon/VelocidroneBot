@@ -46,13 +46,13 @@ public class CompetitionConductor
         if (activeComp is not null)
             throw new Exception("Competition for this chat is already started");
 
-        var trackId = MessageParser.GetTrackId(message);
+        var trackIds = MessageParser.GetTrackId(message);
         var mapTrackName = MessageParser.GetTrackName(message);
 
         var track = await _tracks
                         .GetAll()
-                        .FirstOrDefaultAsync(t => t.TrackId == trackId)
-                    ?? await CreateNewTrackAsync(mapTrackName.map, mapTrackName.track, trackId);
+                        .FirstOrDefaultAsync(t => t.TrackId == trackIds.trackId)
+                    ?? await CreateNewTrackAsync(mapTrackName.map, trackIds.mapId, mapTrackName.track, trackIds.trackId);
 
         var resultsDto = await _resultsFetcher.FetchAsync(track.TrackId);
         var results = _resultsConverter.ConvertTrackTimes(resultsDto);
@@ -135,12 +135,12 @@ public class CompetitionConductor
             .FirstOrDefaultAsync(c => c.ChatId == chatId);
     }
 
-    private async Task<Track> CreateNewTrackAsync(string mapName, string trackName, int trackId)
+    private async Task<Track> CreateNewTrackAsync(string mapName, int mapId, string trackName, int trackId)
     {
         var dbMap = await _maps
                         .GetAll()
                         .FirstOrDefaultAsync(m => m.Name == mapName)
-                    ?? await CreateNewMapAsync(mapName);
+                    ?? await CreateNewMapAsync(mapName, mapId);
 
         var track = new Track
         {
@@ -154,11 +154,12 @@ public class CompetitionConductor
         return track;
     }
 
-    private async Task<TrackMap> CreateNewMapAsync(string name)
+    private async Task<TrackMap> CreateNewMapAsync(string name, int mapId)
     {
         var map = new TrackMap
         {
-            Name = name
+            Name = name,
+            MapId = mapId
         };
 
         await _maps.AddAsync(map);
