@@ -1,3 +1,4 @@
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Veloci.Data.Domain;
@@ -118,10 +119,12 @@ public class CompetitionConductor
 
         var message = _messageComposer.SeasonResults(results);
 
-
         // TODO: Uncomment in the next month
-        //await TelegramBot.EditMessageAsync(message, chatId, messageId);
-
+        // await TelegramBot.EditMessageAsync(message, chatId, messageId);
+        //
+        // var medalCountMessage = _messageComposer.MedalCount(results);
+        // BackgroundJob.Schedule(() => TelegramBot.SendMessageAsync(medalCountMessage, chatId), new TimeSpan(0, 0, 5));
+        //
         // var seasonName = firstDayOfPreviousMonth.ToString("MMMM yyyy");
         // var winnerName = results.FirstOrDefault().PlayerName;
         // var imageStream = await _imageService.CreateWinnerImageAsync(seasonName, winnerName);

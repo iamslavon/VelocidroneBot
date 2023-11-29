@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text;
 using Veloci.Data.Domain;
 
 namespace Veloci.Logic.Services;
@@ -23,21 +24,28 @@ public class MessageComposer
         var rows = results.Select(LeaderboardRow);
         return $"🏆 РЕЗУЛЬТАТИ ДНЯ{Environment.NewLine}" +
                $"Трек: *{trackName}*{Environment.NewLine}{Environment.NewLine}" +
-               $"{string.Join($"{Environment.NewLine}", rows)}";
+               $"{string.Join($"{Environment.NewLine}{Environment.NewLine}", rows)}";
     }
 
     public string TempSeasonResults(IEnumerable<SeasonResult> results)
     {
         var rows = results.Select(TempSeasonResultsRow);
         return $"🗓 Проміжні результати місяця{Environment.NewLine}{Environment.NewLine}" +
-               $"{string.Join(Environment.NewLine, rows)}";
+               $"{string.Join($"{Environment.NewLine}{Environment.NewLine}", rows)}";
     }
 
     public string SeasonResults(IEnumerable<SeasonResult> results)
     {
         var rows = results.Select(SeasonResultsRow);
         return $"🏁 Фінальні результати місяця{Environment.NewLine}{Environment.NewLine}" +
-               $"{string.Join(Environment.NewLine, rows)}";
+               $"{string.Join($"{Environment.NewLine}{Environment.NewLine}", rows)}";
+    }
+
+    public string MedalCount(IEnumerable<SeasonResult> results)
+    {
+        var rows = results.Select(MedalCountRow);
+        return $"Медалі за місяць{Environment.NewLine}{Environment.NewLine}" +
+               $"{string.Join($"{Environment.NewLine}{Environment.NewLine}", rows)}";
     }
 
     #region Private
@@ -84,6 +92,27 @@ public class MessageComposer
         };
 
         return $"{icon} - *{result.PlayerName}* - {result.Points} балів";
+    }
+
+    private string? MedalCountRow(SeasonResult result)
+    {
+        if (result is { GoldenCount: 0, SilverCount: 0, BronzeCount: 0 })
+            return null;
+
+        var medals = $"{MedalsRow("🥇", result.GoldenCount)}{MedalsRow("🥈", result.SilverCount)}{MedalsRow("🥉", result.BronzeCount)}";
+        return $"*{result.PlayerName}* - {medals}";
+    }
+
+    private string MedalsRow(string medalIcon, int count)
+    {
+        var result = new StringBuilder();
+
+        for (var i = 0; i < count; i++)
+        {
+            result.Append(medalIcon);
+        }
+
+        return result.ToString();
     }
 
     private static string MsToSec(int ms) => (ms / 1000.0).ToString(CultureInfo.InvariantCulture);
