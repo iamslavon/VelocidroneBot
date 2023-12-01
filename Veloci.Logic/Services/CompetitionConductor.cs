@@ -100,9 +100,7 @@ public class CompetitionConductor
         var firstDayOfMonth = new DateTime(today.Year, today.Month, 1);
         var results = await _competitionService.GetSeasonResultsAsync(chatId, firstDayOfMonth, today);
         var message = _messageComposer.TempSeasonResults(results);
-
-        // TODO: Uncomment in the next month
-        //await TelegramBot.EditMessageAsync(message, chatId, messageId);
+        await TelegramBot.EditMessageAsync(message, chatId, messageId);
     }
 
     public async Task StopSeasonAsync(long chatId, int messageId)
@@ -118,17 +116,15 @@ public class CompetitionConductor
             return;
 
         var message = _messageComposer.SeasonResults(results);
+        await TelegramBot.EditMessageAsync(message, chatId, messageId);
 
-        // TODO: Uncomment in the next month
-        // await TelegramBot.EditMessageAsync(message, chatId, messageId);
-        //
-        // var medalCountMessage = _messageComposer.MedalCount(results);
-        // BackgroundJob.Schedule(() => TelegramBot.SendMessageAsync(medalCountMessage, chatId), new TimeSpan(0, 0, 5));
-        //
-        // var seasonName = firstDayOfPreviousMonth.ToString("MMMM yyyy");
-        // var winnerName = results.FirstOrDefault().PlayerName;
-        // var imageStream = await _imageService.CreateWinnerImageAsync(seasonName, winnerName);
-        // await TelegramBot.SendPhotoAsync(chatId, imageStream);
+        var medalCountMessage = _messageComposer.MedalCount(results);
+        BackgroundJob.Schedule(() => TelegramBot.SendMessageAsync(medalCountMessage, chatId), new TimeSpan(0, 0, 5));
+
+        var seasonName = firstDayOfPreviousMonth.ToString("MMMM yyyy");
+        var winnerName = results.FirstOrDefault().PlayerName;
+        var imageStream = await _imageService.CreateWinnerImageAsync(seasonName, winnerName);
+        await TelegramBot.SendPhotoAsync(chatId, imageStream);
     }
 
     private async Task<Competition?> GetActiveCompetitionAsync(long chatId)
