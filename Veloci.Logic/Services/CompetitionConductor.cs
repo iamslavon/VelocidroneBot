@@ -4,14 +4,14 @@ using Serilog;
 using Veloci.Data.Domain;
 using Veloci.Data.Repositories;
 using Veloci.Logic.Bot;
+using Veloci.Logic.Services.Tracks;
 
 namespace Veloci.Logic.Services;
 
 public class CompetitionConductor
 {
     private readonly IRepository<Competition> _competitions;
-    private readonly IRepository<Track> _tracks;
-    private readonly IRepository<TrackMap> _maps;
+    private readonly TrackService _trackService;
     private readonly ResultsFetcher _resultsFetcher;
     private readonly RaceResultsConverter _resultsConverter;
     private readonly CompetitionService _competitionService;
@@ -20,22 +20,20 @@ public class CompetitionConductor
 
     public CompetitionConductor(
         IRepository<Competition> competitions,
-        IRepository<Track> tracks,
-        IRepository<TrackMap> maps,
         ResultsFetcher resultsFetcher,
         RaceResultsConverter resultsConverter,
         CompetitionService competitionService,
         MessageComposer messageComposer,
-        ImageService imageService)
+        ImageService imageService,
+        TrackService trackService)
     {
         _competitions = competitions;
-        _tracks = tracks;
-        _maps = maps;
         _resultsFetcher = resultsFetcher;
         _resultsConverter = resultsConverter;
         _competitionService = competitionService;
         _messageComposer = messageComposer;
         _imageService = imageService;
+        _trackService = trackService;
     }
 
     public async Task StartNewAsync(string message, long chatId)
@@ -50,10 +48,8 @@ public class CompetitionConductor
         var trackIds = MessageParser.GetTrackId(message);
         var mapTrackName = MessageParser.GetTrackName(message);
 
-        var track = await _tracks
-                        .GetAll()
-                        .FirstOrDefaultAsync(t => t.TrackId == trackIds.trackId)
-                    ?? await CreateNewTrackAsync(mapTrackName.map, trackIds.mapId, mapTrackName.track, trackIds.trackId);
+        var track = await _trackService.GetTrackAsync(trackIds.trackId)
+                    ?? await _trackService.CreateNewTrackAsync(mapTrackName.map, trackIds.mapId, mapTrackName.track, trackIds.trackId);
 
         var resultsDto = await _resultsFetcher.FetchAsync(track.TrackId);
         var results = _resultsConverter.ConvertTrackTimes(resultsDto);
@@ -132,37 +128,5 @@ public class CompetitionConductor
         return await _competitions
             .GetAll(c => c.State == CompetitionState.Started)
             .FirstOrDefaultAsync(c => c.ChatId == chatId);
-    }
-
-    private async Task<Track> CreateNewTrackAsync(string mapName, int mapId, string trackName, int trackId)
-    {
-        var dbMap = await _maps
-                        .GetAll()
-                        .FirstOrDefaultAsync(m => m.Name == mapName)
-                    ?? await CreateNewMapAsync(mapName, mapId);
-
-        var track = new Track
-        {
-            MapId = dbMap.Id,
-            Name = trackName,
-            TrackId = trackId
-        };
-
-        await _tracks.AddAsync(track);
-
-        return track;
-    }
-
-    private async Task<TrackMap> CreateNewMapAsync(string name, int mapId)
-    {
-        var map = new TrackMap
-        {
-            Name = name,
-            MapId = mapId
-        };
-
-        await _maps.AddAsync(map);
-
-        return map;
     }
 }
