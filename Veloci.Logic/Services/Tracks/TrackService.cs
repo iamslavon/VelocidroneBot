@@ -25,10 +25,10 @@ public class TrackService
         _competitions = competitions;
     }
 
-    public async Task GetRandomTrackAsync()
+    public async Task<Track> GetRandomTrackAsync()
     {
         var maps = await _trackFetcher.FetchMapsAsync();
-        var track = await GetRandomTrackAsync(maps);
+        return await GetRandomTrackAsync(maps);
     }
 
     private async Task<Track> GetRandomTrackAsync(List<ParsedTrackModel> maps)
@@ -41,7 +41,7 @@ public class TrackService
 
         var usedTrackIds = await GetUsedTrackIdsAsync();
 
-        if (dbTrack.Rating is < 0 || usedTrackIds.Contains(dbTrack.Id))
+        if (dbTrack.Rating?.Value is < 0 || usedTrackIds.Contains(dbTrack.Id))
         {
             return await GetRandomTrackAsync(maps);
         }
@@ -49,14 +49,14 @@ public class TrackService
         return dbTrack;
     }
 
-    public async Task<Track?> GetTrackAsync(int trackId)
+    private async Task<Track?> GetTrackAsync(int trackId)
     {
         return await _tracks
                 .GetAll()
                 .FirstOrDefaultAsync(t => t.TrackId == trackId);
     }
 
-    public async Task<Track> CreateNewTrackAsync(string mapName, int mapId, string trackName, int trackId)
+    private async Task<Track> CreateNewTrackAsync(string mapName, int mapId, string trackName, int trackId)
     {
         var dbMap = await _maps
                         .GetAll()

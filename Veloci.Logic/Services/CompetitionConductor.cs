@@ -36,21 +36,16 @@ public class CompetitionConductor
         _trackService = trackService;
     }
 
-    public async Task StartNewAsync(string message, long chatId)
+    public async Task StartNewAsync()
     {
         Log.Debug("Starting a new competition");
 
-        var activeComp = await GetActiveCompetitionAsync(chatId);
+        var activeComp = await GetActiveCompetitionAsync();
 
         if (activeComp is not null)
-            throw new Exception("Competition for this chat is already started");
+            await StopAsync(false);
 
-        var trackIds = MessageParser.GetTrackId(message);
-        var mapTrackName = MessageParser.GetTrackName(message);
-
-        var track = await _trackService.GetTrackAsync(trackIds.trackId)
-                    ?? await _trackService.CreateNewTrackAsync(mapTrackName.map, trackIds.mapId, mapTrackName.track, trackIds.trackId);
-
+        var track = await _trackService.GetRandomTrackAsync();
         var resultsDto = await _resultsFetcher.FetchAsync(track.TrackId);
         var results = _resultsConverter.ConvertTrackTimes(resultsDto);
         var trackResults = new TrackResults
@@ -62,32 +57,43 @@ public class CompetitionConductor
         {
             TrackId = track.Id,
             State = CompetitionState.Started,
-            ChatId = chatId,
             InitialResults = trackResults,
             CurrentResults = trackResults
         };
 
         await _competitions.AddAsync(competition);
+
+        var startCompetitionMessage = _messageComposer.StartCompetition(track);
+        await TelegramBot.SendMessageAsync(startCompetitionMessage);
+
+        var pollId = await TelegramBot.SendPollAsync(
+            _messageComposer.PollQuestion(track.FullName),
+            _messageComposer.PollOptions()
+            );
+
+        var rating = new TrackRating { PollMessageId = pollId };
+        competition.Track.Rating = rating;
+        await _competitions.SaveChangesAsync();
     }
 
-    public async Task StopAsync(string message, long chatId, int messageId)
+    public async Task StopAsync(bool postResults = true)
     {
         Log.Debug("Stopping a competition");
 
-        var competition = await GetActiveCompetitionAsync(chatId);
+        var competition = await GetActiveCompetitionAsync();
 
         if (competition is null)
-            throw new Exception("There are no active competitions for this chat");
-
-        if (!message.Contains(competition.Track.FullName))
-            throw new Exception("Can not stop competition. Active one is on another track");
+            throw new Exception("There are no active competitions");
 
         competition.State = CompetitionState.Closed;
         competition.CompetitionResults = _competitionService.GetLocalLeaderboard(competition);
         await _competitions.SaveChangesAsync();
 
+        if (!postResults)
+            return;
+
         var resultsMessage = _messageComposer.Leaderboard(competition.CompetitionResults, competition.Track.FullName);
-        await TelegramBot.EditMessageAsync(resultsMessage, chatId, messageId);
+        await TelegramBot.SendMessageAsync(resultsMessage);
     }
 
     public async Task TempSeasonResultsAsync(long chatId, int messageId)
@@ -115,7 +121,7 @@ public class CompetitionConductor
         await TelegramBot.EditMessageAsync(message, chatId, messageId);
 
         var medalCountMessage = _messageComposer.MedalCount(results);
-        BackgroundJob.Schedule(() => TelegramBot.SendMessageAsync(medalCountMessage, chatId), new TimeSpan(0, 0, 5));
+        BackgroundJob.Schedule(() => TelegramBot.SendMessageAsync(medalCountMessage), new TimeSpan(0, 0, 5));
 
         var seasonName = firstDayOfPreviousMonth.ToString("MMMM yyyy");
         var winnerName = results.FirstOrDefault().PlayerName;
@@ -123,10 +129,10 @@ public class CompetitionConductor
         await TelegramBot.SendPhotoAsync(chatId, imageStream);
     }
 
-    private async Task<Competition?> GetActiveCompetitionAsync(long chatId)
+    private async Task<Competition?> GetActiveCompetitionAsync()
     {
         return await _competitions
             .GetAll(c => c.State == CompetitionState.Started)
-            .FirstOrDefaultAsync(c => c.ChatId == chatId);
+            .FirstOrDefaultAsync();
     }
 }

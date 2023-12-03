@@ -35,7 +35,7 @@ public class TelegramUpdateHandler : ITelegramUpdateHandler
         {
             try
             {
-                await _competitionConductor.StartNewAsync(text, message.Chat.Id);
+                await _competitionConductor.StartNewAsync();
             }
             catch (Exception e)
             {
@@ -47,7 +47,7 @@ public class TelegramUpdateHandler : ITelegramUpdateHandler
         {
             try
             {
-                await _competitionConductor.StopAsync(text, message.Chat.Id, message.MessageId);
+                await _competitionConductor.StopAsync();
             }
             catch (Exception e)
             {

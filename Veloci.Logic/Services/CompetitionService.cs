@@ -66,7 +66,7 @@ public class CompetitionService
         competition.ResultsPosted = false;
         await _competitions.SaveChangesAsync();
         var message = _messageComposer.TimeUpdate(deltas);
-        await TelegramBot.SendMessageAsync(message, competition.ChatId);
+        await TelegramBot.SendMessageAsync(message);
     }
 
     [DisableConcurrentExecution("Competition", 60)]
@@ -101,7 +101,7 @@ public class CompetitionService
         Log.Debug($"Publishing current leaderboard for competition {competition.Id}");
 
         var message = _messageComposer.TempLeaderboard(leaderboard);
-        await TelegramBot.SendMessageAsync(message, competition.ChatId);
+        await TelegramBot.SendMessageAsync(message);
 
         competition.ResultsPosted = true;
         await _competitions.SaveChangesAsync();
@@ -194,7 +194,7 @@ public class CompetitionService
 
         if (cheerUpMessage.FileUrl is null && cheerUpMessage.Text is not null)
         {
-            await TelegramBot.SendMessageAsync(cheerUpMessage.Text, chatId);
+            await TelegramBot.SendMessageAsync(cheerUpMessage.Text);
             return;
         }
 

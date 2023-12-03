@@ -12,6 +12,31 @@ public class MessageComposer
         return string.Join($"{Environment.NewLine}", messages);
     }
 
+    public string StartCompetition(Track track)
+    {
+        return $"📅 Вітаємо на щоденному FPV онлайн-турнірі!{Environment.NewLine}{Environment.NewLine}" +
+               $"Трек дня: *{track.FullName}*{Environment.NewLine}{Environment.NewLine}" +
+               $"Leaderboard: *https://www.velocidrone.com/leaderboard/{track.Map.MapId}/{track.TrackId}/All*";
+    }
+
+    public string PollQuestion(string trackName)
+    {
+        return $"Оцініть трек {trackName}{Environment.NewLine}{Environment.NewLine}" +
+               $"Не забувайте оцінювати треки!";
+    }
+
+    public IEnumerable<string> PollOptions()
+    {
+        return new []
+        {
+            "Один із кращих",
+            "Подобається",
+            "Нормальний",
+            "Не дуже",
+            "Лайно"
+        };
+    }
+
     public string TempLeaderboard(IEnumerable<CompetitionResults> results)
     {
         var rows = results.Select(TempLeaderboardRow);

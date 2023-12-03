@@ -13,6 +13,7 @@ public class TelegramBot
 {
     private readonly IServiceProvider _sp;
     private static string _botToken;
+    private static string _channelId;
     private static TelegramBotClient _client;
     private static CompetitionService _competitionService;
     private CancellationTokenSource _cts;
@@ -21,6 +22,7 @@ public class TelegramBot
     {
         _sp = sp;
         _botToken = configuration.GetSection("Telegram:BotToken").Value;
+        _channelId = configuration.GetSection("Telegram:ChannelId").Value;
     }
 
     public void Init()
@@ -63,12 +65,12 @@ public class TelegramBot
         Log.Error(exception, "Error in telegram bot");
     }
 
-    public static async Task SendMessageAsync(string message, long chatId)
+    public static async Task SendMessageAsync(string message)
     {
         try
         {
             var result = await _client.SendTextMessageAsync(
-                chatId: chatId,
+                chatId: _channelId,
                 text: Isolate(message),
                 parseMode: ParseMode.MarkdownV2);
         }
@@ -136,6 +138,17 @@ public class TelegramBot
         {
             await file.DisposeAsync();
         }
+    }
+
+    public static async Task<int> SendPollAsync(string question, IEnumerable<string> options)
+    {
+        var message = await _client.SendPollAsync(
+            chatId: _channelId,
+            question: question,
+            options: options
+            );
+
+        return message.MessageId;
     }
 
     private static string Isolate(string message) => message

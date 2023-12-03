@@ -17,8 +17,9 @@ public class HangfireInit
             }
         }
 
+        RecurringJob.AddOrUpdate<CompetitionConductor>("Start new competition", x => x.StartNewAsync(), "2 17 * * *");
+
         RecurringJob.AddOrUpdate<CompetitionService>("Update results", x => x.UpdateResultsAsync(), "*/5 * * * *");
         RecurringJob.AddOrUpdate<CompetitionService>("Publish current leaderboard", x => x.PublishCurrentLeaderboardAsync(), "1 */2 * * *");
-        RecurringJob.AddOrUpdate<TrackService>("Select new track", x => x.GetRandomTrackAsync(), "2 17 * * *");
     }
 }
