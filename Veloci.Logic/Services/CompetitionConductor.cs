@@ -43,7 +43,10 @@ public class CompetitionConductor
         var activeComp = await GetActiveCompetitionAsync();
 
         if (activeComp is not null)
+        {
+            await StopPollAsync();
             await StopAsync(false);
+        }
 
         var track = await _trackService.GetRandomTrackAsync();
         var resultsDto = await _resultsFetcher.FetchAsync(track.TrackId);
@@ -66,13 +69,21 @@ public class CompetitionConductor
         var startCompetitionMessage = _messageComposer.StartCompetition(track);
         await TelegramBot.SendMessageAsync(startCompetitionMessage);
 
-        var pollId = await TelegramBot.SendPollAsync(
-            _messageComposer.PollQuestion(track.FullName),
-            _messageComposer.PollOptions()
-            );
+        var poll = _messageComposer.Poll(track.FullName);
+        var pollId = await TelegramBot.SendPollAsync(poll);
 
-        var rating = new TrackRating { PollMessageId = pollId };
-        competition.Track.Rating = rating;
+        if (pollId is null)
+            return;
+
+        var rating = competition.Track.Rating;
+
+        if (rating is null)
+        {
+            rating = new TrackRating();
+            competition.Track.Rating = rating;
+        }
+
+        rating.PollMessageId = pollId.Value;
         await _competitions.SaveChangesAsync();
     }
 
@@ -94,6 +105,42 @@ public class CompetitionConductor
 
         var resultsMessage = _messageComposer.Leaderboard(competition.CompetitionResults, competition.Track.FullName);
         await TelegramBot.SendMessageAsync(resultsMessage);
+    }
+
+    public async Task StopPollAsync()
+    {
+        var competition = await GetActiveCompetitionAsync();
+
+        if (competition is null)
+            throw new Exception("There are no active competitions");
+
+        var poll = _messageComposer.Poll(competition.Track.FullName);
+        var telegramPoll = await TelegramBot.StopPollAsync(competition.Track.Rating.PollMessageId);
+
+        if (telegramPoll is null)
+        {
+            Log.Error("Poll is already stopped");
+            return;
+        }
+
+        var totalPoints = telegramPoll.Options.Sum(option =>
+        {
+            var points = poll.Options.FirstOrDefault(x => x.Text == option.Text).Points;
+            return option.VoterCount * points;
+        });
+
+        var rating = telegramPoll.TotalVoterCount == 0 ?
+            0 :
+            totalPoints / telegramPoll.TotalVoterCount;
+
+        competition.Track.Rating.Value = rating;
+        await _competitions.SaveChangesAsync();
+
+        if (rating >= 0)
+            return;
+
+        var message = _messageComposer.BadTrackRating();
+        await TelegramBot.SendMessageAsync(message);
     }
 
     public async Task TempSeasonResultsAsync(long chatId, int messageId)

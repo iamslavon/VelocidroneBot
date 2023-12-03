@@ -13,7 +13,7 @@ public class Track
     public virtual TrackMap Map { get; set; }
     public string MapId { get; set; }
 
-    public virtual TrackRating Rating { get; set; }
+    public virtual TrackRating? Rating { get; set; }
 
     [NotMapped]
     public string FullName => $"{Map.Name} - {Name}";

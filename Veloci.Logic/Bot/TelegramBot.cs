@@ -140,15 +140,36 @@ public class TelegramBot
         }
     }
 
-    public static async Task<int> SendPollAsync(string question, IEnumerable<string> options)
+    public static async Task<int?> SendPollAsync(BotPoll poll)
     {
-        var message = await _client.SendPollAsync(
-            chatId: _channelId,
-            question: question,
-            options: options
+        try
+        {
+            var message = await _client.SendPollAsync(
+                chatId: _channelId,
+                question: poll.Question,
+                options: poll.Options.Select(x => x.Text)
             );
 
-        return message.MessageId;
+            return message.MessageId;
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Telegram. Failed to send a poll");
+            return null;
+        }
+    }
+
+    public static async Task<Poll?> StopPollAsync(int messageId)
+    {
+        try
+        {
+            return await _client.StopPollAsync(_channelId, messageId);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Telegram. Failed to stop the poll");
+            return null;
+        }
     }
 
     private static string Isolate(string message) => message
