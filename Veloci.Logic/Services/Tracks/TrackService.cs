@@ -63,6 +63,9 @@ public class TrackService
                         .FirstOrDefaultAsync(m => m.Name == mapName)
                     ?? await CreateNewMapAsync(mapName, mapId);
 
+        if (dbMap.MapId == 0)
+            dbMap.MapId = mapId; // since MapId property was added later, some maps dont have this value
+
         var track = new Track
         {
             MapId = dbMap.Id,
