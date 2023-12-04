@@ -43,7 +43,7 @@ public class MessageComposer
 
     public string BadTrackRating()
     {
-        return $"😔 Бачу трек не сподобався. Більше його не буде ";
+        return $"😔 Бачу трек не сподобався. Більше його не буде";
     }
 
     public string TempLeaderboard(IEnumerable<CompetitionResults> results)
@@ -104,7 +104,7 @@ public class MessageComposer
             1 => "🥇",
             2 => "🥈",
             3 => "🥉",
-            _ => $"{time.LocalRank}"
+            _ => $"#{time.LocalRank}"
         };
 
         return $"{icon} - *{time.PlayerName}* ({MsToSec(time.TrackTime)}s) / Балів: *{time.Points}*";
@@ -122,7 +122,7 @@ public class MessageComposer
             1 => "🥇",
             2 => "🥈",
             3 => "🥉",
-            _ => $"{result.Rank}"
+            _ => $"#{result.Rank}"
         };
 
         return $"{icon} - *{result.PlayerName}* - {result.Points} балів";

@@ -42,11 +42,12 @@ public class TrackFetcher
         return maps;
     }
 
-    public async Task FetchMapTracksAsync(ParsedMapModel mapModel)
+    private async Task FetchMapTracksAsync(ParsedMapModel mapModel)
     {
         var web = new HtmlWeb();
         var doc = await web.LoadFromWebAsync(mapModel.Url);
         var nodes = doc.DocumentNode.SelectNodes("//div[@class='track-grid__li']");
+
         foreach (var node in nodes)
         {
             var track = ParseTrackNode(node);

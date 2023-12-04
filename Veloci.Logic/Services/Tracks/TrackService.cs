@@ -28,41 +28,30 @@ public class TrackService
     public async Task<Track> GetRandomTrackAsync()
     {
         var maps = await _trackFetcher.FetchMapsAsync();
-        return await GetRandomTrackAsync(maps);
-    }
+        var filteredTracks = GetCandidateTracks(maps);
 
-    private async Task<Track> GetRandomTrackAsync(List<ParsedMapModel> maps)
-    {
-        var tracks = GetCandidateTracks(maps, out var filteredTracks);
-        return await ChooseRandomTrackAsync(filteredTracks, tracks);
-    }
-
-    private async Task<Track> ChooseRandomTrackAsync(List<ParsedTrackModel> tracks, ParsedMapModel map)
-    {
-        //var tracklist = string.Join(Environment.NewLine, tracks.Select(t => t.Name));
         while (true)
         {
-            var track = GetRandomElement(tracks);
+            var track = GetRandomElement(filteredTracks);
             var dbTrack = await GetTrackAsync(track.Id)
-                          ?? await CreateNewTrackAsync(map.Name, map.Id, track.Name, track.Id);
+                          ?? await CreateNewTrackAsync(track.Map.Name, track.Map.Id, track.Name, track.Id);
 
             var usedTrackIds = await GetUsedTrackIdsAsync();
 
-            if (dbTrack.Rating?.Value >= 0 && !usedTrackIds.Contains(dbTrack.Id))
+            if (dbTrack.Rating?.Value is null or >= 0 && !usedTrackIds.Contains(dbTrack.Id))
             {
                 return dbTrack;
             }
         }
     }
 
-    private ParsedMapModel GetCandidateTracks(List<ParsedMapModel> maps, out List<ParsedTrackModel> filteredTracks)
+    private List<ParsedTrackModel> GetCandidateTracks(IEnumerable<ParsedMapModel> maps)
     {
-        var map = GetRandomElement(maps);
         var allTracks = maps.SelectMany(m => m.Tracks).ToList();
-
         var trackFilter = new TrackFilter();
-        filteredTracks = allTracks.Where(t => trackFilter.IsTrackGoodFor5inchRacing(t)).ToList();
-        return map;
+        var filteredTracks = allTracks.Where(t => trackFilter.IsTrackGoodFor5inchRacing(t)).ToList();
+
+        return filteredTracks;
     }
 
     private async Task<Track?> GetTrackAsync(int trackId)

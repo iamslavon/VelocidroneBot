@@ -45,7 +45,7 @@ public class CompetitionConductor
         if (activeComp is not null)
         {
             await StopPollAsync();
-            await StopAsync(false);
+            await CancelAsync();
         }
 
         var track = await _trackService.GetRandomTrackAsync();
@@ -87,7 +87,7 @@ public class CompetitionConductor
         await _competitions.SaveChangesAsync();
     }
 
-    public async Task StopAsync(bool postResults = true)
+    public async Task StopAsync()
     {
         Log.Debug("Stopping a competition");
 
@@ -100,11 +100,21 @@ public class CompetitionConductor
         competition.CompetitionResults = _competitionService.GetLocalLeaderboard(competition);
         await _competitions.SaveChangesAsync();
 
-        if (!postResults)
-            return;
-
         var resultsMessage = _messageComposer.Leaderboard(competition.CompetitionResults, competition.Track.FullName);
         await TelegramBot.SendMessageAsync(resultsMessage);
+    }
+
+    private async Task CancelAsync()
+    {
+        Log.Debug("Cancelling a competition");
+
+        var competition = await GetActiveCompetitionAsync();
+
+        if (competition is null)
+            throw new Exception("There are no active competitions");
+
+        competition.State = CompetitionState.Cancelled;
+        await _competitions.SaveChangesAsync();
     }
 
     public async Task StopPollAsync()
@@ -129,8 +139,8 @@ public class CompetitionConductor
             return option.VoterCount * points;
         });
 
-        var rating = telegramPoll.TotalVoterCount == 0 ?
-            0 :
+        double? rating = telegramPoll.TotalVoterCount == 0 ?
+            null :
             totalPoints / telegramPoll.TotalVoterCount;
 
         competition.Track.Rating.Value = rating;
@@ -147,7 +157,7 @@ public class CompetitionConductor
     {
         var today = DateTime.Now;
         var firstDayOfMonth = new DateTime(today.Year, today.Month, 1);
-        var results = await _competitionService.GetSeasonResultsAsync(chatId, firstDayOfMonth, today);
+        var results = await _competitionService.GetSeasonResultsAsync(firstDayOfMonth, today);
         var message = _messageComposer.TempSeasonResults(results);
         await TelegramBot.EditMessageAsync(message, chatId, messageId);
     }
@@ -159,7 +169,7 @@ public class CompetitionConductor
         var firstDayOfCurrentMonth = new DateTime(today.Year, today.Month, 1);
 
         var results =
-            await _competitionService.GetSeasonResultsAsync(chatId, firstDayOfPreviousMonth, firstDayOfCurrentMonth);
+            await _competitionService.GetSeasonResultsAsync(firstDayOfPreviousMonth, firstDayOfCurrentMonth);
 
         if (results.Count == 0)
             return;

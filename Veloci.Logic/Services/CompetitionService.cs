@@ -125,11 +125,11 @@ public class CompetitionService
             .ToList();
     }
 
-    public async Task<List<SeasonResult>> GetSeasonResultsAsync(long chatId, DateTime from, DateTime to)
+    public async Task<List<SeasonResult>> GetSeasonResultsAsync(DateTime from, DateTime to)
     {
         var results = await _competitions
-            .GetAll(comp => comp.ChatId == chatId)
-            .Where(comp => comp.StartedOn >= from && comp.StartedOn <= to)
+            .GetAll(comp => comp.StartedOn >= from && comp.StartedOn <= to)
+            .Where(comp => comp.State != CompetitionState.Cancelled)
             .SelectMany(comp => comp.CompetitionResults)
             .GroupBy(result => result.PlayerName)
             .Select(group => new SeasonResult
