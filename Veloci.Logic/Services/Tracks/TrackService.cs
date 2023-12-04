@@ -31,22 +31,38 @@ public class TrackService
         return await GetRandomTrackAsync(maps);
     }
 
-    private async Task<Track> GetRandomTrackAsync(List<ParsedTrackModel> maps)
+    private async Task<Track> GetRandomTrackAsync(List<ParsedMapModel> maps)
+    {
+        var tracks = GetCandidateTracks(maps, out var filteredTracks);
+        return await ChooseRandomTrackAsync(filteredTracks, tracks);
+    }
+
+    private async Task<Track> ChooseRandomTrackAsync(List<ParsedTrackModel> tracks, ParsedMapModel map)
+    {
+        //var tracklist = string.Join(Environment.NewLine, tracks.Select(t => t.Name));
+        while (true)
+        {
+            var track = GetRandomElement(tracks);
+            var dbTrack = await GetTrackAsync(track.Id)
+                          ?? await CreateNewTrackAsync(map.Name, map.Id, track.Name, track.Id);
+
+            var usedTrackIds = await GetUsedTrackIdsAsync();
+
+            if (dbTrack.Rating?.Value >= 0 && !usedTrackIds.Contains(dbTrack.Id))
+            {
+                return dbTrack;
+            }
+        }
+    }
+
+    private ParsedMapModel GetCandidateTracks(List<ParsedMapModel> maps, out List<ParsedTrackModel> filteredTracks)
     {
         var map = GetRandomElement(maps);
-        var tracks = await _trackFetcher.FetchMapTracksAsync(map.Url);
-        var track = GetRandomElement(tracks);
-        var dbTrack = await GetTrackAsync(track.Id)
-                      ?? await CreateNewTrackAsync(map.Name, map.Id, track.Name, track.Id);
+        var allTracks = maps.SelectMany(m => m.Tracks).ToList();
 
-        var usedTrackIds = await GetUsedTrackIdsAsync();
-
-        if (dbTrack.Rating?.Value is < 0 || usedTrackIds.Contains(dbTrack.Id))
-        {
-            return await GetRandomTrackAsync(maps);
-        }
-
-        return dbTrack;
+        var trackFilter = new TrackFilter();
+        filteredTracks = allTracks.Where(t => trackFilter.IsTrackGoodFor5inchRacing(t)).ToList();
+        return map;
     }
 
     private async Task<Track?> GetTrackAsync(int trackId)

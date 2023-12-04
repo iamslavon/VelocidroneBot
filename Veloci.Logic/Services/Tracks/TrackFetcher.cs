@@ -19,16 +19,15 @@ public class TrackFetcher
         "Basketball Stadium",
         "Library",
         "Office Complex",
-        "Slovenia Krvavec"
+        "Slovenia Krvavec",
+        "Karting Track",
+        "Night Factory",
+        "La Mothe", //premium
+        "Castle Sneznik", //premium
+        "Drift Track", //premium
     };
 
-    private readonly string[] _blackListedTracks =
-    {
-        "Pylons",
-        "Freestyle"
-    };
-
-    public async Task<List<ParsedTrackModel>> FetchMapsAsync()
+    public async Task<List<ParsedMapModel>> FetchMapsAsync()
     {
         var web = new HtmlWeb();
         var doc = await web.LoadFromWebAsync("https://www.velocidrone.com/leaderboards");
@@ -37,22 +36,27 @@ public class TrackFetcher
             .Where(x => x is not null)
             .ToList();
 
+        var tasks = maps.Select(FetchMapTracksAsync).ToArray();
+        await Task.WhenAll(tasks);
+
         return maps;
     }
 
-    public async Task<List<ParsedTrackModel>> FetchMapTracksAsync(string url)
+    public async Task FetchMapTracksAsync(ParsedMapModel mapModel)
     {
         var web = new HtmlWeb();
-        var doc = await web.LoadFromWebAsync(url);
+        var doc = await web.LoadFromWebAsync(mapModel.Url);
         var nodes = doc.DocumentNode.SelectNodes("//div[@class='track-grid__li']");
-        var tracks = nodes.Select(ParseTrackNode)
-            .Where(x => x is not null)
-            .ToList();
-
-        return tracks;
+        foreach (var node in nodes)
+        {
+            var track = ParseTrackNode(node);
+            if (track == null) continue;
+            mapModel.Tracks.Add(track);
+            track.Map = mapModel;
+        }
     }
 
-    private ParsedTrackModel? ParseMapNode(HtmlNode node)
+    private ParsedMapModel? ParseMapNode(HtmlNode node)
     {
         var nameNode = node.ParentNode
             .Descendants("div")
@@ -66,7 +70,7 @@ public class TrackFetcher
         var url = node.GetAttributeValue("href", null);
         var mapId = GetMapId(url);
 
-        return new ParsedTrackModel
+        return new ParsedMapModel
         {
             Name = mapName,
             Id = mapId,
@@ -80,17 +84,14 @@ public class TrackFetcher
             .Descendants("a")
             .FirstOrDefault();
 
-        var mapName = nameNode.InnerText;
-
-        if (_blackListedTracks.Any(mapName.Contains))
-            return null;
+        var trackName = nameNode.InnerText;
 
         var url = nameNode.GetAttributeValue("href", null);
         var trackId = GetTrackId(url);
 
         return new ParsedTrackModel
         {
-            Name = mapName,
+            Name = trackName,
             Id = trackId,
             Url = url
         };
