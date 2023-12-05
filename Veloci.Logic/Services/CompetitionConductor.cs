@@ -205,7 +205,7 @@ public class CompetitionConductor
         var seasonName = firstDayOfPreviousMonth.ToString("MMMM yyyy");
         var winnerName = results.FirstOrDefault().PlayerName;
         var imageStream = await _imageService.CreateWinnerImageAsync(seasonName, winnerName);
-        BackgroundJob.Schedule(() => TelegramBot.SendPhotoAsync(imageStream, null), new TimeSpan(0, 0, 3));
+        await TelegramBot.SendPhotoAsync(imageStream);
 
         var medalCountMessage = _messageComposer.MedalCount(results);
         BackgroundJob.Schedule(() => TelegramBot.SendMessageAsync(medalCountMessage), new TimeSpan(0, 0, 6));
