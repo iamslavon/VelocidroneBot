@@ -100,6 +100,9 @@ public class CompetitionConductor
         competition.CompetitionResults = _competitionService.GetLocalLeaderboard(competition);
         await _competitions.SaveChangesAsync();
 
+        if (competition.CompetitionResults.Count == 0)
+            return;
+
         var resultsMessage = _messageComposer.Leaderboard(competition.CompetitionResults, competition.Track.FullName);
         await TelegramBot.SendMessageAsync(resultsMessage);
     }
@@ -148,7 +151,7 @@ public class CompetitionConductor
         competition.Track.Rating.Value = rating;
         await _competitions.SaveChangesAsync();
 
-        if (rating >= 0)
+        if (rating is null or >= 0)
             return;
 
         var message = _messageComposer.BadTrackRating();
@@ -176,6 +179,10 @@ public class CompetitionConductor
         var today = DateTime.Now;
         var firstDayOfMonth = new DateTime(today.Year, today.Month, 1);
         var results = await _competitionService.GetSeasonResultsAsync(firstDayOfMonth, today);
+
+        if (results.Count == 0)
+            return;
+
         var message = _messageComposer.TempSeasonResults(results);
         await TelegramBot.SendMessageAsync(message);
     }
