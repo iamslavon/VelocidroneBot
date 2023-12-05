@@ -1,4 +1,4 @@
-﻿using Serilog;
+﻿using Hangfire;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Veloci.Logic.Services;
@@ -31,52 +31,10 @@ public class TelegramUpdateHandler : ITelegramUpdateHandler
         if (string.IsNullOrEmpty(text))
             return;
 
-        if (MessageParser.IsStartCompetition(text))
+        if (MessageParser.IsCompetitionRestart(text))
         {
-            try
-            {
-                await _competitionConductor.StartNewAsync(text, message.Chat.Id);
-            }
-            catch (Exception e)
-            {
-                Log.Error(e, "Failed to start competition");
-            }
-        }
-
-        if (MessageParser.IsStopCompetition(text))
-        {
-            try
-            {
-                await _competitionConductor.StopAsync(text, message.Chat.Id, message.MessageId);
-            }
-            catch (Exception e)
-            {
-                Log.Error(e, "Failed to stop competition");
-            }
-        }
-
-        if (MessageParser.IsTempSeasonResults(text))
-        {
-            try
-            {
-                await _competitionConductor.TempSeasonResultsAsync(message.Chat.Id, message.MessageId);
-            }
-            catch (Exception e)
-            {
-                Log.Error(e, "Failed to post temp season results");
-            }
-        }
-
-        if (MessageParser.IsStopSeason(text))
-        {
-            try
-            {
-                await _competitionConductor.StopSeasonAsync(message.Chat.Id, message.MessageId);
-            }
-            catch (Exception e)
-            {
-                Log.Error(e, "Failed to stop season");
-            }
+            await TelegramBot.SendMessageAsync("Добре 🫡");
+            BackgroundJob.Schedule(() => _competitionConductor.StartNewAsync(), new TimeSpan(0, 0, 5));
         }
     }
 }

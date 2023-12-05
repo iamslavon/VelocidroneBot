@@ -1,6 +1,7 @@
 using Veloci.Data.Repositories;
 using Veloci.Logic.Bot;
 using Veloci.Logic.Services;
+using Veloci.Logic.Services.Tracks;
 
 namespace Veloci.Web.Infrastructure;
 
@@ -18,6 +19,8 @@ public static class ServiceRegistration
         services.AddTransient<TelegramBot>();
         services.AddTransient<ITelegramUpdateHandler, TelegramUpdateHandler>();
         services.AddTransient<ImageService>();
+        services.AddTransient<TrackFetcher>();
+        services.AddTransient<TrackService>();
 
         return services;
     }

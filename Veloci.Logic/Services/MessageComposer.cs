@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text;
 using Veloci.Data.Domain;
+using Veloci.Logic.Bot;
 
 namespace Veloci.Logic.Services;
 
@@ -10,6 +11,39 @@ public class MessageComposer
     {
         var messages = deltas.Select(TimeUpdate);
         return string.Join($"{Environment.NewLine}", messages);
+    }
+
+    public string StartCompetition(Track track)
+    {
+        return $"📅 Вітаємо на щоденному FPV онлайн-турнірі!{Environment.NewLine}{Environment.NewLine}" +
+               $"Трек дня: *{track.FullName}*{Environment.NewLine}{Environment.NewLine}" +
+               $"Leaderboard: *https://www.velocidrone.com/leaderboard/{track.Map.MapId}/{track.TrackId}/All*";
+    }
+
+    public BotPoll Poll(string trackName)
+    {
+        var question = $"Оцініть трек {trackName}{Environment.NewLine}{Environment.NewLine}" +
+               $"Не забувайте оцінювати треки!";
+
+        var options = new List<BotPollOption>
+        {
+            new (3, "Один із кращих"),
+            new (1, "Подобається"),
+            new (0, "Нормальний"),
+            new (-1, "Не дуже"),
+            new (-3, "Лайно")
+        };
+
+        return new BotPoll
+        {
+            Question = question,
+            Options = options
+        };
+    }
+
+    public string BadTrackRating()
+    {
+        return $"😔 Бачу трек не сподобався. Більше його не буде";
     }
 
     public string TempLeaderboard(IEnumerable<CompetitionResults> results)
@@ -70,7 +104,7 @@ public class MessageComposer
             1 => "🥇",
             2 => "🥈",
             3 => "🥉",
-            _ => $"{time.LocalRank}"
+            _ => $"#{time.LocalRank}"
         };
 
         return $"{icon} - *{time.PlayerName}* ({MsToSec(time.TrackTime)}s) / Балів: *{time.Points}*";
@@ -88,7 +122,7 @@ public class MessageComposer
             1 => "🥇",
             2 => "🥈",
             3 => "🥉",
-            _ => $"{result.Rank}"
+            _ => $"#{result.Rank}"
         };
 
         return $"{icon} - *{result.PlayerName}* - {result.Points} балів";

@@ -2,17 +2,20 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Veloci.Data;
 
 #nullable disable
 
-namespace Veloci.Web.Data.Migrations
+namespace Veloci.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231202193708_AddTrackRating")]
+    partial class AddTrackRating
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -300,8 +303,8 @@ namespace Veloci.Web.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("RatingId")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Rating")
+                        .HasColumnType("REAL");
 
                     b.Property<int>("TrackId")
                         .HasColumnType("INTEGER");
@@ -309,8 +312,6 @@ namespace Veloci.Web.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("MapId");
-
-                    b.HasIndex("RatingId");
 
                     b.ToTable("Tracks", (string)null);
                 });
@@ -330,22 +331,6 @@ namespace Veloci.Web.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TrackMaps", (string)null);
-                });
-
-            modelBuilder.Entity("Veloci.Data.Domain.TrackRating", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("PollMessageId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<double?>("Value")
-                        .HasColumnType("REAL");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TrackRating");
                 });
 
             modelBuilder.Entity("Veloci.Data.Domain.TrackResults", b =>
@@ -520,13 +505,7 @@ namespace Veloci.Web.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Veloci.Data.Domain.TrackRating", "Rating")
-                        .WithMany()
-                        .HasForeignKey("RatingId");
-
                     b.Navigation("Map");
-
-                    b.Navigation("Rating");
                 });
 
             modelBuilder.Entity("Veloci.Data.Domain.TrackTime", b =>

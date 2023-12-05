@@ -13,6 +13,7 @@ public class TelegramBot
 {
     private readonly IServiceProvider _sp;
     private static string _botToken;
+    private static string _channelId;
     private static TelegramBotClient _client;
     private static CompetitionService _competitionService;
     private CancellationTokenSource _cts;
@@ -21,6 +22,7 @@ public class TelegramBot
     {
         _sp = sp;
         _botToken = configuration.GetSection("Telegram:BotToken").Value;
+        _channelId = configuration.GetSection("Telegram:ChannelId").Value;
     }
 
     public void Init()
@@ -63,12 +65,12 @@ public class TelegramBot
         Log.Error(exception, "Error in telegram bot");
     }
 
-    public static async Task SendMessageAsync(string message, long chatId)
+    public static async Task SendMessageAsync(string message)
     {
         try
         {
             var result = await _client.SendTextMessageAsync(
-                chatId: chatId,
+                chatId: _channelId,
                 text: Isolate(message),
                 parseMode: ParseMode.MarkdownV2);
         }
@@ -78,12 +80,12 @@ public class TelegramBot
         }
     }
 
-    public static async Task EditMessageAsync(string message, long chatId, int messageId)
+    public static async Task EditMessageAsync(string message, int messageId)
     {
         try
         {
             var result = await _client.EditMessageTextAsync(
-                chatId: chatId,
+                chatId: _channelId,
                 messageId: messageId,
                 parseMode: ParseMode.MarkdownV2,
                 text: Isolate(message));
@@ -94,7 +96,7 @@ public class TelegramBot
         }
     }
 
-    public static async Task SendPhotoAsync(long chatId, string fileUrl, string? message = null)
+    public static async Task SendPhotoAsync(string fileUrl, string? message = null)
     {
         if (message is not null)
             message = Isolate(message);
@@ -102,7 +104,7 @@ public class TelegramBot
         try
         {
             var result = await _client.SendPhotoAsync(
-                chatId: chatId,
+                chatId: _channelId,
                 caption: message,
                 photo: new InputFileUrl(fileUrl)
             );
@@ -113,7 +115,7 @@ public class TelegramBot
         }
     }
 
-    public static async Task SendPhotoAsync(long chatId, Stream file, string? message = null)
+    public static async Task SendPhotoAsync(Stream file, string? message = null)
     {
         file.Position = 0; // Weird fix. It throws an exception without
 
@@ -123,7 +125,7 @@ public class TelegramBot
         try
         {
             var result = await _client.SendPhotoAsync(
-                chatId: chatId,
+                chatId: _channelId,
                 photo: new InputFileStream(file),
                 caption: message
             );
@@ -135,6 +137,38 @@ public class TelegramBot
         finally
         {
             await file.DisposeAsync();
+        }
+    }
+
+    public static async Task<int?> SendPollAsync(BotPoll poll)
+    {
+        try
+        {
+            var message = await _client.SendPollAsync(
+                chatId: _channelId,
+                question: poll.Question,
+                options: poll.Options.Select(x => x.Text)
+            );
+
+            return message.MessageId;
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Telegram. Failed to send a poll");
+            return null;
+        }
+    }
+
+    public static async Task<Poll?> StopPollAsync(int messageId)
+    {
+        try
+        {
+            return await _client.StopPollAsync(_channelId, messageId);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Telegram. Failed to stop the poll");
+            return null;
         }
     }
 

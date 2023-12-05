@@ -66,7 +66,7 @@ public class CompetitionService
         competition.ResultsPosted = false;
         await _competitions.SaveChangesAsync();
         var message = _messageComposer.TimeUpdate(deltas);
-        await TelegramBot.SendMessageAsync(message, competition.ChatId);
+        await TelegramBot.SendMessageAsync(message);
     }
 
     [DisableConcurrentExecution("Competition", 60)]
@@ -101,7 +101,7 @@ public class CompetitionService
         Log.Debug($"Publishing current leaderboard for competition {competition.Id}");
 
         var message = _messageComposer.TempLeaderboard(leaderboard);
-        await TelegramBot.SendMessageAsync(message, competition.ChatId);
+        await TelegramBot.SendMessageAsync(message);
 
         competition.ResultsPosted = true;
         await _competitions.SaveChangesAsync();
@@ -125,11 +125,11 @@ public class CompetitionService
             .ToList();
     }
 
-    public async Task<List<SeasonResult>> GetSeasonResultsAsync(long chatId, DateTime from, DateTime to)
+    public async Task<List<SeasonResult>> GetSeasonResultsAsync(DateTime from, DateTime to)
     {
         var results = await _competitions
-            .GetAll(comp => comp.ChatId == chatId)
-            .Where(comp => comp.StartedOn >= from && comp.StartedOn <= to)
+            .GetAll(comp => comp.StartedOn >= from && comp.StartedOn <= to)
+            .Where(comp => comp.State != CompetitionState.Cancelled)
             .SelectMany(comp => comp.CompetitionResults)
             .GroupBy(result => result.PlayerName)
             .Select(group => new SeasonResult
@@ -194,13 +194,13 @@ public class CompetitionService
 
         if (cheerUpMessage.FileUrl is null && cheerUpMessage.Text is not null)
         {
-            await TelegramBot.SendMessageAsync(cheerUpMessage.Text, chatId);
+            await TelegramBot.SendMessageAsync(cheerUpMessage.Text);
             return;
         }
 
         if (cheerUpMessage.FileUrl is not null)
         {
-            await TelegramBot.SendPhotoAsync(chatId, cheerUpMessage.FileUrl, cheerUpMessage.Text);
+            await TelegramBot.SendPhotoAsync(cheerUpMessage.FileUrl, cheerUpMessage.Text);
         }
     }
 
