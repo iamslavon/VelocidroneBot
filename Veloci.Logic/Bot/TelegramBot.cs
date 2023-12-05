@@ -80,12 +80,12 @@ public class TelegramBot
         }
     }
 
-    public static async Task EditMessageAsync(string message, long chatId, int messageId)
+    public static async Task EditMessageAsync(string message, int messageId)
     {
         try
         {
             var result = await _client.EditMessageTextAsync(
-                chatId: chatId,
+                chatId: _channelId,
                 messageId: messageId,
                 parseMode: ParseMode.MarkdownV2,
                 text: Isolate(message));
@@ -96,7 +96,7 @@ public class TelegramBot
         }
     }
 
-    public static async Task SendPhotoAsync(long chatId, string fileUrl, string? message = null)
+    public static async Task SendPhotoAsync(string fileUrl, string? message = null)
     {
         if (message is not null)
             message = Isolate(message);
@@ -104,7 +104,7 @@ public class TelegramBot
         try
         {
             var result = await _client.SendPhotoAsync(
-                chatId: chatId,
+                chatId: _channelId,
                 caption: message,
                 photo: new InputFileUrl(fileUrl)
             );
@@ -115,7 +115,7 @@ public class TelegramBot
         }
     }
 
-    public static async Task SendPhotoAsync(long chatId, Stream file, string? message = null)
+    public static async Task SendPhotoAsync(Stream file, string? message = null)
     {
         file.Position = 0; // Weird fix. It throws an exception without
 
@@ -125,7 +125,7 @@ public class TelegramBot
         try
         {
             var result = await _client.SendPhotoAsync(
-                chatId: chatId,
+                chatId: _channelId,
                 photo: new InputFileStream(file),
                 caption: message
             );

@@ -18,8 +18,8 @@ public class ImageService
         const int seasonFontSize = 24;
 
         // Winner text
-        const int winnerTextContainerWidth = 419;
-        const int winnerTextContainerX = 20;
+        const int winnerTextContainerWidth = 399;
+        const int winnerTextContainerX = 30;
         const int winnerTextContainerY = 465;
         const int winnerFontSize = 55;
 

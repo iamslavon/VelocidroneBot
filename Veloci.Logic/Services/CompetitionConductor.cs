@@ -119,6 +119,8 @@ public class CompetitionConductor
 
     public async Task StopPollAsync()
     {
+        Log.Debug("Stopping poll");
+
         var competition = await GetActiveCompetitionAsync();
 
         if (competition is null)
@@ -153,16 +155,32 @@ public class CompetitionConductor
         await TelegramBot.SendMessageAsync(message);
     }
 
-    public async Task TempSeasonResultsAsync(long chatId, int messageId)
+    public async Task SeasonResultsAsync()
+    {
+        Log.Debug("Publishing season results");
+
+        var now = DateTime.Now;
+
+        if (now.Day == 1)
+        {
+            await StopSeasonAsync();
+        }
+        else
+        {
+            await TempSeasonResultsAsync();
+        }
+    }
+
+    private async Task TempSeasonResultsAsync()
     {
         var today = DateTime.Now;
         var firstDayOfMonth = new DateTime(today.Year, today.Month, 1);
         var results = await _competitionService.GetSeasonResultsAsync(firstDayOfMonth, today);
         var message = _messageComposer.TempSeasonResults(results);
-        await TelegramBot.EditMessageAsync(message, chatId, messageId);
+        await TelegramBot.SendMessageAsync(message);
     }
 
-    public async Task StopSeasonAsync(long chatId, int messageId)
+    private async Task StopSeasonAsync()
     {
         var today = DateTime.Now;
         var firstDayOfPreviousMonth = new DateTime(today.Year, today.Month, 1).AddMonths(-1);
@@ -175,15 +193,15 @@ public class CompetitionConductor
             return;
 
         var message = _messageComposer.SeasonResults(results);
-        await TelegramBot.EditMessageAsync(message, chatId, messageId);
-
-        var medalCountMessage = _messageComposer.MedalCount(results);
-        BackgroundJob.Schedule(() => TelegramBot.SendMessageAsync(medalCountMessage), new TimeSpan(0, 0, 5));
+        await TelegramBot.SendMessageAsync(message);
 
         var seasonName = firstDayOfPreviousMonth.ToString("MMMM yyyy");
         var winnerName = results.FirstOrDefault().PlayerName;
         var imageStream = await _imageService.CreateWinnerImageAsync(seasonName, winnerName);
-        await TelegramBot.SendPhotoAsync(chatId, imageStream);
+        BackgroundJob.Schedule(() => TelegramBot.SendPhotoAsync(imageStream, null), new TimeSpan(0, 0, 3));
+
+        var medalCountMessage = _messageComposer.MedalCount(results);
+        BackgroundJob.Schedule(() => TelegramBot.SendMessageAsync(medalCountMessage), new TimeSpan(0, 0, 6));
     }
 
     private async Task<Competition?> GetActiveCompetitionAsync()

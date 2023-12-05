@@ -200,7 +200,7 @@ public class CompetitionService
 
         if (cheerUpMessage.FileUrl is not null)
         {
-            await TelegramBot.SendPhotoAsync(chatId, cheerUpMessage.FileUrl, cheerUpMessage.Text);
+            await TelegramBot.SendPhotoAsync(cheerUpMessage.FileUrl, cheerUpMessage.Text);
         }
     }
 
