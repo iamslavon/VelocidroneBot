@@ -89,7 +89,7 @@ public class CompetitionService
 
         if (competition.TimeDeltas.Count == 0)
         {
-            await SendCheerUpMessageAsync(competition.ChatId, TelegramMessageType.NobodyFlying);
+            await SendCheerUpMessageAsync(TelegramMessageType.NobodyFlying);
             return;
         }
 
@@ -179,7 +179,7 @@ public class CompetitionService
         };
     }
 
-    private async Task SendCheerUpMessageAsync(long chatId, TelegramMessageType type)
+    private async Task SendCheerUpMessageAsync(TelegramMessageType type)
     {
         var now = DateTime.Now;
         var isDontDisturbTime = now.Hour is < 7 or > 22;
