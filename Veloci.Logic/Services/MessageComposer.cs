@@ -78,7 +78,7 @@ public class MessageComposer
     public string MedalCount(IEnumerable<SeasonResult> results)
     {
         var rows = results.Select(MedalCountRow);
-        return $"Медалі за місяць{Environment.NewLine}{Environment.NewLine}" +
+        return $"*Медалі за місяць*{Environment.NewLine}{Environment.NewLine}" +
                $"{string.Join($"{Environment.NewLine}{Environment.NewLine}", rows)}";
     }
 
@@ -134,7 +134,7 @@ public class MessageComposer
             return null;
 
         var medals = $"{MedalsRow("🥇", result.GoldenCount)}{MedalsRow("🥈", result.SilverCount)}{MedalsRow("🥉", result.BronzeCount)}";
-        return $"*{result.PlayerName}* - {medals}";
+        return $"*{result.PlayerName}*:{Environment.NewLine}{medals}";
     }
 
     private string MedalsRow(string medalIcon, int count)
