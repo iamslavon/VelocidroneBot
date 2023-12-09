@@ -8,7 +8,7 @@ public class FetchRandomTrackTests
     [Trait ("Category", "Integration")]
     public async Task can_get_random_track()
     {
-        var ts = new TrackService(new TrackFetcher(), null, null, null);
+        var ts = new TrackService(new WebTrackFetcher(), null, null, null);
         var t = await ts.GetRandomTrackAsync();
     }
 }

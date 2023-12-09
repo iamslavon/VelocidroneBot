@@ -19,7 +19,8 @@ public static class ServiceRegistration
         services.AddTransient<TelegramBot>();
         services.AddTransient<ITelegramUpdateHandler, TelegramUpdateHandler>();
         services.AddTransient<ImageService>();
-        services.AddTransient<TrackFetcher>();
+        //services.AddTransient<ITrackFetcher, WebTrackFetcher>();
+        services.AddTransient<ITrackFetcher, ApiTrackFetcher>();
         services.AddTransient<TrackService>();
 
         return services;

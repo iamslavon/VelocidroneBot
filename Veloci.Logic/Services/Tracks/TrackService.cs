@@ -10,11 +10,11 @@ public class TrackService
     private readonly IRepository<Track> _tracks;
     private readonly IRepository<TrackMap> _maps;
     private readonly IRepository<Competition> _competitions;
-    private readonly TrackFetcher _trackFetcher;
+    private readonly ITrackFetcher _trackFetcher;
     private List<string>? _usedTrackIds;
 
     public TrackService(
-        TrackFetcher trackFetcher,
+        ITrackFetcher trackFetcher,
         IRepository<Track> tracks,
         IRepository<TrackMap> maps,
         IRepository<Competition> competitions)

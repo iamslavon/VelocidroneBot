@@ -4,7 +4,12 @@ using Veloci.Logic.Services.Tracks.Models;
 
 namespace Veloci.Logic.Services.Tracks;
 
-public class TrackFetcher
+public interface ITrackFetcher
+{
+    Task<List<ParsedMapModel>> FetchMapsAsync();
+}
+
+public class WebTrackFetcher : ITrackFetcher
 {
     private readonly string[] _blackListedMaps =
     {
