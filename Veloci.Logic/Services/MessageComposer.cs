@@ -28,10 +28,10 @@ public class MessageComposer
         var options = new List<BotPollOption>
         {
             new (3, "Один із кращих"),
-            new (1, "Подобається"),
-            new (0, "Нормальний"),
+            new (2, "Подобається"),
+            new (1, "Нормальний"),
             new (-1, "Не дуже"),
-            new (-3, "Лайно")
+            new (-2, "Лайно")
         };
 
         return new BotPoll
