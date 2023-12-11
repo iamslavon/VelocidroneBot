@@ -176,6 +176,8 @@ public class CompetitionConductor
 
     public async Task VoteReminder()
     {
+        Log.Debug("Publishing vote reminder");
+
         var competition = await GetActiveCompetitionAsync();
         var messageText = TelegramMessages.GetRandomByType(TelegramMessageType.VoteReminder);
 

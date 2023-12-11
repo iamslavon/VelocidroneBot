@@ -96,7 +96,10 @@ public class CompetitionService
         var leaderboard = GetLocalLeaderboard(competition);
 
         if (leaderboard.Count < 2)
+        {
+            await SendCheerUpMessageAsync(TelegramMessageType.OnlyOneFlew);
             return;
+        }
 
         Log.Debug($"Publishing current leaderboard for competition {competition.Id}");
 

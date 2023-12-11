@@ -23,5 +23,6 @@ public enum TelegramMessageType
 {
     NobodyFlying,
     FirstResult,
+    OnlyOneFlew,
     VoteReminder
 }
