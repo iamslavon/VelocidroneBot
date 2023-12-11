@@ -15,7 +15,7 @@ public class MessageComposer
 
     public string StartCompetition(Track track)
     {
-        return $"📅 Вітаємо на щоденному FPV онлайн-турнірі!{Environment.NewLine}{Environment.NewLine}" +
+        return $"📅 Вітаємо на щоденному UA Velocidrone Battle!{Environment.NewLine}{Environment.NewLine}" +
                $"Трек дня: *{track.FullName}*{Environment.NewLine}{Environment.NewLine}" +
                $"Leaderboard: *https://www.velocidrone.com/leaderboard/{track.Map.MapId}/{track.TrackId}/All*";
     }
@@ -56,7 +56,7 @@ public class MessageComposer
     public string Leaderboard(IEnumerable<CompetitionResults> results, string trackName)
     {
         var rows = results.Select(LeaderboardRow);
-        return $"🏆 РЕЗУЛЬТАТИ ДНЯ{Environment.NewLine}" +
+        return $"🏆 Результати дня{Environment.NewLine}" +
                $"Трек: *{trackName}*{Environment.NewLine}{Environment.NewLine}" +
                $"{string.Join($"{Environment.NewLine}{Environment.NewLine}", rows)}";
     }
