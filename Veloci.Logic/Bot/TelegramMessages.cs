@@ -2,7 +2,7 @@ namespace Veloci.Logic.Bot;
 
 public static class TelegramMessages
 {
-    private static readonly List<TelegramMessage> Messages = new ();
+    private static readonly List<TelegramMessage> Messages = [];
     private static readonly Random Random = new ();
 
     static TelegramMessages()
@@ -12,9 +12,22 @@ public static class TelegramMessages
         Messages.Add(new TelegramMessage(TelegramMessageType.NobodyFlying, "🫠 Трек сам себе не пролетить"));
         Messages.Add(new TelegramMessage(TelegramMessageType.NobodyFlying, "🙃 Може пора вже?"));
         Messages.Add(new TelegramMessage(TelegramMessageType.NobodyFlying, "🙄 Чого чекаємо?"));
+
+        Messages.Add(new TelegramMessage(TelegramMessageType.VoteReminder, "👌 Не забудь оцінити трек"));
+        Messages.Add(new TelegramMessage(TelegramMessageType.VoteReminder, "Оцінювати треки важливо"));
+        Messages.Add(new TelegramMessage(TelegramMessageType.VoteReminder, "Ну як тобі трек?"));
+        Messages.Add(new TelegramMessage(TelegramMessageType.VoteReminder, "Твоя думка важлива"));
+        Messages.Add(new TelegramMessage(TelegramMessageType.VoteReminder, "Оціни трек, якщо ще ні"));
     }
 
-    public static TelegramMessage? GetRandomByType(TelegramMessageType messageType)
+    public static TelegramMessage GetRandomByType(TelegramMessageType messageType)
+    {
+        var msgs = Messages.Where(m => m.Type == messageType).ToList();
+        var r = Random.Next(msgs.Count);
+        return msgs[r];
+    }
+
+    public static TelegramMessage? GetRandomByTypeWithProbability(TelegramMessageType messageType)
     {
         if (!CalculateProbability())
             return null;

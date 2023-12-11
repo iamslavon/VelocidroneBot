@@ -80,19 +80,19 @@ public class TelegramBot
         }
     }
 
-    public static async Task EditMessageAsync(string message, int messageId)
+    public static async Task ReplyMessageAsync(string message, int messageId)
     {
         try
         {
-            var result = await _client.EditMessageTextAsync(
+            var result = await _client.SendTextMessageAsync(
                 chatId: _channelId,
-                messageId: messageId,
+                replyToMessageId: messageId,
                 parseMode: ParseMode.MarkdownV2,
                 text: Isolate(message));
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Telegram. Failed to edit a message '{Message}'", message);
+            Log.Error(ex, "Telegram. Failed to send a message '{Message}'", message);
         }
     }
 

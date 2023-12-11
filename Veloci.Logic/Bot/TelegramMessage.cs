@@ -22,5 +22,6 @@ public class TelegramMessage
 public enum TelegramMessageType
 {
     NobodyFlying,
-    FirstResult
+    FirstResult,
+    VoteReminder
 }

@@ -174,6 +174,14 @@ public class CompetitionConductor
         }
     }
 
+    public async Task VoteReminder()
+    {
+        var competition = await GetActiveCompetitionAsync();
+        var messageText = TelegramMessages.GetRandomByType(TelegramMessageType.VoteReminder);
+
+        await TelegramBot.ReplyMessageAsync(messageText.Text, competition.Track.Rating.PollMessageId);
+    }
+
     private async Task TempSeasonResultsAsync()
     {
         var today = DateTime.Now;

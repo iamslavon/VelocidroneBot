@@ -187,7 +187,7 @@ public class CompetitionService
         if (isDontDisturbTime)
             return;
 
-        var cheerUpMessage = TelegramMessages.GetRandomByType(type);
+        var cheerUpMessage = TelegramMessages.GetRandomByTypeWithProbability(type);
 
         if (cheerUpMessage is null)
             return;
