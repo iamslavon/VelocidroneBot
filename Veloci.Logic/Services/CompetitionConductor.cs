@@ -144,9 +144,9 @@ public class CompetitionConductor
             return option.VoterCount * points;
         });
 
-        double? rating = telegramPoll.TotalVoterCount == 0 ?
-            null :
-            totalPoints / telegramPoll.TotalVoterCount;
+        double? rating = telegramPoll.TotalVoterCount == 0
+            ? null
+            : totalPoints / (double)telegramPoll.TotalVoterCount;
 
         competition.Track.Rating.Value = rating;
         await _competitions.SaveChangesAsync();
