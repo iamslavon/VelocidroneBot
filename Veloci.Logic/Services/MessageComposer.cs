@@ -15,10 +15,12 @@ public class MessageComposer
 
     public string StartCompetition(Track track)
     {
-        return $"📅 Вітаємо на щоденному UA Velocidrone Battle!{Environment.NewLine}{Environment.NewLine}" +
-               $"Трек дня: *{track.FullName}*{Environment.NewLine}{Environment.NewLine}" +
-               $"Leaderboard: *https://www.velocidrone.com/leaderboard/{track.Map.MapId}/{track.TrackId}/All*{Environment.NewLine}{Environment.NewLine}" +
-               $"Назву трека можна скопіювати тут ⬇️{Environment.NewLine}" +
+        return $"📅 Вітаємо на щоденному *UA Velocidrone Battle*!{Environment.NewLine}{Environment.NewLine}" +
+               $"Трек дня:{Environment.NewLine}" +
+               $"*{track.FullName}*{Environment.NewLine}{Environment.NewLine}" +
+               $"Leaderboard:{Environment.NewLine}" +
+               $"*https://www.velocidrone.com/leaderboard/{track.Map.MapId}/{track.TrackId}/All*{Environment.NewLine}{Environment.NewLine}" +
+               $"Тицяй, щоб скопіювати ⬇️{Environment.NewLine}" +
                $"```{Environment.NewLine}" +
                $"{track.Name}{Environment.NewLine}" +
                $"```";
