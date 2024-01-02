@@ -81,7 +81,10 @@ public class MessageComposer
 
     public string MedalCount(IEnumerable<SeasonResult> results)
     {
-        var rows = results.Select(MedalCountRow);
+        var rows = results
+            .Select(MedalCountRow)
+            .Where(row => row is not null);
+
         return $"*Медалі за місяць*{Environment.NewLine}{Environment.NewLine}" +
                $"{string.Join($"{Environment.NewLine}{Environment.NewLine}", rows)}";
     }
