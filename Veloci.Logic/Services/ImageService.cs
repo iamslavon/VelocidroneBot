@@ -23,22 +23,22 @@ public class ImageService
         const int winnerTextContainerY = 465;
         const int winnerFontSize = 55;
 
-        const string fontFamily = "Tahoma";
-
+        FontCollection collection = new();
+        var family = collection.Add("wwwroot/fonts/tahoma.ttf");
 
         var templatePath = Path.Combine(Environment.CurrentDirectory, $"wwwroot/images/{templateName}");
         using var template = await Image.LoadAsync(templatePath);
 
-        var seasonfont = SystemFonts.CreateFont(fontFamily, seasonFontSize, FontStyle.Regular);
-        var seasonOptions = new RichTextOptions(seasonfont)
+        var seasonFont = family.CreateFont(seasonFontSize, FontStyle.Regular);
+        var seasonOptions = new RichTextOptions(seasonFont)
         {
             Origin = new PointF(seasonTextContainerX, seasonTextContainerY),
             WrappingLength = seasonTextContainerWidth,
             TextAlignment = TextAlignment.Center,
         };
 
-        var winnerfont = SystemFonts.CreateFont(fontFamily, winnerFontSize, FontStyle.Regular);
-        var winnerOptions = new RichTextOptions(winnerfont)
+        var winnerFont = family.CreateFont(winnerFontSize, FontStyle.Regular);
+        var winnerOptions = new RichTextOptions(winnerFont)
         {
             Origin = new PointF(winnerTextContainerX, winnerTextContainerY),
             WrappingLength = winnerTextContainerWidth,

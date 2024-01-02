@@ -140,6 +140,28 @@ public class TelegramBot
         }
     }
 
+    // For testing. Delete after
+    public static async Task SendPhotoAsync(long chatId, Stream file)
+    {
+        file.Position = 0; // Weird fix. It throws an exception without
+
+        try
+        {
+            var result = await _client.SendPhotoAsync(
+                chatId: chatId,
+                photo: new InputFileStream(file)
+            );
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Telegram. Failed to send a photo");
+        }
+        finally
+        {
+            await file.DisposeAsync();
+        }
+    }
+
     public static async Task<int?> SendPollAsync(BotPoll poll)
     {
         try
