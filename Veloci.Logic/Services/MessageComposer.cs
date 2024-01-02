@@ -21,7 +21,7 @@ public class MessageComposer
                $"Leaderboard:{Environment.NewLine}" +
                $"*https://www.velocidrone.com/leaderboard/{track.Map.MapId}/{track.TrackId}/All*{Environment.NewLine}{Environment.NewLine}" +
                $"Тицяй, щоб скопіювати ⬇️{Environment.NewLine}" +
-               $"```{Environment.NewLine}{track.Name.Trim()}```";
+               $"`{track.Name}`";
     }
 
     public BotPoll Poll(string trackName)
