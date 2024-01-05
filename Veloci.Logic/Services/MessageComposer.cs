@@ -17,11 +17,9 @@ public class MessageComposer
     {
         return $"📅 Вітаємо на щоденному *UA Velocidrone Battle*!{Environment.NewLine}{Environment.NewLine}" +
                $"Трек дня:{Environment.NewLine}" +
-               $"*{track.FullName}*{Environment.NewLine}{Environment.NewLine}" +
+               $"*{track.Map.Name} - `{track.Name}`*{Environment.NewLine}{Environment.NewLine}" +
                $"Leaderboard:{Environment.NewLine}" +
-               $"*https://www.velocidrone.com/leaderboard/{track.Map.MapId}/{track.TrackId}/All*{Environment.NewLine}{Environment.NewLine}" +
-               $"Тицяй, щоб скопіювати ⬇️{Environment.NewLine}" +
-               $"`{track.Name}`";
+               $"*https://www.velocidrone.com/leaderboard/{track.Map.MapId}/{track.TrackId}/All*{Environment.NewLine}{Environment.NewLine}";
     }
 
     public BotPoll Poll(string trackName)
