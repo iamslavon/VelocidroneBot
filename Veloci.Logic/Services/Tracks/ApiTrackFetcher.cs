@@ -26,14 +26,9 @@ public class ApiTrackFetcher : ITrackFetcher
         {30,"Bando"},
         {31,"IndoorGoKart"},
         {33,"Dynamic Weather"},
-        {36,"PolyWorld"},
-        {42,"Empty PolyWorld"},
         {43,"Future Hangar Empty"},
-        {44,"DynamicPoly"},
         {55,"Night Factory 2"},
         {56,"Factory"},
-        {100,"PolyPort"},
-        {101,"PolyBando"},
     };
 
     public async Task<List<ParsedMapModel>> FetchMapsAsync()
