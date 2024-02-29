@@ -12,6 +12,7 @@ public class CompetitionConductor
 {
     private readonly IRepository<Competition> _competitions;
     private readonly TrackService _trackService;
+    private readonly IDiscordBot _discordBot;
     private readonly ResultsFetcher _resultsFetcher;
     private readonly RaceResultsConverter _resultsConverter;
     private readonly CompetitionService _competitionService;
@@ -25,7 +26,8 @@ public class CompetitionConductor
         CompetitionService competitionService,
         MessageComposer messageComposer,
         ImageService imageService,
-        TrackService trackService)
+        TrackService trackService,
+        IDiscordBot discordBot)
     {
         _competitions = competitions;
         _resultsFetcher = resultsFetcher;
@@ -34,6 +36,7 @@ public class CompetitionConductor
         _messageComposer = messageComposer;
         _imageService = imageService;
         _trackService = trackService;
+        _discordBot = discordBot;
     }
 
     public async Task StartNewAsync()
@@ -68,6 +71,7 @@ public class CompetitionConductor
 
         var startCompetitionMessage = _messageComposer.StartCompetition(track);
         await TelegramBot.SendMessageAsync(startCompetitionMessage);
+        await _discordBot.SendMessage(startCompetitionMessage);
 
         var poll = _messageComposer.Poll(track.FullName);
         var pollId = await TelegramBot.SendPollAsync(poll);
@@ -105,6 +109,7 @@ public class CompetitionConductor
 
         var resultsMessage = _messageComposer.Leaderboard(competition.CompetitionResults, competition.Track.FullName);
         await TelegramBot.SendMessageAsync(resultsMessage);
+        await _discordBot.SendMessage(resultsMessage);
     }
 
     private async Task CancelAsync()
@@ -195,6 +200,7 @@ public class CompetitionConductor
 
         var message = _messageComposer.TempSeasonResults(results);
         await TelegramBot.SendMessageAsync(message);
+        await _discordBot.SendMessage(message);
     }
 
     private async Task StopSeasonAsync()
@@ -211,6 +217,7 @@ public class CompetitionConductor
 
         var message = _messageComposer.SeasonResults(results);
         await TelegramBot.SendMessageAsync(message);
+        await _discordBot.SendMessage(message);
 
         var seasonName = firstDayOfPreviousMonth.ToString("MMMM yyyy");
         var winnerName = results.FirstOrDefault().PlayerName;
@@ -218,7 +225,8 @@ public class CompetitionConductor
         await TelegramBot.SendPhotoAsync(imageStream);
 
         var medalCountMessage = _messageComposer.MedalCount(results);
-        BackgroundJob.Schedule(() => TelegramBot.SendMessageAsync(medalCountMessage), new TimeSpan(0, 0, 6));
+        await _discordBot.SendMessage(medalCountMessage);
+        BackgroundJob.Schedule(() => TelegramBot.SendMessageAsync(medalCountMessage), TimeSpan.FromSeconds(6));
     }
 
     private async Task<Competition?> GetActiveCompetitionAsync()

@@ -72,6 +72,7 @@ public class Startup
         });
         services.RegisterCustomServices();
         services.UseTelegramBotService();
+        services.UseDiscordBotService();
     }
 
     public void Configure(WebApplication app)

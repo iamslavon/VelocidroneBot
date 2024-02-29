@@ -14,19 +14,22 @@ public class CompetitionService
     private readonly RaceResultsConverter _resultsConverter;
     private readonly RaceResultDeltaAnalyzer _analyzer;
     private readonly MessageComposer _messageComposer;
+    private readonly IDiscordBot _discordBot;
 
     public CompetitionService(
         IRepository<Competition> competitions,
         ResultsFetcher resultsFetcher,
         RaceResultsConverter resultsConverter,
         RaceResultDeltaAnalyzer analyzer,
-        MessageComposer messageComposer)
+        MessageComposer messageComposer,
+        IDiscordBot discordBot)
     {
         _competitions = competitions;
         _resultsFetcher = resultsFetcher;
         _resultsConverter = resultsConverter;
         _analyzer = analyzer;
         _messageComposer = messageComposer;
+        _discordBot = discordBot;
     }
 
     [DisableConcurrentExecution("Competition", 60)]
@@ -47,7 +50,7 @@ public class CompetitionService
 
     private async Task UpdateResultsAsync(Competition competition)
     {
-        Log.Debug($"Starting updating results for competition {competition.Id}");
+        Log.Debug("Starting updating results for competition {competitionId}", competition.Id);
 
         var resultsDto = await _resultsFetcher.FetchAsync(competition.Track.TrackId);
         var times = _resultsConverter.ConvertTrackTimes(resultsDto);
@@ -67,6 +70,7 @@ public class CompetitionService
         await _competitions.SaveChangesAsync();
         var message = _messageComposer.TimeUpdate(deltas);
         await TelegramBot.SendMessageAsync(message);
+        await _discordBot.SendMessage(message);
     }
 
     [DisableConcurrentExecution("Competition", 60)]
@@ -101,10 +105,11 @@ public class CompetitionService
             return;
         }
 
-        Log.Debug($"Publishing current leaderboard for competition {competition.Id}");
+        Log.Debug("Publishing current leaderboard for competition {competitionId}", competition.Id);
 
         var message = _messageComposer.TempLeaderboard(leaderboard);
         await TelegramBot.SendMessageAsync(message);
+        await _discordBot.SendMessage(message);
 
         competition.ResultsPosted = true;
         await _competitions.SaveChangesAsync();
