@@ -69,13 +69,15 @@ public class DiscordBot : IDiscordBot
         await _client.StopAsync();
     }
 
+    private static readonly string[] AllowedChannels = ["velocidrone-battle", "лісопед"];
+
     public async Task SendMessage(string message)
     {
         if (_client == null) return;
 
         var t = from guild in _client.Guilds
             from channel in guild.Channels.OfType<ITextChannel>()
-            where channel.Name == "velocidrone-battle"
+            where AllowedChannels.Contains(channel.Name)
             select SendMessage(channel, message);
 
         await Task.WhenAll(t);
