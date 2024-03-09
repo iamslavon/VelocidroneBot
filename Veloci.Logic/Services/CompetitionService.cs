@@ -1,9 +1,11 @@
 using Hangfire;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Veloci.Data.Domain;
 using Veloci.Data.Repositories;
 using Veloci.Logic.Bot;
+using Veloci.Logic.Notifications;
 
 namespace Veloci.Logic.Services;
 
@@ -13,23 +15,20 @@ public class CompetitionService
     private readonly ResultsFetcher _resultsFetcher;
     private readonly RaceResultsConverter _resultsConverter;
     private readonly RaceResultDeltaAnalyzer _analyzer;
-    private readonly MessageComposer _messageComposer;
-    private readonly IDiscordBot _discordBot;
+    private readonly IMediator _mediator;
 
     public CompetitionService(
         IRepository<Competition> competitions,
         ResultsFetcher resultsFetcher,
         RaceResultsConverter resultsConverter,
         RaceResultDeltaAnalyzer analyzer,
-        MessageComposer messageComposer,
-        IDiscordBot discordBot)
+        IMediator mediator)
     {
         _competitions = competitions;
         _resultsFetcher = resultsFetcher;
         _resultsConverter = resultsConverter;
         _analyzer = analyzer;
-        _messageComposer = messageComposer;
-        _discordBot = discordBot;
+        _mediator = mediator;
     }
 
     [DisableConcurrentExecution("Competition", 60)]
@@ -68,9 +67,7 @@ public class CompetitionService
         competition.TimeDeltas.AddRange(deltas);
         competition.ResultsPosted = false;
         await _competitions.SaveChangesAsync();
-        var message = _messageComposer.TimeUpdate(deltas);
-        await TelegramBot.SendMessageAsync(message);
-        await _discordBot.SendMessage(message);
+        await _mediator.Publish(new CurrentResultUpdateMessage(deltas));
     }
 
     [DisableConcurrentExecution("Competition", 60)]
@@ -88,12 +85,11 @@ public class CompetitionService
 
     private async Task PublishCurrentLeaderboardAsync(Competition competition)
     {
-        if (competition.ResultsPosted)
-            return;
+        if (competition.ResultsPosted) return;
 
         if (competition.TimeDeltas.Count == 0)
         {
-            await SendCheerUpMessageAsync(TelegramMessageType.NobodyFlying);
+            await SendCheerUpMessageAsync(ChatMessageType.NobodyFlying);
             return;
         }
 
@@ -101,15 +97,13 @@ public class CompetitionService
 
         if (leaderboard.Count < 2)
         {
-            await SendCheerUpMessageAsync(TelegramMessageType.OnlyOneFlew);
+            await SendCheerUpMessageAsync(ChatMessageType.OnlyOneFlew);
             return;
         }
 
         Log.Debug("Publishing current leaderboard for competition {competitionId}", competition.Id);
 
-        var message = _messageComposer.TempLeaderboard(leaderboard);
-        await TelegramBot.SendMessageAsync(message);
-        await _discordBot.SendMessage(message);
+        await _mediator.Publish(new IntermediateCompetitionResult(leaderboard, competition));
 
         competition.ResultsPosted = true;
         await _competitions.SaveChangesAsync();
@@ -159,7 +153,7 @@ public class CompetitionService
         return results;
     }
 
-    private int PointsByRank(int rank)
+    private static int PointsByRank(int rank)
     {
         return rank switch
         {
@@ -187,29 +181,20 @@ public class CompetitionService
         };
     }
 
-    private async Task SendCheerUpMessageAsync(TelegramMessageType type)
+    private async Task SendCheerUpMessageAsync(ChatMessageType type)
     {
-        var now = DateTime.Now;
-        var isDontDisturbTime = now.Hour is < 7 or > 22;
+        if (DoNotDisturb(DateTime.Now)) return;
 
-        if (isDontDisturbTime)
-            return;
+        var cheerUpMessage = ChatMessages.GetRandomByTypeWithProbability(type);
 
-        var cheerUpMessage = TelegramMessages.GetRandomByTypeWithProbability(type);
+        if (cheerUpMessage is null) return;
 
-        if (cheerUpMessage is null)
-            return;
+        await _mediator.Publish(new CheerUp(cheerUpMessage));
+    }
 
-        if (cheerUpMessage.FileUrl is null && cheerUpMessage.Text is not null)
-        {
-            await TelegramBot.SendMessageAsync(cheerUpMessage.Text);
-            return;
-        }
-
-        if (cheerUpMessage.FileUrl is not null)
-        {
-            await TelegramBot.SendPhotoAsync(cheerUpMessage.FileUrl, cheerUpMessage.Text);
-        }
+    private static bool DoNotDisturb(DateTime dateTime)
+    {
+        return dateTime.Hour is < 7 or > 22;
     }
 
     public IQueryable<Competition> GetCurrentCompetitions()

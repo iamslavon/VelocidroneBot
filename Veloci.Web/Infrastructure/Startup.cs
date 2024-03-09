@@ -12,6 +12,7 @@ using Serilog.Formatting.Elasticsearch;
 using Serilog.Sinks.Elasticsearch;
 using Veloci.Data;
 using Veloci.Logic.Bot;
+using Veloci.Logic.Notifications;
 using Veloci.Web.Infrastructure.Hangfire;
 
 namespace Veloci.Web.Infrastructure;
@@ -73,6 +74,8 @@ public class Startup
         services.RegisterCustomServices();
         services.UseTelegramBotService();
         services.UseDiscordBotService();
+
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<IntermediateCompetitionResult>());
     }
 
     public void Configure(WebApplication app)

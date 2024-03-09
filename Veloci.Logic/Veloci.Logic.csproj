@@ -10,6 +10,7 @@
       <PackageReference Include="Discord.Net.WebSocket" Version="3.13.1" />
       <PackageReference Include="Hangfire.Core" Version="1.8.6" />
       <PackageReference Include="HtmlAgilityPack" Version="1.11.54" />
+      <PackageReference Include="MediatR" Version="12.2.0" />
       <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
       <PackageReference Include="RestSharp" Version="110.2.0" />
       <PackageReference Include="Riok.Mapperly" Version="3.2.0" />

@@ -1,9 +1,11 @@
-using Hangfire;
+using System.Globalization;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Veloci.Data.Domain;
 using Veloci.Data.Repositories;
 using Veloci.Logic.Bot;
+using Veloci.Logic.Notifications;
 using Veloci.Logic.Services.Tracks;
 
 namespace Veloci.Logic.Services;
@@ -12,7 +14,7 @@ public class CompetitionConductor
 {
     private readonly IRepository<Competition> _competitions;
     private readonly TrackService _trackService;
-    private readonly IDiscordBot _discordBot;
+    private readonly IMediator _mediator;
     private readonly ResultsFetcher _resultsFetcher;
     private readonly RaceResultsConverter _resultsConverter;
     private readonly CompetitionService _competitionService;
@@ -27,7 +29,7 @@ public class CompetitionConductor
         MessageComposer messageComposer,
         ImageService imageService,
         TrackService trackService,
-        IDiscordBot discordBot)
+        IMediator mediator)
     {
         _competitions = competitions;
         _resultsFetcher = resultsFetcher;
@@ -36,12 +38,12 @@ public class CompetitionConductor
         _messageComposer = messageComposer;
         _imageService = imageService;
         _trackService = trackService;
-        _discordBot = discordBot;
+        _mediator = mediator;
     }
 
     public async Task StartNewAsync()
     {
-        Log.Debug("Starting a new competition");
+        Log.Information("Starting a new competition");
 
         var activeComp = await GetActiveCompetitionAsync();
 
@@ -69,15 +71,20 @@ public class CompetitionConductor
 
         await _competitions.AddAsync(competition);
 
-        var startCompetitionMessage = _messageComposer.StartCompetition(track);
-        await TelegramBot.SendMessageAsync(startCompetitionMessage);
-        await _discordBot.SendMessage(startCompetitionMessage);
+        await _mediator.Publish(new CompetitionStarted(competition, track));
 
+        //possible needs to be moved to CompetitionStarted event handler in TelegramHandler
+        await CreatePoll(track, competition);
+
+        await _competitions.SaveChangesAsync();
+    }
+
+    private async Task CreatePoll(Track track, Competition competition)
+    {
         var poll = _messageComposer.Poll(track.FullName);
         var pollId = await TelegramBot.SendPollAsync(poll);
 
-        if (pollId is null)
-            return;
+        if (pollId is null) return;
 
         var rating = competition.Track.Rating;
 
@@ -88,38 +95,31 @@ public class CompetitionConductor
         }
 
         rating.PollMessageId = pollId.Value;
-        await _competitions.SaveChangesAsync();
     }
 
     public async Task StopAsync()
     {
-        Log.Debug("Stopping a competition");
-
         var competition = await GetActiveCompetitionAsync();
 
         if (competition is null)
             throw new Exception("There are no active competitions");
+
+        Log.Information("Stopping a competition {competitionId}", competition.Id);
 
         competition.State = CompetitionState.Closed;
         competition.CompetitionResults = _competitionService.GetLocalLeaderboard(competition);
         await _competitions.SaveChangesAsync();
 
-        if (competition.CompetitionResults.Count == 0)
-            return;
-
-        var resultsMessage = _messageComposer.Leaderboard(competition.CompetitionResults, competition.Track.FullName);
-        await TelegramBot.SendMessageAsync(resultsMessage);
-        await _discordBot.SendMessage(resultsMessage);
+        await _mediator.Publish(new CompetitionStopped(competition));
     }
 
     private async Task CancelAsync()
     {
-        Log.Debug("Cancelling a competition");
-
         var competition = await GetActiveCompetitionAsync();
 
-        if (competition is null)
-            throw new Exception("There are no active competitions");
+        if (competition is null) throw new Exception("There are no active competitions");
+
+        Log.Information("Cancelling a competition {competitionId}", competition.Id);
 
         competition.State = CompetitionState.Cancelled;
         await _competitions.SaveChangesAsync();
@@ -159,8 +159,7 @@ public class CompetitionConductor
         if (rating is null or >= 0)
             return;
 
-        var message = _messageComposer.BadTrackRating();
-        await TelegramBot.SendMessageAsync(message);
+        await _mediator.Publish(new BadTrack(competition, competition.Track));
     }
 
     public async Task SeasonResultsAsync()
@@ -184,7 +183,7 @@ public class CompetitionConductor
         Log.Debug("Publishing vote reminder");
 
         var competition = await GetActiveCompetitionAsync();
-        var messageText = TelegramMessages.GetRandomByType(TelegramMessageType.VoteReminder);
+        var messageText = ChatMessages.GetRandomByType(ChatMessageType.VoteReminder);
 
         await TelegramBot.ReplyMessageAsync(messageText.Text, competition.Track.Rating.PollMessageId);
     }
@@ -198,9 +197,7 @@ public class CompetitionConductor
         if (results.Count == 0)
             return;
 
-        var message = _messageComposer.TempSeasonResults(results);
-        await TelegramBot.SendMessageAsync(message);
-        await _discordBot.SendMessage(message);
+        await _mediator.Publish(new TempSeasonResults(results));
     }
 
     private async Task StopSeasonAsync()
@@ -209,24 +206,16 @@ public class CompetitionConductor
         var firstDayOfPreviousMonth = new DateTime(today.Year, today.Month, 1).AddMonths(-1);
         var firstDayOfCurrentMonth = new DateTime(today.Year, today.Month, 1);
 
-        var results =
-            await _competitionService.GetSeasonResultsAsync(firstDayOfPreviousMonth, firstDayOfCurrentMonth);
+        var results = await _competitionService.GetSeasonResultsAsync(firstDayOfPreviousMonth, firstDayOfCurrentMonth);
 
-        if (results.Count == 0)
-            return;
+        if (results.Count == 0) return;
 
-        var message = _messageComposer.SeasonResults(results);
-        await TelegramBot.SendMessageAsync(message);
-        await _discordBot.SendMessage(message);
-
-        var seasonName = firstDayOfPreviousMonth.ToString("MMMM yyyy");
+        var seasonName = firstDayOfPreviousMonth.ToString("MMMM yyyy", CultureInfo.InvariantCulture);
         var winnerName = results.FirstOrDefault().PlayerName;
-        var imageStream = await _imageService.CreateWinnerImageAsync(seasonName, winnerName);
-        await TelegramBot.SendPhotoAsync(imageStream);
 
-        var medalCountMessage = _messageComposer.MedalCount(results);
-        await _discordBot.SendMessage(medalCountMessage);
-        BackgroundJob.Schedule(() => TelegramBot.SendMessageAsync(medalCountMessage), TimeSpan.FromSeconds(6));
+        var image = await _imageService.CreateWinnerImageAsync(seasonName, winnerName);
+
+        await _mediator.Publish(new SeasonFinished(results, seasonName, winnerName, image));
     }
 
     private async Task<Competition?> GetActiveCompetitionAsync()

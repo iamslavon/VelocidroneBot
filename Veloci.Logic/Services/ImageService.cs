@@ -7,7 +7,7 @@ namespace Veloci.Logic.Services;
 
 public class ImageService
 {
-    public async Task<Stream> CreateWinnerImageAsync(string season, string winnerName)
+    public async Task<byte[]> CreateWinnerImageAsync(string season, string winnerName)
     {
         const string templateName = "winner-template.png";
 
@@ -50,9 +50,9 @@ public class ImageService
             .DrawText(seasonOptions, season, brush)
             .DrawText(winnerOptions, winnerName, brush));
 
-        var stream = new MemoryStream();
+        using var stream = new MemoryStream();
         await template.SaveAsync(stream, new PngEncoder());
 
-        return stream;
+        return stream.ToArray();
     }
 }

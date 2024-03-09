@@ -1,7 +1,6 @@
 using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
-using Veloci.Logic.Bot;
 using Veloci.Web.Infrastructure;
 
 Log.Logger = new LoggerConfiguration()

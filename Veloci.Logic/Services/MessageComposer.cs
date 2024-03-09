@@ -45,7 +45,7 @@ public class MessageComposer
 
     public string BadTrackRating()
     {
-        return $"😔 Бачу трек не сподобався. Більше його не буде";
+        return "😔 Бачу трек не сподобався. Більше його не буде";
     }
 
     public string TempLeaderboard(IEnumerable<CompetitionResults> results)
@@ -55,19 +55,21 @@ public class MessageComposer
                $"{string.Join($"{Environment.NewLine}", rows)}";
     }
 
-    public string Leaderboard(IEnumerable<CompetitionResults> results, string trackName)
+    public string Leaderboard(IEnumerable<CompetitionResults> results, string trackName, bool includeExtraNewLine = true)
     {
         var rows = results.Select(LeaderboardRow);
+        var divider = includeExtraNewLine ? $"{Environment.NewLine}{Environment.NewLine}" : Environment.NewLine;
         return $"🏆 Результати дня{Environment.NewLine}" +
                $"Трек: *{trackName}*{Environment.NewLine}{Environment.NewLine}" +
-               $"{string.Join($"{Environment.NewLine}{Environment.NewLine}", rows)}";
+               $"{string.Join($"{divider}", rows)}";
     }
 
-    public string TempSeasonResults(IEnumerable<SeasonResult> results)
+    public string TempSeasonResults(IEnumerable<SeasonResult> results, bool includeExtraNewLine = true)
     {
         var rows = results.Select(TempSeasonResultsRow);
+        var divider = includeExtraNewLine ? $"{Environment.NewLine}{Environment.NewLine}" : Environment.NewLine;
         return $"🗓 Проміжні результати місяця{Environment.NewLine}{Environment.NewLine}" +
-               $"{string.Join($"{Environment.NewLine}{Environment.NewLine}", rows)}";
+               $"{string.Join($"{divider}", rows)}";
     }
 
     public string SeasonResults(IEnumerable<SeasonResult> results)
@@ -77,14 +79,16 @@ public class MessageComposer
                $"{string.Join($"{Environment.NewLine}{Environment.NewLine}", rows)}";
     }
 
-    public string MedalCount(IEnumerable<SeasonResult> results)
+    public string MedalCount(IEnumerable<SeasonResult> results, bool includeExtraNewLine = true)
     {
         var rows = results
             .Select(MedalCountRow)
             .Where(row => row is not null);
 
+        var divider = includeExtraNewLine ? $"{Environment.NewLine}{Environment.NewLine}" : Environment.NewLine;
+
         return $"*Медалі за місяць*{Environment.NewLine}{Environment.NewLine}" +
-               $"{string.Join($"{Environment.NewLine}{Environment.NewLine}", rows)}";
+               $"{string.Join($"{divider}", rows)}";
     }
 
     #region Private

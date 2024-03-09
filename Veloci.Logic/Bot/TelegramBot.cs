@@ -134,10 +134,6 @@ public class TelegramBot
         {
             Log.Error(ex, "Telegram. Failed to send a photo");
         }
-        finally
-        {
-            await file.DisposeAsync();
-        }
     }
 
     public static async Task<int?> SendPollAsync(BotPoll poll)

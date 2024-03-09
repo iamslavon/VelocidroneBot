@@ -1,25 +1,21 @@
 namespace Veloci.Logic.Bot;
 
-public class TelegramMessage
+public class ChatMessage
 {
-    public TelegramMessage()
-    {
-    }
-
-    public TelegramMessage(TelegramMessageType type, string text)
+    public ChatMessage(ChatMessageType type, string text)
     {
         Type = type;
         Text = text;
     }
 
-    public TelegramMessageType Type { get; set; }
+    public ChatMessageType Type { get; set; }
 
     public string? FileUrl { get; set; }
 
     public string? Text { get; set; }
 }
 
-public enum TelegramMessageType
+public enum ChatMessageType
 {
     NobodyFlying,
     FirstResult,
