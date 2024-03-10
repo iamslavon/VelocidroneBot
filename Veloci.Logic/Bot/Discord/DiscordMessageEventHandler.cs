@@ -17,14 +17,14 @@ public class DiscordCompetitionStartedHandler : INotificationHandler<Competition
     {
         var track = notification.Track;
 
-        var message =
+        var message = Environment.NewLine +
             $"📅 Вітаємо на щоденному *UA Velocidrone Battle*!{Environment.NewLine}{Environment.NewLine}" +
             $"Трек дня:{Environment.NewLine}" +
             $"*{track.Map.Name}* - `{track.Name}`{Environment.NewLine}{Environment.NewLine}" +
             $"Leaderboard:{Environment.NewLine}" +
-            $"*https://www.velocidrone.com/leaderboard/{track.Map.MapId}/{track.TrackId}/All*{Environment.NewLine}{Environment.NewLine}" +
+            $"<https://www.velocidrone.com/leaderboard/{track.Map.MapId}/{track.TrackId}/All>{Environment.NewLine}{Environment.NewLine}" +
             $"Тицяй, щоб скопіювати ⬇️{Environment.NewLine}" +
-            $"```{Environment.NewLine}{track.Name.Trim()}{Environment.NewLine}```";
+            $"```{Environment.NewLine}{track.Name.Trim()}{Environment.NewLine}```{Environment.NewLine}";
 
         await _discordBot.SendMessage(message);
     }
