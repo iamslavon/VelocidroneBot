@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Veloci.Logic.Dto;
+using Veloci.Logic.Services.Tracks;
 
 namespace Veloci.Logic.Services;
 
@@ -18,7 +19,7 @@ public class ResultsFetcher
             { "post_data", encrypted }
         };
 
-        var response = await Client.PostAsync("http://www.velocidrone.com/api/leaderboard/getLeaderBoard", new FormUrlEncodedContent (parameters));
+        var response = await Client.PostAsync($"{VelocidroneApiConstants.BaseUrl}/api/leaderboard/getLeaderBoard", new FormUrlEncodedContent (parameters));
         response.EnsureSuccessStatusCode();
         var responseBody = await response.Content.ReadAsStringAsync();
         var decrypted = Encryption.Decrypt(responseBody);

@@ -8,7 +8,7 @@ public class ApiTrackFetcher : ITrackFetcher
 {
     private static readonly HttpClient Client = new HttpClient();
 
-    private IDictionary<int, string> _scenes = new Dictionary<int, string>()
+    private readonly IDictionary<int, string> _scenes = new Dictionary<int, string>
     {
         {3,"Hangar"},
         {7,"Industrial Wasteland"},
@@ -33,7 +33,7 @@ public class ApiTrackFetcher : ITrackFetcher
 
     public async Task<List<ParsedMapModel>> FetchMapsAsync()
     {
-        var response = await Client.GetAsync("http://www.velocidrone.com/api/get_official_tracks");
+        var response = await Client.GetAsync($"{VelocidroneApiConstants.BaseUrl}/api/get_official_tracks");
         response.EnsureSuccessStatusCode();
         var responseBody = await response.Content.ReadAsStringAsync();
         var decrypted = Encryption.Decrypt(responseBody);
