@@ -1,6 +1,7 @@
 using Hangfire;
 using Hangfire.Storage;
 using Veloci.Logic.Services;
+using Veloci.Logic.Services.YearResults;
 
 namespace Veloci.Web.Infrastructure.Hangfire;
 
@@ -24,5 +25,7 @@ public class HangfireInit
 
         RecurringJob.AddOrUpdate<CompetitionService>("Update results", x => x.UpdateResultsAsync(), "*/10 * * * *");
         RecurringJob.AddOrUpdate<CompetitionService>("Publish current leaderboard", x => x.PublishCurrentLeaderboardAsync(), "1 */2 * * *");
+
+        RecurringJob.AddOrUpdate<YearResultsService>("Year results", x => x.Publish(), "15 11 2 1 *");
     }
 }

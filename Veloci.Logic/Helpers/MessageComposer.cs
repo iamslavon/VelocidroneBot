@@ -2,8 +2,9 @@ using System.Globalization;
 using System.Text;
 using Veloci.Data.Domain;
 using Veloci.Logic.Bot;
+using Veloci.Logic.Services.YearResults;
 
-namespace Veloci.Logic.Services;
+namespace Veloci.Logic.Helpers;
 
 public class MessageComposer
 {
@@ -89,6 +90,42 @@ public class MessageComposer
 
         return $"*Медалі за місяць*{Environment.NewLine}{Environment.NewLine}" +
                $"{string.Join($"{divider}", rows)}";
+    }
+
+    public IEnumerable<string> YearResults(YearResultsModel model)
+    {
+        var first = $"🎉 *UA Velocidrone Battle WRAPPED 📈 {model.Year}*{Environment.NewLine}" +
+               $"або трохи цифр за минулий рік{Environment.NewLine}{Environment.NewLine}" +
+               $"📊 *{model.TotalTrackCount} треків!* Це стільки ми пролетіли минулого року.{Environment.NewLine}" +
+               $"Із них унікальних - *{model.UniqueTrackCount}*. Так, деякі треки повторювались, але такі вже у нас алгоритми.{Environment.NewLine}" +
+               $"З іншого боку, це гарний привід покращити свій же результат і стати ще швидшим.{Environment.NewLine}{Environment.NewLine}" +
+               $"👎 *{model.TracksSkipped} треків* були настільки ганебні, що довелось їх одразу замінити.{Environment.NewLine}{Environment.NewLine}" +
+               $"👍 Але ваш улюблений трек року:{Environment.NewLine}" +
+               $"*{model.FavoriteTrack}*{Environment.NewLine}" +
+               $"Це переможець за вашими голосами!";
+
+        var second = $"👥 В минулому році тут з'являлись імена *{model.TotalPilotCount}* пілотів.{Environment.NewLine}{Environment.NewLine}" +
+                     $"🥷 *Чемпіон відвідувань: {model.PilotWhoCameTheMost.name}.* Цей відчайдух пролетів *{model.PilotWhoCameTheMost.count} треків* за рік!{Environment.NewLine}" +
+                     $"{model.PilotWhoCameTheMost.name}, ти точно людина? 🤖{Environment.NewLine}{Environment.NewLine}" +
+                     $"🧐 *Приз за рідкісні появи: {model.PilotWhoCameTheLeast.name}* Він з'явився всього {model.PilotWhoCameTheLeast.count} {UkrainianHelper.GetTimesString(model.PilotWhoCameTheLeast.count)}.{Environment.NewLine}" +
+                     $"{model.PilotWhoCameTheLeast.name}, ми тут без тебе сумуємо!{Environment.NewLine}{Environment.NewLine}" +
+                     $"🥇 *Містер Золото: {model.PilotWithTheMostGoldenMedal.name}.* Цей геній зібрав *{model.PilotWithTheMostGoldenMedal.count}* золотих медалей!";
+
+        var third = $"🏆 А ось *ТОП-3* пілотів, які набрали найбільшу сумарну кількість балів за рік:{Environment.NewLine}{Environment.NewLine}";
+
+        foreach (var pilot in model.Top3Pilots)
+        {
+            third += $"*{pilot.Key}* - *{pilot.Value}* балів{Environment.NewLine}";
+        }
+
+        third += $"{Environment.NewLine}Непогано, авжеж? Дякуємо, що продовжуєте літати і стаєте ще швидшими! 🚀";
+
+        return new List<string>()
+        {
+            first,
+            second,
+            third
+        };
     }
 
     #region Private

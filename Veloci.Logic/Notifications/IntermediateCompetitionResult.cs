@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Veloci.Data.Domain;
 using Veloci.Logic.Bot;
+using Veloci.Logic.Services.YearResults;
 
 namespace Veloci.Logic.Notifications;
 
@@ -17,3 +18,5 @@ public record SeasonFinished(List<SeasonResult> Results, string SeasonName, stri
 public record BadTrack(Competition Competition, Track Track) : INotification;
 
 public record CheerUp(ChatMessage Message) : INotification;
+
+public record YearResults(YearResultsModel Results) : INotification;

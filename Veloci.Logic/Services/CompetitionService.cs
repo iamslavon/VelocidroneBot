@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Hangfire;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -129,7 +130,21 @@ public class CompetitionService
 
     public async Task<List<SeasonResult>> GetSeasonResultsAsync(DateTime from, DateTime to)
     {
-        var results = await _competitions
+        var results = await GetSeasonResultsQuery(from, to)
+            .OrderByDescending(result => result.Points)
+            .ToListAsync();
+
+        for (var i = 0; i < results.Count; i++)
+        {
+            results[i].Rank = i + 1;
+        }
+
+        return results;
+    }
+
+    public IQueryable<SeasonResult> GetSeasonResultsQuery(DateTime from, DateTime to)
+    {
+        return _competitions
             .GetAll(comp => comp.StartedOn >= from && comp.StartedOn <= to)
             .Where(comp => comp.State != CompetitionState.Cancelled)
             .SelectMany(comp => comp.CompetitionResults)
@@ -141,16 +156,7 @@ public class CompetitionService
                 GoldenCount = group.Count(r => r.LocalRank == 1),
                 SilverCount = group.Count(r => r.LocalRank == 2),
                 BronzeCount = group.Count(r => r.LocalRank == 3)
-            })
-            .OrderByDescending(result => result.Points)
-            .ToListAsync();
-
-        for (var i = 0; i < results.Count; i++)
-        {
-            results[i].Rank = i + 1;
-        }
-
-        return results;
+            });
     }
 
     private static int PointsByRank(int rank)

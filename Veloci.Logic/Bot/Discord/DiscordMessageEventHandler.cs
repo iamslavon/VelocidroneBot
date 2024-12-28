@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Veloci.Logic.Helpers;
 using Veloci.Logic.Notifications;
 using Veloci.Logic.Services;
 

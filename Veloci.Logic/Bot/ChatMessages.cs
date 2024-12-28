@@ -13,7 +13,8 @@ public static class ChatMessages
         Messages.Add(new ChatMessage(ChatMessageType.NobodyFlying, "🙃 Може пора вже?"));
         Messages.Add(new ChatMessage(ChatMessageType.NobodyFlying, "🙄 Чого чекаємо?"));
         Messages.Add(new ChatMessage(ChatMessageType.NobodyFlying, "🤓 Запускайте вже ваші симулятори"));
-        Messages.Add(new ChatMessage(ChatMessageType.NobodyFlying, "🤔 Я новий трек для кого видав?"));
+        Messages.Add(new ChatMessage(ChatMessageType.NobodyFlying, "😴 Zzzz..."));
+        Messages.Add(new ChatMessage(ChatMessageType.NobodyFlying, "😕 Знову світла немає?"));
 
         Messages.Add(new ChatMessage(ChatMessageType.OnlyOneFlew, "👀 А де всі інші?"));
         Messages.Add(new ChatMessage(ChatMessageType.OnlyOneFlew, "😐 Тільки один результат? Ви серйозно?"));

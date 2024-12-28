@@ -1,5 +1,6 @@
 ﻿using Hangfire;
 using MediatR;
+using Veloci.Logic.Helpers;
 using Veloci.Logic.Notifications;
 using Veloci.Logic.Services;
 
@@ -13,7 +14,8 @@ public class TelegramMessageEventHandler :
     INotificationHandler<TempSeasonResults>,
     INotificationHandler<SeasonFinished>,
     INotificationHandler<BadTrack>,
-    INotificationHandler<CheerUp>
+    INotificationHandler<CheerUp>,
+    INotificationHandler<YearResults>
 {
     private readonly MessageComposer _messageComposer;
 
@@ -87,6 +89,18 @@ public class TelegramMessageEventHandler :
         if (cheerUpMessage.FileUrl is not null)
         {
             await TelegramBot.SendPhotoAsync(cheerUpMessage.FileUrl, cheerUpMessage.Text);
+        }
+    }
+
+    public async Task Handle(YearResults notification, CancellationToken cancellationToken)
+    {
+        var messageSet = _messageComposer.YearResults(notification.Results);
+        const int delaySec = 10;
+
+        foreach (var message in messageSet)
+        {
+            await TelegramBot.SendMessageAsync(message);
+            await Task.Delay(TimeSpan.FromSeconds(delaySec), cancellationToken);
         }
     }
 }
