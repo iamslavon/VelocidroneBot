@@ -26,7 +26,7 @@ public class YearResultsService
         var today = DateTime.Today;
         var previousYear = today.Year - 1;
         _from = new DateTime(previousYear, 1, 1);
-        _to = new DateTime(previousYear, 12, 31);
+        _to = _from.AddYears(1);
     }
 
     public async Task Publish()
@@ -74,16 +74,18 @@ public class YearResultsService
     private async Task<int> GetTotalTrackCountAsync()
     {
         return await _competitions
-            .GetAll(comp => comp.StartedOn >= _from && comp.StartedOn <= _to)
-            .Where(comp => comp.State != CompetitionState.Cancelled)
+            .GetAll()
+            .InRange(_from, _to)
+            .NotCancelled()
             .CountAsync();
     }
 
     private async Task<int> GetUniqueTrackCountAsync()
     {
         return await _competitions
-            .GetAll(comp => comp.StartedOn >= _from && comp.StartedOn <= _to)
-            .Where(comp => comp.State != CompetitionState.Cancelled)
+            .GetAll()
+            .InRange(_from, _to)
+            .NotCancelled()
             .Select(comp => comp.TrackId)
             .Distinct()
             .CountAsync();
@@ -92,7 +94,8 @@ public class YearResultsService
     private async Task<int> GetTracksSkippedAsync()
     {
         return await _competitions
-            .GetAll(comp => comp.StartedOn >= _from && comp.StartedOn <= _to)
+            .GetAll()
+            .InRange(_from, _to)
             .Where(comp => comp.State == CompetitionState.Cancelled)
             .CountAsync();
     }
@@ -100,8 +103,9 @@ public class YearResultsService
     private async Task<(string name, int count)> GetPilotWhoCameTheLeastAsync()
     {
         var result = await _competitions
-            .GetAll(comp => comp.StartedOn >= _from && comp.StartedOn <= _to)
-            .Where(comp => comp.State != CompetitionState.Cancelled)
+            .GetAll()
+            .InRange(_from, _to)
+            .NotCancelled()
             .SelectMany(comp => comp.CompetitionResults)
             .GroupBy(res => res.PlayerName)
             .Select(group => new
@@ -121,8 +125,9 @@ public class YearResultsService
     private async Task<(string name, int count)> GetPilotWhoCameTheMostAsync()
     {
         var result = await _competitions
-            .GetAll(comp => comp.StartedOn >= _from && comp.StartedOn <= _to)
-            .Where(comp => comp.State != CompetitionState.Cancelled)
+            .GetAll()
+            .InRange(_from, _to)
+            .NotCancelled()
             .SelectMany(comp => comp.CompetitionResults)
             .GroupBy(res => res.PlayerName)
             .Select(group => new
@@ -142,8 +147,9 @@ public class YearResultsService
     private async Task<string> GetFavoriteTrackAsync()
     {
         var favoriteMap = await _competitions
-            .GetAll(comp => comp.StartedOn >= _from && comp.StartedOn <= _to)
-            .Where(comp => comp.State != CompetitionState.Cancelled)
+            .GetAll()
+            .InRange(_from, _to)
+            .NotCancelled()
             .Select(comp => new
             {
                 Name = comp.Track.FullName,
@@ -158,8 +164,9 @@ public class YearResultsService
     private async Task<int> GetTotalPilotCountAsync()
     {
         return await _competitions
-            .GetAll(comp => comp.StartedOn >= _from && comp.StartedOn <= _to)
-            .Where(comp => comp.State != CompetitionState.Cancelled)
+            .GetAll()
+            .InRange(_from, _to)
+            .NotCancelled()
             .SelectMany(comp => comp.CompetitionResults)
             .Select(res => res.PlayerName)
             .Distinct()

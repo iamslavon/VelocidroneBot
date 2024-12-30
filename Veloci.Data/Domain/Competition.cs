@@ -23,3 +23,29 @@ public class Competition
 
     public bool ResultsPosted { get; set; }
 }
+
+public static class IQueryableCompetionExtensions
+{
+    /// <summary>
+    /// Filters competitions by date range
+    /// </summary>
+    /// <param name="query">Source query</param>
+    /// <param name="from">From date inclusive</param>
+    /// <param name="to">To date exclusive</param>
+    /// <returns></returns>
+    public static IQueryable<Competition> InRange(this IQueryable<Competition> query, DateTime from, DateTime to)
+    {
+        return query.Where(comp => comp.StartedOn >= from && comp.StartedOn < to);
+    }
+
+
+    /// <summary>
+    /// Filters competitions that are not cancelled
+    /// </summary>
+    /// <param name="query">Source query</param>
+    /// <returns></returns>
+    public static IQueryable<Competition> NotCancelled(this IQueryable<Competition> query)
+    {
+        return query.Where(comp => comp.State != CompetitionState.Cancelled);
+    }
+}
