@@ -33,7 +33,7 @@ public class YearResultsService
     {
         var statistics = new YearResultsModel
         {
-            Year = _to.Year,
+            Year = _from.Year,
             PilotWithTheMostGoldenMedal = await GetPilotWithTheMostGoldenMedalAsync(),
             PilotWhoCameTheMost = await GetPilotWhoCameTheMostAsync(),
             PilotWhoCameTheLeast = await GetPilotWhoCameTheLeastAsync(),
