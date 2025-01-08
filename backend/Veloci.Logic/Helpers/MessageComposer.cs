@@ -62,7 +62,8 @@ public class MessageComposer
         var divider = includeExtraNewLine ? $"{Environment.NewLine}{Environment.NewLine}" : Environment.NewLine;
         return $"🏆 Результати дня{Environment.NewLine}" +
                $"Трек: *{trackName}*{Environment.NewLine}{Environment.NewLine}" +
-               $"{string.Join($"{divider}", rows)}";
+               $"{string.Join($"{divider}", rows)}" +
+               $"{Environment.NewLine}{Environment.NewLine}#dayresults";
     }
 
     public string TempSeasonResults(IEnumerable<SeasonResult> results, bool includeExtraNewLine = true)
