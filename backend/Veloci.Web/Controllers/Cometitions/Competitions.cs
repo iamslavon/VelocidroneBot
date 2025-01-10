@@ -5,6 +5,7 @@ using Veloci.Web.Controllers.Cometitions;
 
 namespace Veloci.Web.Controllers;
 
+[ApiController]
 [Route("/api/competitions/[action]")]
 public class CompetitionsController : ControllerBase
 {
@@ -14,10 +15,26 @@ public class CompetitionsController : ControllerBase
     {
         _competitionService = competitionService;
     }
+
     [HttpGet("/api/competitions/current")]
-    public async Task<IActionResult> GetCurrent()
+    public async Task<CompetitionModel[]> GetCurrent()
     {
-        var competitions  = await _competitionService.GetCurrentCompetitions().ProjectToModel().ToListAsync() ;
-        return Ok(competitions);
+        var competitions  = await _competitionService.GetCurrentCompetitions().ProjectToModel().ToArrayAsync() ;
+        return competitions;
+    }
+
+    [HttpGet("/api/dashboard")]
+    public async Task<DashboardModel?> Dashboard()
+    {
+        var competition  = await _competitionService.GetCurrentCompetitions().FirstOrDefaultAsync();
+
+        if (competition is null) return null;
+
+        var dashboardModel = new DashboardModel
+        {
+            Competition = competition.MapToModel(), Results = competition.CurrentResults.Times.MapToModel()
+        };
+
+        return dashboardModel;
     }
 }

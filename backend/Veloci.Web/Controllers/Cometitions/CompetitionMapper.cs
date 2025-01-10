@@ -6,6 +6,8 @@ namespace Veloci.Web.Controllers.Cometitions;
 [Mapper]
 public static partial class CompetitionMapper
 {
-    public static partial CompetitionModel MapToModel(Competition competition);
+    public static partial CompetitionModel MapToModel(this Competition competition);
     public static partial IQueryable<CompetitionModel> ProjectToModel(this IQueryable<Competition> competitions);
+
+    public static partial List<TrackTimeModel> MapToModel(this IEnumerable<TrackTime> results);
 }
