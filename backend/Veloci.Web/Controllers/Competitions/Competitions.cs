@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Veloci.Logic.Services;
-using Veloci.Web.Controllers.Cometitions;
 
-namespace Veloci.Web.Controllers;
+namespace Veloci.Web.Controllers.Competitions;
 
 [ApiController]
 [Route("/api/competitions/[action]")]

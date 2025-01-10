@@ -1,7 +1,7 @@
 ﻿using Riok.Mapperly.Abstractions;
 using Veloci.Data.Domain;
 
-namespace Veloci.Web.Controllers.Cometitions;
+namespace Veloci.Web.Controllers.Competitions;
 
 [Mapper]
 public static partial class CompetitionMapper
