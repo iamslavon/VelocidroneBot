@@ -31,7 +31,11 @@ public class CompetitionsController : ControllerBase
 
         var dashboardModel = new DashboardModel
         {
-            Competition = competition.MapToModel(), Results = competition.CurrentResults.Times.MapToModel()
+            Competition = competition.MapToModel(),
+            Results = competition.CurrentResults
+                .Times
+                .OrderBy(x => x.Time)
+                .MapToModel()
         };
 
         return dashboardModel;

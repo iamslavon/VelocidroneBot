@@ -74,9 +74,7 @@ public class CompetitionService
     [DisableConcurrentExecution("Competition", 60)]
     public async Task PublishCurrentLeaderboardAsync()
     {
-        var activeCompetitions = await _competitions
-            .GetAll(c => c.State == CompetitionState.Started)
-            .ToListAsync();
+        var activeCompetitions = GetCurrentCompetitions();
 
         foreach (var activeCompetition in activeCompetitions)
         {
