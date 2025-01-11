@@ -5,6 +5,7 @@ import ClickableTrackName from './components/ClickableTrackName'
 import api from './api/api'
 import { DashboardModel } from './api/client';
 import CurrentLeaderboard from './components/CurrentLeaderBoard';
+import LeaderBoard from './components/LeaderBoard';
 
 function App() {
 
@@ -60,7 +61,7 @@ function App() {
                   ПОТОЧНА ТУРНІРНА ТАБЛИЦЯ
                 </h3>
               </div>
-              <span>TBD</span>
+              <LeaderBoard leaderBoard={dashboard.leaderboard}></LeaderBoard>
             </div>
           </div>
         </div>
