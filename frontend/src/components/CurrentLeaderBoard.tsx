@@ -11,7 +11,7 @@ const CurrentLeaderboard: React.FC<CurrentLeaderboardProps> = ({ trackResults }:
 
     return (
         <div className="overflow-hidden">
-            <ul className="divide-y divide-gray-700">
+            <ul className="divide-y divide-slate-700/50">
                 {trackResults.map((pilot, index) => (
                     <li key={pilot.playerName} className="px-6 py-4 hover:bg-slate-700/30 transition-colors duration-150">
                         <div className="flex items-center justify-between">
