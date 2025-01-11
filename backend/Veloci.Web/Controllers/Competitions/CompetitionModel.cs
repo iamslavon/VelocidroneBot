@@ -4,17 +4,17 @@ namespace Veloci.Web.Controllers.Competitions;
 
 public class CompetitionModel
 {
-    public required string Id { get; set; }
+    public string Id { get; set; }
     public DateTime StartedOn { get; set; }
     public CompetitionState State { get; set; }
-    public required string TrackName { get; set; }
+    public string MapName { get; set; }
+    public string TrackName { get; set; }
 }
 
 public class DashboardModel
 {
     public required CompetitionModel Competition { get; set; }
     public required List<TrackTimeModel> Results { get; set; }
-
     public required List<SeasonResultModel> Leaderboard { get; set; }
 }
 
@@ -29,6 +29,5 @@ public class TrackTimeModel
 public class SeasonResultModel
 {
     public required string PlayerName { get; set; }
-
     public int Points { get; set; }
 }

@@ -48,7 +48,7 @@ function App() {
                   <h3 className="text-sm uppercase tracking-wider text-emerald-400 font-medium">
                     Трек сьогодні:
                   </h3>
-                  <ClickableTrackName trackName={dashboard.competition.trackName!} />
+                  <ClickableTrackName mapName={dashboard.competition.mapName!} trackName={dashboard.competition.trackName!} />
                 </div>
               </div>
               <CurrentLeaderboard trackResults={dashboard.results!} />

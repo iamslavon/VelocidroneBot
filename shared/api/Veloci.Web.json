@@ -76,10 +76,6 @@
   "components": {
     "schemas": {
       "CompetitionModel": {
-        "required": [
-          "id",
-          "trackName"
-        ],
         "type": "object",
         "properties": {
           "id": {
@@ -91,6 +87,9 @@
           },
           "state": {
             "$ref": "#/components/schemas/CompetitionState"
+          },
+          "mapName": {
+            "type": "string"
           },
           "trackName": {
             "type": "string"
