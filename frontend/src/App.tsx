@@ -27,12 +27,15 @@ function App() {
 
   return (
     <>
-      <main className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
-        <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+      <main className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800">
+        <div className="max-w-[1800px] mx-auto px-4 py-8 sm:px-6 lg:px-8">
           <header className="mb-12 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent mb-4">
               UA Velocidrone Battle
             </h1>
+            <nav className="flex justify-center space-x-4">
+            
+          </nav>
           </header>
 
           <div className="grid lg:grid-cols-2 gap-8">
@@ -49,15 +52,15 @@ function App() {
               <CurrentLeaderboard trackResults={dashboard!.results!} />
             </div>
 
-            {/* Yesterday's Results */}
-            <div className="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
-              <div className="px-6 py-8 border-b border-gray-700">
-                <h3 className="text-sm uppercase tracking-wider text-emerald-400 font-medium">
-                  Результати вчорашнього дня:
-                </h3>
-              </div>
-              <h2 className="text-center">Comming soon...</h2>
+            {/* Tournament Leaderboard */}
+          <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700 overflow-hidden">
+            <div className="px-6 py-8 border-b border-slate-700/50">
+              <h3 className="text-sm uppercase tracking-wider text-emerald-400 font-medium">
+                ПОТОЧНА ТУРНІРНА ТАБЛИЦЯ
+              </h3>
             </div>
+            <span>TBD</span>
+          </div>
           </div>
         </div>
       </main>

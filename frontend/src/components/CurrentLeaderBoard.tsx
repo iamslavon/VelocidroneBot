@@ -13,17 +13,17 @@ const CurrentLeaderboard: React.FC<CurrentLeaderboardProps> = ({ trackResults }:
         <div className="overflow-hidden">
             <ul className="divide-y divide-gray-700">
                 {trackResults.map((pilot, index) => (
-                    <li key={pilot.playerName} className="px-6 py-4 hover:bg-gray-700/50 transition-colors duration-150">
+                    <li key={pilot.playerName} className="px-6 py-4 hover:bg-slate-700/30 transition-colors duration-150">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center">
-                                <span className="font-medium text-gray-500 mr-4 w-6 text-right text-lg tabular-nums">
+                                <span className="font-bold text-slate-400 mr-4 w-8 text-right text-2xl tabular-nums">
                                     {index + 1}
                                 </span>
-                                <p className="text-sm font-medium text-gray-200">
+                                <p className="text-sm font-medium text-slate-200">
                                     {pilot.playerName}
                                 </p>
                             </div>
-                            <div className="text-sm text-gray-400 font-medium tabular-nums">{convertMsToSec(pilot.time)}</div>
+                            <div className="text-lg text-slate-300 font-semibold tabular-nums">{convertMsToSec(pilot.time)}</div>
                         </div>
                     </li>
                 ))}
