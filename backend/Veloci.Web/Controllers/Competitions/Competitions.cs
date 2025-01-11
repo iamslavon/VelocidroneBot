@@ -35,9 +35,23 @@ public class CompetitionsController : ControllerBase
             Results = competition.CurrentResults
                 .Times
                 .OrderBy(x => x.Time)
-                .MapToModel()
+                .MapToModel(),
+            Leaderboard = GetLeaderboard()
         };
 
         return dashboardModel;
+    }
+
+    private List<SeasonResultModel> GetLeaderboard()
+    {
+        var today = DateTime.Now;
+        var firstDayOfMonth = new DateTime(today.Year, today.Month, 1);
+
+        var leaderboard = _competitionService
+            .GetSeasonResultsQuery(firstDayOfMonth, today)
+            .OrderByDescending(result => result.Points)
+            .MapToModel();
+
+        return leaderboard;
     }
 }
