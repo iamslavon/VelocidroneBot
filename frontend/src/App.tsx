@@ -21,6 +21,10 @@ function App() {
     })
   }, []);
 
+  if (!dashboard) {
+    return <></>
+  }
+
   return (
     <>
       <main className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
@@ -39,10 +43,10 @@ function App() {
                   <h3 className="text-sm uppercase tracking-wider text-emerald-400 font-medium">
                     Трек сьогодні:
                   </h3>
-                  <ClickableTrackName trackName={dashboard?.competition?.trackName} />
+                  <ClickableTrackName trackName={dashboard!.competition!.trackName!} />
                 </div>
               </div>
-              <CurrentLeaderboard trackResults={dashboard?.results} />
+              <CurrentLeaderboard trackResults={dashboard!.results!} />
             </div>
 
             {/* Yesterday's Results */}
