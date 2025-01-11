@@ -17,9 +17,7 @@ export const getApiCompetitionsCurrentResponseTransformer = async (data: any): P
 };
 
 const dashboardModelSchemaResponseTransformer = (data: any) => {
-    if (data.competition) {
-        data.competition = competitionModelSchemaResponseTransformer(data.competition);
-    }
+    data.competition = competitionModelSchemaResponseTransformer(data.competition);
     return data;
 };
 

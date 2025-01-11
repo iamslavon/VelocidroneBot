@@ -76,6 +76,10 @@
   "components": {
     "schemas": {
       "CompetitionModel": {
+        "required": [
+          "id",
+          "trackName"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -97,6 +101,11 @@
         "type": "integer"
       },
       "DashboardModel": {
+        "required": [
+          "competition",
+          "results",
+          "leaderboard"
+        ],
         "type": "object",
         "properties": {
           "competition": {
@@ -107,10 +116,34 @@
             "items": {
               "$ref": "#/components/schemas/TrackTimeModel"
             }
+          },
+          "leaderboard": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SeasonResultModel"
+            }
+          }
+        }
+      },
+      "SeasonResultModel": {
+        "required": [
+          "playerName"
+        ],
+        "type": "object",
+        "properties": {
+          "playerName": {
+            "type": "string"
+          },
+          "points": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
       "TrackTimeModel": {
+        "required": [
+          "playerName"
+        ],
         "type": "object",
         "properties": {
           "playerName": {

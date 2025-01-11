@@ -21,6 +21,7 @@ function App() {
     })
   }, []);
 
+  //TODO: Add proper loading state and indicator
   if (!dashboard) {
     return <></>
   }
@@ -34,8 +35,8 @@ function App() {
               UA Velocidrone Battle
             </h1>
             <nav className="flex justify-center space-x-4">
-            
-          </nav>
+
+            </nav>
           </header>
 
           <div className="grid lg:grid-cols-2 gap-8">
@@ -46,21 +47,21 @@ function App() {
                   <h3 className="text-sm uppercase tracking-wider text-emerald-400 font-medium">
                     Трек сьогодні:
                   </h3>
-                  <ClickableTrackName trackName={dashboard!.competition!.trackName!} />
+                  <ClickableTrackName trackName={dashboard.competition.trackName!} />
                 </div>
               </div>
-              <CurrentLeaderboard trackResults={dashboard!.results!} />
+              <CurrentLeaderboard trackResults={dashboard.results!} />
             </div>
 
             {/* Tournament Leaderboard */}
-          <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700 overflow-hidden">
-            <div className="px-6 py-8 border-b border-slate-700/50">
-              <h3 className="text-sm uppercase tracking-wider text-emerald-400 font-medium">
-                ПОТОЧНА ТУРНІРНА ТАБЛИЦЯ
-              </h3>
+            <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700 overflow-hidden">
+              <div className="px-6 py-8 border-b border-slate-700/50">
+                <h3 className="text-sm uppercase tracking-wider text-emerald-400 font-medium">
+                  ПОТОЧНА ТУРНІРНА ТАБЛИЦЯ
+                </h3>
+              </div>
+              <span>TBD</span>
             </div>
-            <span>TBD</span>
-          </div>
           </div>
         </div>
       </main>
