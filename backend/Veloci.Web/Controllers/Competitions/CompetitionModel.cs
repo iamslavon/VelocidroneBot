@@ -22,8 +22,6 @@ public class TrackTimeModel
 {
     public required string PlayerName { get; set; }
     public int Time { get; set; }
-    public int ModelId { get; set; }
-
     public int GlobalRank { get; set; }
     public int LocalRank { get; set; }
 }

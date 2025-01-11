@@ -153,10 +153,6 @@
             "type": "integer",
             "format": "int32"
           },
-          "modelId": {
-            "type": "integer",
-            "format": "int32"
-          },
           "globalRank": {
             "type": "integer",
             "format": "int32"

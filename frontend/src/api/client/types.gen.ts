@@ -23,7 +23,6 @@ export type SeasonResultModel = {
 export type TrackTimeModel = {
     playerName: string;
     time?: number;
-    modelId?: number;
     globalRank?: number;
     localRank?: number;
 };

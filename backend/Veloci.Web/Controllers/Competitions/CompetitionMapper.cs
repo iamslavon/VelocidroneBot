@@ -12,4 +12,9 @@ public static partial class CompetitionMapper
     public static partial List<TrackTimeModel> MapToModel(this IEnumerable<TrackTime> results);
 
     public static partial List<SeasonResultModel> MapToModel(this IEnumerable<SeasonResult> results);
+
+    public static partial List<TrackTimeModel> MapToModel(this IEnumerable<CompetitionResults> results);
+
+    [MapProperty(nameof(CompetitionResults.TrackTime), nameof(TrackTimeModel.Time))]
+    public static partial TrackTimeModel MapToModel(this CompetitionResults results);
 }

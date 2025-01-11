@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Veloci.Data.Domain;
 using Veloci.Logic.Services;
 
 namespace Veloci.Web.Controllers.Competitions;
@@ -32,14 +33,17 @@ public class CompetitionsController : ControllerBase
         var dashboardModel = new DashboardModel
         {
             Competition = competition.MapToModel(),
-            Results = competition.CurrentResults
-                .Times
-                .OrderBy(x => x.Time)
-                .MapToModel(),
+            Results = GetCurrentResults(competition),
             Leaderboard = GetLeaderboard()
         };
 
         return dashboardModel;
+    }
+
+    private List<TrackTimeModel> GetCurrentResults(Competition competition)
+    {
+        var currentResults = _competitionService.GetLocalLeaderboard(competition);
+        return currentResults.MapToModel();
     }
 
     private List<SeasonResultModel> GetLeaderboard()
