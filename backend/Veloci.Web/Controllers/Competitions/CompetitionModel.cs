@@ -9,6 +9,8 @@ public class CompetitionModel
     public CompetitionState State { get; set; }
     public string MapName { get; set; }
     public string TrackName { get; set; }
+    public int TrackId { get; set; }
+    public int MapId { get; set; }
 }
 
 public class DashboardModel

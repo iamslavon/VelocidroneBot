@@ -5,6 +5,7 @@ import api from './../api/api'
 import { DashboardModel } from './../api/client';
 import CurrentLeaderboard from './../components/CurrentLeaderBoard';
 import LeaderBoard from './../components/LeaderBoard';
+import VelocdroneResultLink from '../components/VelocidroneResultsLink';
 
 const PageDashboard: React.FC = () => {
 
@@ -37,6 +38,7 @@ const PageDashboard: React.FC = () => {
                             Трек сьогодні:
                         </h3>
                         <ClickableTrackName mapName={dashboard.competition.mapName!} trackName={dashboard.competition.trackName!} />
+                        <VelocdroneResultLink trackInfo={{ MapId: dashboard.competition.mapId!, TrackId: dashboard.competition.trackId! }}></VelocdroneResultLink>
                     </div>
                 </div>
                 <CurrentLeaderboard trackResults={dashboard.results!} />

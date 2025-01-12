@@ -6,6 +6,8 @@ export type CompetitionModel = {
     state?: CompetitionState;
     mapName?: string;
     trackName?: string;
+    trackId?: number;
+    mapId?: number;
 };
 
 export type CompetitionState = number;

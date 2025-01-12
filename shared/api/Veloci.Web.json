@@ -93,6 +93,14 @@
           },
           "trackName": {
             "type": "string"
+          },
+          "trackId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mapId": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
