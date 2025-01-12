@@ -13,8 +13,8 @@ const LayoutMain: React.FC = () => {
                     <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent mb-4">
                         <Link to={'/'}>UA Velocidrone Battle</Link>
                     </h1>
-                    <nav className="flex justify-center space-x-4">
-                        <Link to="https://t.me/ua_velocidrone_bot" className="text-slate-300 hover:text-emerald-400 transition-colors flex items-center space-x-2">
+                    <nav className="flex justify-center space-x-10">
+                        <Link to="https://t.me/fpv_velocidrone_ua" className="text-slate-300 hover:text-emerald-400 transition-colors flex items-center space-x-2">
                             <span>Telegram Bot</span>
                         </Link>
                         <NavLink to="/rules" className="text-slate-300 hover:text-emerald-400 transition-colors flex items-center space-x-2">
