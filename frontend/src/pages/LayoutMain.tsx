@@ -1,5 +1,4 @@
 import { Link, NavLink, Outlet } from "react-router-dom"
-import './../App.css'
 
 /**
  * Defines main layout that is applied to all top level pages
