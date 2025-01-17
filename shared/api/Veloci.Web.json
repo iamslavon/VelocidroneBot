@@ -1,0 +1,180 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Veloci.Web | v1",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/competitions/current": {
+      "get": {
+        "tags": [
+          "Competitions"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CompetitionModel"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CompetitionModel"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CompetitionModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/dashboard": {
+      "get": {
+        "tags": [
+          "Competitions"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CompetitionModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "startedOn": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "state": {
+            "$ref": "#/components/schemas/CompetitionState"
+          },
+          "mapName": {
+            "type": "string"
+          },
+          "trackName": {
+            "type": "string"
+          },
+          "trackId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mapId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "CompetitionState": {
+        "type": "integer"
+      },
+      "DashboardModel": {
+        "required": [
+          "competition",
+          "results",
+          "leaderboard"
+        ],
+        "type": "object",
+        "properties": {
+          "competition": {
+            "$ref": "#/components/schemas/CompetitionModel"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrackTimeModel"
+            }
+          },
+          "leaderboard": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SeasonResultModel"
+            }
+          }
+        }
+      },
+      "SeasonResultModel": {
+        "required": [
+          "playerName"
+        ],
+        "type": "object",
+        "properties": {
+          "playerName": {
+            "type": "string"
+          },
+          "points": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "TrackTimeModel": {
+        "required": [
+          "playerName"
+        ],
+        "type": "object",
+        "properties": {
+          "playerName": {
+            "type": "string"
+          },
+          "time": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "globalRank": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "localRank": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Competitions"
+    }
+  ]
+}

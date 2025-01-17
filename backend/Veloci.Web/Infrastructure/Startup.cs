@@ -76,6 +76,8 @@ public class Startup
         services.UseDiscordBotService();
 
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<IntermediateCompetitionResult>());
+
+        services.AddOpenApi();
     }
 
     public void Configure(WebApplication app)
@@ -84,6 +86,7 @@ public class Startup
         if (app.Environment.IsDevelopment())
         {
             app.UseMigrationsEndPoint();
+            app.MapOpenApi();
         }
         else
         {
