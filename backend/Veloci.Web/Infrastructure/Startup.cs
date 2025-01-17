@@ -62,6 +62,17 @@ public class Startup
             options.User.RequireUniqueEmail = true;
         });
 
+        services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAnyOrigin", builder =>
+            {
+                builder
+                    .AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+        });
+
         services.AddHangfire(config => config
             .UseSQLiteStorage(new SqliteConnectionStringBuilder(connectionString).DataSource)
             .UseSimpleAssemblyNameTypeSerializer()
@@ -103,6 +114,8 @@ public class Startup
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
+
+        app.UseCors("AllowAnyOrigin");
 
         app.UseForwardedHeaders(new ForwardedHeadersOptions
         {
