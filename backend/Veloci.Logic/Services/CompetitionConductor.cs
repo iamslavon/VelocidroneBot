@@ -14,6 +14,7 @@ namespace Veloci.Logic.Services;
 public class CompetitionConductor
 {
     private readonly IRepository<Competition> _competitions;
+    private readonly IRepository<Pilot> _pilots;
     private readonly TrackService _trackService;
     private readonly IMediator _mediator;
     private readonly ResultsFetcher _resultsFetcher;
@@ -30,7 +31,8 @@ public class CompetitionConductor
         MessageComposer messageComposer,
         ImageService imageService,
         TrackService trackService,
-        IMediator mediator)
+        IMediator mediator,
+        IRepository<Pilot> pilots)
     {
         _competitions = competitions;
         _resultsFetcher = resultsFetcher;
@@ -40,6 +42,7 @@ public class CompetitionConductor
         _imageService = imageService;
         _trackService = trackService;
         _mediator = mediator;
+        _pilots = pilots;
     }
 
     public async Task StartNewAsync()
@@ -109,9 +112,44 @@ public class CompetitionConductor
 
         competition.State = CompetitionState.Closed;
         competition.CompetitionResults = _competitionService.GetLocalLeaderboard(competition);
+
+        await UpdateDayStreakAsync(competition.CompetitionResults);
         await _competitions.SaveChangesAsync();
 
         await _mediator.Publish(new CompetitionStopped(competition));
+    }
+
+    private async Task UpdateDayStreakAsync(List<CompetitionResults> competitionResults)
+    {
+        var today = DateTime.Today;
+
+        foreach (var results in competitionResults)
+        {
+            var pilot = await _pilots.GetAll()
+                .FirstOrDefaultAsync(p => p.Name == results.PlayerName);
+
+            if (pilot is null)
+            {
+                pilot = new Pilot
+                {
+                    Name = results.PlayerName,
+                    DayStreak = 1,
+                    LastRaceDate = today
+                };
+
+                await _pilots.AddAsync(pilot);
+                continue;
+            }
+
+            if (pilot.LastRaceDate == today.AddDays(-1))
+            {
+                pilot.DayStreak++;
+            }
+            else
+            {
+                pilot.DayStreak = 1;
+            }
+        }
     }
 
     private async Task CancelAsync()

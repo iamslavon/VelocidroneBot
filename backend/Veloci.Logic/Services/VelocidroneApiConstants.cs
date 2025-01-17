@@ -1,4 +1,4 @@
-﻿namespace Veloci.Logic.Services.Tracks;
+﻿namespace Veloci.Logic.Services;
 
 public static class VelocidroneApiConstants
 {

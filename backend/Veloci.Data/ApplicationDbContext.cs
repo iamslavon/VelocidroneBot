@@ -22,5 +22,6 @@ public class ApplicationDbContext : IdentityDbContext
         builder.Entity<TrackTime>().ToTable("TrackTimes");
         builder.Entity<TrackTimeDelta>().ToTable("TrackTimeDeltas");
         builder.Entity<CompetitionResults>().ToTable("CompetitionResults");
+        builder.Entity<Pilot>().ToTable("Pilots");
     }
 }
