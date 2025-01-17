@@ -33,10 +33,10 @@ const PageDashboard: React.FC = () => {
     return <>
         <div className="grid lg:grid-cols-2 gap-8">
             {/* Current Competition */}
-            <div className="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
-                <div className="px-6 py-8 border-b border-gray-700">
-                    <div className="space-y-2">
-                        <h3 className="text-sm uppercase tracking-wider text-emerald-400 font-medium">
+            <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700 overflow-hidden">
+                <div className="px-6 py-8 border-b border-slate-700/50">
+                    <div className="flex flex-col space-y-1">
+                        <h3 className="text-sm uppercase tracking-wider text-emerald-400 font-medium mb-2">
                             Трек сьогодні:
                         </h3>
                         <ClickableTrackName mapName={dashboard.competition.mapName!} trackName={dashboard.competition.trackName!} />
