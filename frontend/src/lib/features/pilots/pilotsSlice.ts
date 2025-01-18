@@ -2,12 +2,12 @@ import { getApiPilotsAll } from "../../../api/client";
 import { createAppSlice } from "../../createAppSlice";
 
 export interface PilotsSliceState {
-  state: "Loading" | "Loaded" | "Error";
+  state: "Idle" | "Loading" | "Loaded" | "Error";
   pilots: string[];
 }
 
 const initialState: PilotsSliceState = {
-  state: "Loading",
+  state: "Idle",
   pilots: [],
 };
 
