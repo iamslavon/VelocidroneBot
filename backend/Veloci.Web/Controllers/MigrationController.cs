@@ -21,6 +21,8 @@ public class MigrationController
     [HttpGet("/api/migration/pilots")]
     public async Task Pilots()
     {
+        if (await _pilots.GetAll().AnyAsync()) return;
+
         var allPilots = await _competitions.GetAll()
             .NotCancelled()
             .SelectMany(comp => comp.CompetitionResults)
@@ -41,22 +43,17 @@ public class MigrationController
                 .StartedOn;
         }
 
-        var lastCompetition = competitions.FirstOrDefault();
+        var closedCompetitions = await competitions.Where(c => c.State == CompetitionState.Closed).ToListAsync();
+        var lastClosedCompetition = closedCompetitions.FirstOrDefault();
 
-        if (lastCompetition is null)
+        if (lastClosedCompetition is null)
             throw new Exception("What do you mean no last competition?");
 
-        foreach (var result in lastCompetition.CompetitionResults)
+        foreach (var result in lastClosedCompetition.CompetitionResults)
         {
-            var dayStreak = 0;
-
-            foreach (var competition in competitions)
-            {
-                if (competition.CompetitionResults.Any(r => r.PlayerName == result.PlayerName))
-                    dayStreak++;
-                else
-                    break;
-            }
+            var dayStreak = closedCompetitions
+                .TakeWhile(competition => competition.CompetitionResults.Any(r => r.PlayerName == result.PlayerName))
+                .Count();
 
             var pilot = allPilots.FirstOrDefault(p => p.Name == result.PlayerName);
 
