@@ -30,6 +30,22 @@ export type TrackTimeModel = {
     localRank?: number;
 };
 
+export type GetApiPilotsAllData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/pilots/All';
+};
+
+export type GetApiPilotsAllResponses = {
+    /**
+     * OK
+     */
+    200: Array<string>;
+};
+
+export type GetApiPilotsAllResponse = GetApiPilotsAllResponses[keyof GetApiPilotsAllResponses];
+
 export type GetApiCompetitionsCurrentData = {
     body?: never;
     path?: never;

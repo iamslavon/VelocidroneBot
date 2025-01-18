@@ -29,7 +29,7 @@ export const dashboardSlice = createAppSlice({
           state.state = "Loaded";
           state.data = action.payload!;
         },
-        rejected: (state, ...other) => {
+        rejected: (state) => {
           state.state = "Error";
           state.data = null;
         },
