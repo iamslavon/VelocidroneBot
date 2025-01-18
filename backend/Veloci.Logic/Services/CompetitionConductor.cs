@@ -149,6 +149,8 @@ public class CompetitionConductor
             {
                 pilot.DayStreak = 1;
             }
+
+            pilot.LastRaceDate = today;
         }
     }
 
