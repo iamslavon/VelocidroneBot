@@ -31,27 +31,29 @@ public class MigrationController
             .Select(name => new Pilot(name))
             .ToListAsync();
 
-        var competitions = _competitions
+        var competitions = await _competitions
             .GetAll()
-            .NotCancelled()
-            .OrderByDescending(c => c.StartedOn);
+            .OrderByDescending(c => c.StartedOn)
+            .Where(c => c.State == CompetitionState.Closed)
+            .ToListAsync();
 
         foreach (var pilot in allPilots)
         {
             pilot.LastRaceDate = competitions
                 .FirstOrDefault(c => c.CompetitionResults.Any(r => r.PlayerName == pilot.Name))?
                 .StartedOn;
+
+            pilot.MaxDayStreak = GetMaxDayStreak(pilot.Name, competitions);
         }
 
-        var closedCompetitions = await competitions.Where(c => c.State == CompetitionState.Closed).ToListAsync();
-        var lastClosedCompetition = closedCompetitions.FirstOrDefault();
+        var lastCompetition = competitions.FirstOrDefault();
 
-        if (lastClosedCompetition is null)
+        if (lastCompetition is null)
             throw new Exception("What do you mean no last competition?");
 
-        foreach (var result in lastClosedCompetition.CompetitionResults)
+        foreach (var result in lastCompetition.CompetitionResults)
         {
-            var dayStreak = closedCompetitions
+            var dayStreak = competitions
                 .TakeWhile(competition => competition.CompetitionResults.Any(r => r.PlayerName == result.PlayerName))
                 .Count();
 
@@ -62,5 +64,32 @@ public class MigrationController
         }
 
         await _pilots.AddRangeAsync(allPilots);
+    }
+
+    private int GetMaxDayStreak(string pilot, List<Competition> competitions)
+    {
+        var maxStreak = 0;
+        var currentStreak = 0;
+        DateTime? lastDate = null;
+
+        var pilotsCompetitions = competitions
+            .Where(competition => competition.CompetitionResults.Any(r => r.PlayerName == pilot));
+
+        foreach (var competition in pilotsCompetitions)
+        {
+            if (lastDate.HasValue && (lastDate.Value - competition.StartedOn).Days == 1)
+            {
+                currentStreak++;
+            }
+            else
+            {
+                currentStreak = 1;
+            }
+
+            maxStreak = Math.Max(maxStreak, currentStreak);
+            lastDate = competition.StartedOn;
+        }
+
+        return maxStreak;
     }
 }

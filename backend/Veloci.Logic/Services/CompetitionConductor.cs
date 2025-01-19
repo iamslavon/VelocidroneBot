@@ -130,28 +130,16 @@ public class CompetitionConductor
 
             if (pilot is null)
             {
-                pilot = new Pilot
-                {
-                    Name = results.PlayerName,
-                    DayStreak = 1,
-                    LastRaceDate = today
-                };
-
+                pilot = new Pilot(results.PlayerName);
                 await _pilots.AddAsync(pilot);
-                continue;
             }
 
-            if (pilot.LastRaceDate == today.AddDays(-1))
-            {
-                pilot.DayStreak++;
-            }
-            else
-            {
-                pilot.DayStreak = 1;
-            }
-
+            pilot.IncreaseDayStreak();
             pilot.LastRaceDate = today;
         }
+
+        var pilotsFromCompetition = competitionResults.Select(cr => cr.PlayerName).ToList();
+        _pilots.GetAll().ResetDayStreaksExcept(pilotsFromCompetition);
     }
 
     private async Task CancelAsync()
