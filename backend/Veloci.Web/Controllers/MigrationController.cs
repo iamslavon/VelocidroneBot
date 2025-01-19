@@ -77,7 +77,7 @@ public class MigrationController
 
         foreach (var competition in pilotsCompetitions)
         {
-            if (lastDate.HasValue && (lastDate.Value - competition.StartedOn).Days == 1)
+            if (lastDate.HasValue && (lastDate.Value.Date - competition.StartedOn.Date).Days == 1)
             {
                 currentStreak++;
             }
