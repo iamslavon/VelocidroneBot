@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace Veloci.Data.Domain;
 
@@ -16,16 +17,25 @@ public class Pilot
     [Key]
     [MaxLength(128)]
     public string Name { get; set; }
+
+    /// <summary>
+    /// The day when the pilot last raced.
+    /// </summary>
     public DateTime? LastRaceDate { get; set; }
     public int DayStreak { get; set; }
     public int MaxDayStreak { get; set; }
 
-    public void IncreaseDayStreak()
+    public void IncreaseDayStreak(DateTime today)
     {
+        if (LastRaceDate.HasValue && LastRaceDate.Value.Date == today.Date)
+            return;
+
         DayStreak++;
 
         if (DayStreak > MaxDayStreak)
             MaxDayStreak = DayStreak;
+
+        LastRaceDate = today;
     }
 
     public void ResetDayStreak()
@@ -36,14 +46,10 @@ public class Pilot
 
 public static class PilotExtensions
 {
-    /// <summary>
-    /// Resets the day streaks of all pilots except the ones in the exceptPilots list.
-    /// </summary>
-    public static void ResetDayStreaksExcept(this IQueryable<Pilot> allPilots, List<string> exceptPilots)
+    public static async Task ResetDayStreaksAsync(this IQueryable<Pilot> allPilots, DateTime today)
     {
-        allPilots
-            .Where(p => !exceptPilots.Contains(p.Name))
-            .ToList()
-            .ForEach(p => p.ResetDayStreak());
+        await allPilots
+            .Where(p => p.LastRaceDate < today)
+            .ExecuteUpdateAsync(x => x.SetProperty(pilot => pilot.DayStreak, 0));
     }
 }

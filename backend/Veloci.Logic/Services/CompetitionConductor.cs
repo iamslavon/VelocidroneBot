@@ -134,12 +134,11 @@ public class CompetitionConductor
                 await _pilots.AddAsync(pilot);
             }
 
-            pilot.IncreaseDayStreak();
-            pilot.LastRaceDate = today;
+            pilot.IncreaseDayStreak(today);
         }
 
-        var pilotsFromCompetition = competitionResults.Select(cr => cr.PlayerName).ToList();
-        _pilots.GetAll().ResetDayStreaksExcept(pilotsFromCompetition);
+        await _pilots.SaveChangesAsync();
+        await _pilots.GetAll().ResetDayStreaksAsync(today);
     }
 
     private async Task CancelAsync()
