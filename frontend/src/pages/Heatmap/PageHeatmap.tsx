@@ -1,20 +1,33 @@
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { fetch, selectPilots, selectState } from '@/lib/features/pilots/pilotsSlice'
-import { useEffect } from 'react';
-import { ComboboxDemo } from '@/components/ComboBox';
+import { fetch, selectPilots, selectState } from '@/lib/features/pilots/pilotsSlice';
+import { useEffect, Suspense, lazy } from 'react';
+import ComboBox from '@/components/ComboBox';
+import { fetch as fetchHeatmap, choosePilot, selectState as selectHeatmapState, selectCurrentHeatmap } from '@/lib/features/heatmap/heatmapSlice';
 
+const HeatmapChart = lazy(() => import('./HeatmapChart'))
 
-const PageHeatmap: React.FC = () => {
+const pilotKey = (pilot: string) => pilot;
+const pilotLabel = (pilot: string) => pilot;
+
+const PageHeatmap = () => {
 
     const dispatch = useAppDispatch();
     const pilotsState = useAppSelector(selectState);
     const pilots = useAppSelector(selectPilots);
+    const heatMapState = useAppSelector(selectHeatmapState);
+    const heatMap = useAppSelector(selectCurrentHeatmap)
+
 
     useEffect(() => {
         if (pilotsState == 'Idle' || pilotsState == 'Error') {
             dispatch(fetch());
         }
     }, [pilotsState]);
+
+    const selectPilot = (pilot: string) => {
+        dispatch(choosePilot(pilot));
+        dispatch(fetchHeatmap(pilot));
+    }
 
     if (pilotsState == 'Idle') return <></>;
 
@@ -23,15 +36,30 @@ const PageHeatmap: React.FC = () => {
     if (pilotsState == 'Error') return <h2>Error</h2>
 
     return <>
-        <h2 className="text-center text-2xl text-green-500">🤞Heatmap is in Progress</h2>
+        <ComboBox defaultCaption='Select a pilot' items={pilots} getKey={pilotKey} getLabel={pilotLabel} onSelect={selectPilot}></ComboBox>
 
-        <ComboboxDemo></ComboboxDemo>
+        <div className='py-6'>
 
-        <h3 className='p-4 text-green-200 text-xl'>Pilots:</h3>
+            {heatMapState == 'Loading' && <>
+                <div className='flex space-x-2 justify-center items-center bg-white h-screen dark:invert rounded-lg' style={{ height: '300px' }}>
+                    <span className='sr-only'>Loading...</span>
+                    <div className='h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.3s]'></div>
+                    <div className='h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.15s]'></div>
+                    <div className='h-8 w-8 bg-black rounded-full animate-bounce'></div>
+                </div>
+            </>
+            }
 
-        <ul>
-            {pilots.map(p => <li key={p}><span className='text-gray-300'>{p}</span></li>)}
-        </ul>
+            {heatMapState == 'Loaded' && <>
+                <div className='bg-slate-200 rounded-lg' style={{ height: '600px' }}>
+                    <Suspense fallback={<div>Loading...</div>}>
+                        <HeatmapChart data={heatMap} />
+                    </Suspense>
+                </div>
+            </>
+            }
+        </div>
+
     </>
 }
 

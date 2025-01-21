@@ -2,7 +2,7 @@
 
 export type CompetitionModel = {
     id?: string;
-    startedOn?: Date;
+    startedOn?: string;
     state?: CompetitionState;
     mapName?: string;
     trackName?: string;
@@ -16,6 +16,11 @@ export type DashboardModel = {
     competition: CompetitionModel;
     results: Array<TrackTimeModel>;
     leaderboard: Array<SeasonResultModel>;
+};
+
+export type HeatmapEntry = {
+    date?: string;
+    points?: number;
 };
 
 export type SeasonResultModel = {
@@ -45,6 +50,24 @@ export type GetApiPilotsAllResponses = {
 };
 
 export type GetApiPilotsAllResponse = GetApiPilotsAllResponses[keyof GetApiPilotsAllResponses];
+
+export type GetApiHeatmapForPilotData = {
+    body?: never;
+    path?: never;
+    query?: {
+        pilotName?: string;
+    };
+    url: '/api/heatmap/ForPilot';
+};
+
+export type GetApiHeatmapForPilotResponses = {
+    /**
+     * OK
+     */
+    200: Array<HeatmapEntry>;
+};
+
+export type GetApiHeatmapForPilotResponse = GetApiHeatmapForPilotResponses[keyof GetApiHeatmapForPilotResponses];
 
 export type GetApiCompetitionsCurrentData = {
     body?: never;

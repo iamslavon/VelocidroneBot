@@ -8,9 +8,13 @@ export default defineConfig({
   experimentalParser: true,
   plugins: [
     ...defaultPlugins,
-    {
-      dates: true,
-      name: "@hey-api/transformers",
-    },
+    // {
+    //   name: "@hey-api/sdk",
+    //   transformer: true,
+    // },
+    // {
+    //   name: "@hey-api/transformers",
+    //   dates: true,
+    // },
   ],
 });
