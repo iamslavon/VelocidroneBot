@@ -16,9 +16,17 @@ public class MessageComposer
 
     public string StartCompetition(Track track)
     {
+        var rating = string.Empty;
+
+        if (track.Rating?.Value is not null)
+        {
+            rating = $"Попередній рейтинг: *{Math.Round(track.Rating.Value.Value, 1):F1}*/3{Environment.NewLine}{Environment.NewLine}";
+        }
+
         return $"📅 Вітаємо на щоденному *UA Velocidrone Battle*!{Environment.NewLine}{Environment.NewLine}" +
                $"Трек дня:{Environment.NewLine}" +
                $"*{track.Map.Name} - `{track.Name}`*{Environment.NewLine}{Environment.NewLine}" +
+               $"{rating}" +
                $"Leaderboard:{Environment.NewLine}" +
                $"*https://www.velocidrone.com/leaderboard/{track.Map.MapId}/{track.TrackId}/All*{Environment.NewLine}{Environment.NewLine}";
     }

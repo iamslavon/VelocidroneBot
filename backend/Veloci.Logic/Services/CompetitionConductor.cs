@@ -163,6 +163,13 @@ public class CompetitionConductor
             throw new Exception("There are no active competitions");
 
         var poll = _messageComposer.Poll(competition.Track.FullName);
+
+        if (competition.Track.Rating is null)
+        {
+            Log.Error("No poll to stop");
+            return;
+        }
+
         var telegramPoll = await TelegramBot.StopPollAsync(competition.Track.Rating.PollMessageId);
 
         if (telegramPoll is null)
