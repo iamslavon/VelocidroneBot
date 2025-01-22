@@ -50,9 +50,11 @@ export const heatmapSlice = createAppSlice({
   selectors: {
     selectState: (state) => state.state,
     selectCurrentHeatmap: (state) => state.heatmap,
+    selectCurrentPilot: (state) => state.currentPilot,
   },
 });
 
 export const { fetch, choosePilot } = heatmapSlice.actions;
 
-export const { selectState, selectCurrentHeatmap } = heatmapSlice.selectors;
+export const { selectState, selectCurrentHeatmap, selectCurrentPilot } =
+  heatmapSlice.selectors;

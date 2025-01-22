@@ -27,11 +27,13 @@ interface ComboBoxProps<TItem> {
     getLabel: (item: TItem) => string;
     getKey: (item: TItem) => string;
     onSelect: (item: TItem) => void;
+    value: TItem;
 }
 
-const Combobox = <T,>({ items, selectedValue, defaultCaption, getKey, getLabel, onSelect }: ComboBoxProps<T>) => {
+const Combobox = <T,>({ items, selectedValue, value, defaultCaption, getKey, getLabel, onSelect }: ComboBoxProps<T>) => {
     const [open, setOpen] = React.useState(false)
-    const [value, setValue] = React.useState(selectedValue)
+
+    const caption = value ? getLabel(value) : defaultCaption;
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -42,7 +44,7 @@ const Combobox = <T,>({ items, selectedValue, defaultCaption, getKey, getLabel, 
                     aria-expanded={open}
                     className="w-[200px] justify-between"
                 >
-                    {value || defaultCaption}
+                    {caption}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
@@ -56,9 +58,8 @@ const Combobox = <T,>({ items, selectedValue, defaultCaption, getKey, getLabel, 
                                 <CommandItem
                                     key={getKey(item)}
                                     value={getLabel(item)}
-                                    onSelect={(currentValue) => {
-                                        onSelect(item)
-                                        setValue(currentValue === value ? "" : currentValue)
+                                    onSelect={() => {
+                                        onSelect(item);
                                         setOpen(false)
                                     }}
                                 >

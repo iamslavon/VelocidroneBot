@@ -2,7 +2,7 @@ import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { fetch, selectPilots, selectState } from '@/lib/features/pilots/pilotsSlice';
 import { useEffect, Suspense, lazy } from 'react';
 import ComboBox from '@/components/ComboBox';
-import { fetch as fetchHeatmap, choosePilot, selectState as selectHeatmapState, selectCurrentHeatmap } from '@/lib/features/heatmap/heatmapSlice';
+import { fetch as fetchHeatmap, choosePilot, selectState as selectHeatmapState, selectCurrentHeatmap, selectCurrentPilot } from '@/lib/features/heatmap/heatmapSlice';
 
 const HeatmapChart = lazy(() => import('./HeatmapChart'))
 
@@ -15,7 +15,8 @@ const PageHeatmap = () => {
     const pilotsState = useAppSelector(selectState);
     const pilots = useAppSelector(selectPilots);
     const heatMapState = useAppSelector(selectHeatmapState);
-    const heatMap = useAppSelector(selectCurrentHeatmap)
+    const heatMap = useAppSelector(selectCurrentHeatmap);
+    const currentPilot = useAppSelector(selectCurrentPilot);
 
 
     useEffect(() => {
@@ -36,7 +37,12 @@ const PageHeatmap = () => {
     if (pilotsState == 'Error') return <h2>Error</h2>
 
     return <>
-        <ComboBox defaultCaption='Select a pilot' items={pilots} getKey={pilotKey} getLabel={pilotLabel} onSelect={selectPilot}></ComboBox>
+        <ComboBox defaultCaption='Select a pilot'
+            items={pilots}
+            getKey={pilotKey}
+            getLabel={pilotLabel}
+            onSelect={selectPilot}
+            value={currentPilot!}></ComboBox>
 
         <div className='py-6'>
 
