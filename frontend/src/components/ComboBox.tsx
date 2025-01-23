@@ -21,7 +21,6 @@ import {
 
 
 interface ComboBoxProps<TItem> {
-    selectedValue?: string;
     defaultCaption: string;
     items: TItem[];
     getLabel: (item: TItem) => string;
@@ -30,7 +29,7 @@ interface ComboBoxProps<TItem> {
     value: TItem;
 }
 
-const Combobox = <T,>({ items, selectedValue, value, defaultCaption, getKey, getLabel, onSelect }: ComboBoxProps<T>) => {
+const Combobox = <T,>({ items, value, defaultCaption, getKey, getLabel, onSelect }: ComboBoxProps<T>) => {
     const [open, setOpen] = React.useState(false)
 
     const caption = value ? getLabel(value) : defaultCaption;

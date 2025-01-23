@@ -16,7 +16,7 @@ const PageDashboard: React.FC = () => {
 
     useEffect(() => {
         dispatch(fetch());
-    }, []);
+    }, [dispatch]);
 
     if (state == 'Loading') {
         return <>

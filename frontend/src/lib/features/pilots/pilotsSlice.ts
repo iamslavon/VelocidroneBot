@@ -15,7 +15,7 @@ export const pilotsSlice = createAppSlice({
   name: "pilots",
   initialState: initialState,
   reducers: (create) => ({
-    fetch: create.asyncThunk(
+    fetchPilots: create.asyncThunk(
       async () => {
         const result = await getApiPilotsAll();
         return result.data;
@@ -37,11 +37,11 @@ export const pilotsSlice = createAppSlice({
   }),
 
   selectors: {
-    selectState: (state) => state.state,
+    selectPilotsState: (state) => state.state,
     selectPilots: (state) => state.pilots,
   },
 });
 
-export const { fetch } = pilotsSlice.actions;
+export const { fetchPilots } = pilotsSlice.actions;
 
-export const { selectState, selectPilots } = pilotsSlice.selectors;
+export const { selectPilotsState, selectPilots } = pilotsSlice.selectors;

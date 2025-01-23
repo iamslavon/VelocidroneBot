@@ -18,7 +18,7 @@ export const heatmapSlice = createAppSlice({
   name: "heatmap",
   initialState: initialState,
   reducers: (create) => ({
-    fetch: create.asyncThunk(
+    fetchHeatmap: create.asyncThunk(
       async (pilotName: string) => {
         const result = await getApiHeatmapForPilot({
           query: { pilotName: pilotName },
@@ -32,7 +32,6 @@ export const heatmapSlice = createAppSlice({
         fulfilled: (state, action) => {
           state.state = "Loaded";
           state.heatmap = action.payload || [];
-          console.log(action.payload);
         },
         rejected: (state) => {
           state.state = "Error";
@@ -48,13 +47,13 @@ export const heatmapSlice = createAppSlice({
   }),
 
   selectors: {
-    selectState: (state) => state.state,
+    selectHeatmapState: (state) => state.state,
     selectCurrentHeatmap: (state) => state.heatmap,
     selectCurrentPilot: (state) => state.currentPilot,
   },
 });
 
-export const { fetch, choosePilot } = heatmapSlice.actions;
+export const { fetchHeatmap, choosePilot } = heatmapSlice.actions;
 
-export const { selectState, selectCurrentHeatmap, selectCurrentPilot } =
+export const { selectHeatmapState, selectCurrentHeatmap, selectCurrentPilot } =
   heatmapSlice.selectors;

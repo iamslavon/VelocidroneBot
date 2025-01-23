@@ -1,8 +1,8 @@
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { fetch, selectPilots, selectState } from '@/lib/features/pilots/pilotsSlice';
+import { fetchPilots, selectPilots, selectPilotsState } from '@/lib/features/pilots/pilotsSlice';
 import { useEffect, Suspense, lazy } from 'react';
 import ComboBox from '@/components/ComboBox';
-import { fetch as fetchHeatmap, choosePilot, selectState as selectHeatmapState, selectCurrentHeatmap, selectCurrentPilot } from '@/lib/features/heatmap/heatmapSlice';
+import { fetchHeatmap, choosePilot, selectHeatmapState, selectCurrentHeatmap, selectCurrentPilot } from '@/lib/features/heatmap/heatmapSlice';
 
 const HeatmapChart = lazy(() => import('./HeatmapChart'))
 
@@ -12,7 +12,7 @@ const pilotLabel = (pilot: string) => pilot;
 const PageHeatmap = () => {
 
     const dispatch = useAppDispatch();
-    const pilotsState = useAppSelector(selectState);
+    const pilotsState = useAppSelector(selectPilotsState);
     const pilots = useAppSelector(selectPilots);
     const heatMapState = useAppSelector(selectHeatmapState);
     const heatMap = useAppSelector(selectCurrentHeatmap);
@@ -21,9 +21,9 @@ const PageHeatmap = () => {
 
     useEffect(() => {
         if (pilotsState == 'Idle' || pilotsState == 'Error') {
-            dispatch(fetch());
+            dispatch(fetchPilots());
         }
-    }, [pilotsState]);
+    }, [pilotsState, dispatch]);
 
     const selectPilot = (pilot: string) => {
         dispatch(choosePilot(pilot));
