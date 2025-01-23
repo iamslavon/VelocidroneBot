@@ -15,7 +15,8 @@ public class TelegramMessageEventHandler :
     INotificationHandler<SeasonFinished>,
     INotificationHandler<BadTrack>,
     INotificationHandler<CheerUp>,
-    INotificationHandler<YearResults>
+    INotificationHandler<YearResults>,
+    INotificationHandler<DayStreakAchievements>
 {
     private readonly MessageComposer _messageComposer;
 
@@ -99,6 +100,18 @@ public class TelegramMessageEventHandler :
 
         foreach (var message in messageSet)
         {
+            await TelegramBot.SendMessageAsync(message);
+            await Task.Delay(TimeSpan.FromSeconds(delaySec), cancellationToken);
+        }
+    }
+
+    public async Task Handle(DayStreakAchievements notification, CancellationToken cancellationToken)
+    {
+        const int delaySec = 3;
+
+        foreach (var pilot in notification.Pilots)
+        {
+            var message = _messageComposer.DayStreakAchievement(pilot);
             await TelegramBot.SendMessageAsync(message);
             await Task.Delay(TimeSpan.FromSeconds(delaySec), cancellationToken);
         }
