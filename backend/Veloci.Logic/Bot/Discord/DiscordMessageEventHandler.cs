@@ -38,7 +38,9 @@ public class DiscordMessageEventHandler :
     INotificationHandler<TempSeasonResults>,
     INotificationHandler<SeasonFinished>,
     INotificationHandler<BadTrack>,
-    INotificationHandler<CheerUp>
+    INotificationHandler<CheerUp>,
+    INotificationHandler<YearResults>,
+    INotificationHandler<DayStreakAchievements>
 {
     private readonly MessageComposer _messageComposer;
     private readonly IDiscordBot _discordBot;
@@ -105,5 +107,29 @@ public class DiscordMessageEventHandler :
         // {
         //     await TelegramBot.SendPhotoAsync(cheerUpMessage.FileUrl, cheerUpMessage.Text);
         // }
+    }
+
+    public async Task Handle(YearResults notification, CancellationToken cancellationToken)
+    {
+        var messageSet = _messageComposer.YearResults(notification.Results);
+        const int delaySec = 10;
+
+        foreach (var message in messageSet)
+        {
+            await _discordBot.SendMessage(message);
+            await Task.Delay(TimeSpan.FromSeconds(delaySec), cancellationToken);
+        }
+    }
+
+    public async Task Handle(DayStreakAchievements notification, CancellationToken cancellationToken)
+    {
+        const int delaySec = 3;
+
+        foreach (var pilot in notification.Pilots)
+        {
+            var message = _messageComposer.DayStreakAchievement(pilot);
+            await _discordBot.SendMessage(message);
+            await Task.Delay(TimeSpan.FromSeconds(delaySec), cancellationToken);
+        }
     }
 }
