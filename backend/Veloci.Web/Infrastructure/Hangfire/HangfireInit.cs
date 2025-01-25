@@ -17,6 +17,7 @@ public class HangfireInit
             }
         }
 
+        RecurringJob.AddOrUpdate<CompetitionService>("Day streak potential lose", x => x.DayStreakPotentialLoseNotification(), "5 14 * * *");
         RecurringJob.AddOrUpdate<CompetitionConductor>("Vote reminder", x => x.VoteReminder(), "30 14 * * *");
         RecurringJob.AddOrUpdate<CompetitionConductor>("Stop poll", x => x.StopPollAsync(), "58 14 * * *");
         RecurringJob.AddOrUpdate<CompetitionConductor>("Stop competition", x => x.StopAsync(), "1 15 * * *");

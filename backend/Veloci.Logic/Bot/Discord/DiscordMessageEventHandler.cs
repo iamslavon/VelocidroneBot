@@ -40,7 +40,8 @@ public class DiscordMessageEventHandler :
     INotificationHandler<BadTrack>,
     INotificationHandler<CheerUp>,
     INotificationHandler<YearResults>,
-    INotificationHandler<DayStreakAchievements>
+    INotificationHandler<DayStreakAchievements>,
+    INotificationHandler<DayStreakPotentialLose>
 {
     private readonly MessageComposer _messageComposer;
     private readonly IDiscordBot _discordBot;
@@ -131,5 +132,11 @@ public class DiscordMessageEventHandler :
             await _discordBot.SendMessage(message);
             await Task.Delay(TimeSpan.FromSeconds(delaySec), cancellationToken);
         }
+    }
+
+    public async Task Handle(DayStreakPotentialLose notification, CancellationToken cancellationToken)
+    {
+        var message = _messageComposer.DayStreakPotentialLose(notification.Pilots);
+        await _discordBot.SendMessage(message);
     }
 }

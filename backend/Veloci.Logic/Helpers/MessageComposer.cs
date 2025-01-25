@@ -156,6 +156,22 @@ public class MessageComposer
         };
     }
 
+    public string DayStreakPotentialLose(IEnumerable<Pilot> pilots)
+    {
+        var message = $"⚠️ *Важливе повідомлення!*{Environment.NewLine}" +
+                      $"Наступні пілоти можуть втратити свій day streak:{Environment.NewLine}{Environment.NewLine}";
+
+        foreach (var pilot in pilots)
+        {
+            message += $"*{pilot.Name}* - *{pilot.DayStreak}* day streak{Environment.NewLine}";
+        }
+
+        message += $"{Environment.NewLine}Швиденько запускайте симулятори і летіть! 🚀" +
+                   $"{Environment.NewLine}У вас менше години.";
+
+        return message;
+    }
+
     #region Private
 
     private string TimeUpdate(TrackTimeDelta delta)

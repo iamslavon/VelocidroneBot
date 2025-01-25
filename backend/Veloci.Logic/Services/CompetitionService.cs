@@ -224,4 +224,27 @@ public class CompetitionService
 
         await _mediator.Publish(new DayStreakAchievements(pilots));
     }
+
+    public async Task DayStreakPotentialLoseNotification()
+    {
+        var activeCompetition = await GetCurrentCompetitions()
+            .FirstOrDefaultAsync();
+
+        if (activeCompetition is null)
+            return;
+
+        var leaderboard = GetLocalLeaderboard(activeCompetition)
+            .Select(r => r.PlayerName)
+            .ToArray();
+
+        var pilots = await _pilots
+            .GetAll(p => p.DayStreak > 10)
+            .Where(p => leaderboard.All(l => l != p.Name))
+            .ToListAsync();
+
+        if (pilots.Count == 0)
+            return;
+
+        await _mediator.Publish(new DayStreakPotentialLose(pilots));
+    }
 }
