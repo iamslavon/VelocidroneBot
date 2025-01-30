@@ -1,9 +1,9 @@
-import { HeatmapEntry } from '@/api/client';
+import { PilotResult } from '@/api/client';
 import { CalendarDatum, ResponsiveCalendarCanvas } from '@nivo/calendar'
 import { Theme } from '@nivo/core';
 
 interface HeatmapChartProps {
-    data: HeatmapEntry[]
+    data: PilotResult[]
 }
 
 const theme: Theme = {

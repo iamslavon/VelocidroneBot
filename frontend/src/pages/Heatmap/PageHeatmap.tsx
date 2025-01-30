@@ -1,8 +1,9 @@
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { fetchPilots, selectPilots, selectPilotsState } from '@/lib/features/pilots/pilotsSlice';
+import { Spinner } from '@/components/ui/spinner';
+import { fetchPilots, selectPilots, selectPilotsState, selectPilotResultLoadingState, fetchPilotResults, selectPilotResults } from '@/lib/features/pilots/pilotsSlice';
 import { useEffect, Suspense, lazy } from 'react';
 import ComboBox from '@/components/ComboBox';
-import { fetchHeatmap, choosePilot, selectHeatmapState, selectCurrentHeatmap, selectCurrentPilot } from '@/lib/features/heatmap/heatmapSlice';
+import { choosePilot, selectCurrentPilot } from '@/lib/features/heatmap/heatmapSlice';
 
 const HeatmapChart = lazy(() => import('./HeatmapChart'))
 
@@ -14,9 +15,9 @@ const PageHeatmap = () => {
     const dispatch = useAppDispatch();
     const pilotsState = useAppSelector(selectPilotsState);
     const pilots = useAppSelector(selectPilots);
-    const heatMapState = useAppSelector(selectHeatmapState);
-    const heatMap = useAppSelector(selectCurrentHeatmap);
     const currentPilot = useAppSelector(selectCurrentPilot);
+    const heatMap = useAppSelector(state => selectPilotResults(state, currentPilot));
+    const pilotResultsState = useAppSelector(state => selectPilotResultLoadingState(state, currentPilot));
 
 
     useEffect(() => {
@@ -27,7 +28,7 @@ const PageHeatmap = () => {
 
     const selectPilot = (pilot: string) => {
         dispatch(choosePilot(pilot));
-        dispatch(fetchHeatmap(pilot));
+        dispatch(fetchPilotResults(pilot));
     }
 
     if (pilotsState == 'Idle') return <></>;
@@ -46,17 +47,12 @@ const PageHeatmap = () => {
 
         <div className='py-6'>
 
-            {heatMapState == 'Loading' && <>
-                <div className='flex space-x-2 justify-center items-center bg-white h-screen dark:invert rounded-lg' style={{ height: '300px' }}>
-                    <span className='sr-only'>Loading...</span>
-                    <div className='h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.3s]'></div>
-                    <div className='h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.15s]'></div>
-                    <div className='h-8 w-8 bg-black rounded-full animate-bounce'></div>
-                </div>
+            {pilotResultsState == 'Loading' && <>
+                <Spinner></Spinner>
             </>
             }
 
-            {heatMapState == 'Loaded' && <>
+            {pilotResultsState == 'Loaded' && <>
                 <div className='bg-slate-200 rounded-lg' style={{ height: '600px' }}>
                     <Suspense fallback={<div>Loading...</div>}>
                         <HeatmapChart data={heatMap} />

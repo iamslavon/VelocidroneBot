@@ -4,16 +4,16 @@ using Veloci.Data.Repositories;
 
 namespace Veloci.Web.Controllers.Heatmap;
 
-public class HeatMapCalculator
+public class PilotResultsCalculator
 {
     private readonly IRepository<CompetitionResults> _competitionResults;
 
-    public HeatMapCalculator(IRepository<CompetitionResults> competitionResults)
+    public PilotResultsCalculator(IRepository<CompetitionResults> competitionResults)
     {
         _competitionResults = competitionResults;
     }
 
-    public Task<List<HeatmapEntry>> GetHeatMap(string pilotName)
+    public Task<List<PilotResult>> GetPilotResults(string pilotName)
     {
         var now = DateTime.Today;
         var start = now.AddYears(-1);

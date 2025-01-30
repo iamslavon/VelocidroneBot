@@ -43,10 +43,10 @@
         }
       }
     },
-    "/api/heatmap/ForPilot": {
+    "/api/results/ForPilot": {
       "get": {
         "tags": [
-          "Heatmap"
+          "PilotResults"
         ],
         "parameters": [
           {
@@ -65,7 +65,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/HeatmapEntry"
+                    "$ref": "#/components/schemas/PilotResult"
                   }
                 }
               },
@@ -73,7 +73,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/HeatmapEntry"
+                    "$ref": "#/components/schemas/PilotResult"
                   }
                 }
               },
@@ -81,7 +81,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/HeatmapEntry"
+                    "$ref": "#/components/schemas/PilotResult"
                   }
                 }
               }
@@ -217,7 +217,7 @@
           }
         }
       },
-      "HeatmapEntry": {
+      "PilotResult": {
         "type": "object",
         "properties": {
           "date": {
@@ -225,6 +225,10 @@
             "format": "date-time"
           },
           "points": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "trackTime": {
             "type": "integer",
             "format": "int32"
           }
@@ -275,7 +279,7 @@
       "name": "Pilots"
     },
     {
-      "name": "Heatmap"
+      "name": "PilotResults"
     },
     {
       "name": "Competitions"

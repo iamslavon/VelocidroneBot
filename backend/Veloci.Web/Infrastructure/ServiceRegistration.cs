@@ -24,7 +24,7 @@ public static class ServiceRegistration
         //services.AddTransient<ITrackFetcher, WebTrackFetcher>();
         services.AddTransient<ITrackFetcher, ApiTrackFetcher>();
         services.AddTransient<TrackService>();
-        services.AddTransient<HeatMapCalculator>();
+        services.AddTransient<PilotResultsCalculator>();
 
         return services;
     }
