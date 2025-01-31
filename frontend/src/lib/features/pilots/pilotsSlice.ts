@@ -5,15 +5,13 @@ import {
   PilotResult,
 } from "../../../api/client";
 import { createAppSlice } from "../../createAppSlice";
+import { LoadingStates } from "@/lib/loadingStates";
 
 export interface PilotsSliceState {
-  state: "Idle" | "Loading" | "Loaded" | "Error";
+  state: LoadingStates;
   pilots: string[];
   pilotResults: Record<string, PilotResult[]>;
-  selectPilotResultLoadingState: Record<
-    string,
-    "Idle" | "Loading" | "Loaded" | "Error"
-  >;
+  selectPilotResultLoadingState: Record<string, LoadingStates>;
 }
 
 const initialState: PilotsSliceState = {
@@ -27,6 +25,9 @@ export const pilotsSlice = createAppSlice({
   name: "pilots",
   initialState: initialState,
   reducers: (create) => ({
+    /**
+     * Load list of all pilots.
+     */
     fetchPilots: create.asyncThunk(
       async () => {
         const result = await getApiPilotsAll();
@@ -47,6 +48,10 @@ export const pilotsSlice = createAppSlice({
       }
     ),
 
+    /**
+     * Loads results for pilot. If results are presented in store,
+     * cached data is used.
+     */
     fetchPilotResults: create.asyncThunk(
       async (pilotName: string) => {
         const result = await getApiResultsForPilot({

@@ -1,14 +1,15 @@
 import { createAppSlice } from "../../createAppSlice";
 import api from "../../../api/api";
 import { DashboardModel } from "../../../api/client";
+import { LoadingStates } from "@/lib/loadingStates";
 
 export interface DashboardSliceState {
-  state: "Loading" | "Loaded" | "Error";
+  state: LoadingStates;
   data: DashboardModel | null;
 }
 
 const initialState: DashboardSliceState = {
-  state: "Loading",
+  state: "Idle",
   data: null,
 };
 
