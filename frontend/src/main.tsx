@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
 import LayoutMain from './pages/LayoutMain.tsx'
 import PageRules from './pages/PageRules.tsx'
 import PageStatistics from './pages/Statistics/PageStatistics.tsx'
@@ -14,7 +14,6 @@ import PageLeaderBoard from './pages/LeaderBoard/PageLeaderBoard.tsx'
 import PagePilots from './pages/Pilots/PagePilots.tsx'
 
 
-
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={store}>
@@ -25,6 +24,7 @@ createRoot(document.getElementById('root')!).render(
               <Route index element={<PageDashboard />} />
               <Route path='rules' element={<PageRules />} />
               <Route path='statistics' element={<PageStatistics />} >
+                <Route index element={<Navigate to="heatmap" replace />} />
                 <Route path="heatmap" element={<PageHeatmap />} />
                 <Route path="leaderboard" element={<PageLeaderBoard />} />
                 <Route path="tracks" element={<PageTracks />} />
