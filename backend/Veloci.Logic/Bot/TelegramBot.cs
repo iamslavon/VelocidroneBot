@@ -80,12 +80,12 @@ public class TelegramBot
         }
     }
 
-    public static async Task ReplyMessageAsync(string message, int messageId)
+    public static async Task ReplyMessageAsync(string message, int messageId, string chatId)
     {
         try
         {
             var result = await _client.SendTextMessageAsync(
-                chatId: _channelId,
+                chatId: chatId,
                 replyToMessageId: messageId,
                 parseMode: ParseMode.MarkdownV2,
                 text: Isolate(message));
@@ -94,6 +94,11 @@ public class TelegramBot
         {
             Log.Error(ex, "Telegram. Failed to send a message '{Message}'", message);
         }
+    }
+
+    public static async Task ReplyMessageAsync(string message, int messageId)
+    {
+        await ReplyMessageAsync(message, messageId, _channelId);
     }
 
     public static async Task SendPhotoAsync(string fileUrl, string? message = null)
@@ -180,5 +185,10 @@ public class TelegramBot
     public void Stop()
     {
         _cts.Cancel();
+    }
+
+    public static bool IsMainChannelId(string chatId)
+    {
+        return chatId == _channelId;
     }
 }

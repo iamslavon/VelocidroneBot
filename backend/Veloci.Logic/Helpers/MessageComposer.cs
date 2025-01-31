@@ -16,9 +16,17 @@ public class MessageComposer
 
     public string StartCompetition(Track track)
     {
+        var rating = string.Empty;
+
+        if (track.Rating?.Value is not null)
+        {
+            rating = $"Попередній рейтинг: *{Math.Round(track.Rating.Value.Value, 1):F1}*/3{Environment.NewLine}{Environment.NewLine}";
+        }
+
         return $"📅 Вітаємо на щоденному *UA Velocidrone Battle*!{Environment.NewLine}{Environment.NewLine}" +
                $"Трек дня:{Environment.NewLine}" +
                $"*{track.Map.Name} - `{track.Name}`*{Environment.NewLine}{Environment.NewLine}" +
+               $"{rating}" +
                $"Leaderboard:{Environment.NewLine}" +
                $"*https://www.velocidrone.com/leaderboard/{track.Map.MapId}/{track.TrackId}/All*{Environment.NewLine}{Environment.NewLine}";
     }
@@ -127,6 +135,41 @@ public class MessageComposer
             second,
             third
         };
+    }
+
+    public string DayStreakAchievement(Pilot pilot)
+    {
+        return pilot.DayStreak switch
+        {
+            10 or 20 => $"🎉 *{pilot.Name}* має вже *{pilot.DayStreak}* day streak",
+            50 => $"🎉 *{pilot.Name}* досягнув *{pilot.DayStreak}* day streak",
+            75 => $"🎉 *{pilot.Name}* тримає *{pilot.DayStreak}* day streak",
+            100 => $"🎉 *{pilot.Name}* подолав *{pilot.DayStreak}* day streak",
+            150 => $"🎉 *{pilot.Name}* перетнув *{pilot.DayStreak}* day streak",
+            200 => $"🎉 *{pilot.Name}* має неймовірні *{pilot.DayStreak}* day streak",
+            250 => $"🎉 *{pilot.Name}* має вже *{pilot.DayStreak}* day streak",
+            300 => $"🎉 *{pilot.Name}* досягнув вражаючих *{pilot.DayStreak}* day streak",
+            365 => $"🎉 *{pilot.Name}* відзначає *{pilot.DayStreak}* day streak. Цілий рік!",
+            500 => $"🎉 *{pilot.Name}* подолав *{pilot.DayStreak}* day streak. Це вау!",
+            1000 => $"🎉 *{pilot.Name}* має вражаючі *{pilot.DayStreak}* day streak",
+            _ => string.Empty
+        };
+    }
+
+    public string DayStreakPotentialLose(IEnumerable<Pilot> pilots)
+    {
+        var message = $"⚠️ *Важливе повідомлення!*{Environment.NewLine}" +
+                      $"Наступні пілоти можуть втратити свій day streak:{Environment.NewLine}{Environment.NewLine}";
+
+        foreach (var pilot in pilots)
+        {
+            message += $"*{pilot.Name}* - *{pilot.DayStreak}* day streak{Environment.NewLine}";
+        }
+
+        message += $"{Environment.NewLine}Швиденько запускайте симулятори і летіть! 🚀" +
+                   $"{Environment.NewLine}У вас менше години.";
+
+        return message;
     }
 
     #region Private

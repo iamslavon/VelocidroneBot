@@ -20,3 +20,7 @@ public record BadTrack(Competition Competition, Track Track) : INotification;
 public record CheerUp(ChatMessage Message) : INotification;
 
 public record YearResults(YearResultsModel Results) : INotification;
+
+public record DayStreakAchievements(List<Pilot> Pilots) : INotification;
+
+public record DayStreakPotentialLose(List<Pilot> Pilots) : INotification;

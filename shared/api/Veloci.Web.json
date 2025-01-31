@@ -5,6 +5,18 @@
     "version": "1.0.0"
   },
   "paths": {
+    "/api/migration/pilots": {
+      "get": {
+        "tags": [
+          "Migration"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/pilots/All": {
       "get": {
         "tags": [
@@ -275,6 +287,9 @@
     }
   },
   "tags": [
+    {
+      "name": "Migration"
+    },
     {
       "name": "Pilots"
     },

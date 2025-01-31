@@ -13,6 +13,7 @@ namespace Veloci.Logic.Services;
 public class CompetitionService
 {
     private readonly IRepository<Competition> _competitions;
+    private readonly IRepository<Pilot> _pilots;
     private readonly ResultsFetcher _resultsFetcher;
     private readonly RaceResultsConverter _resultsConverter;
     private readonly RaceResultDeltaAnalyzer _analyzer;
@@ -23,13 +24,15 @@ public class CompetitionService
         ResultsFetcher resultsFetcher,
         RaceResultsConverter resultsConverter,
         RaceResultDeltaAnalyzer analyzer,
-        IMediator mediator)
+        IMediator mediator,
+        IRepository<Pilot> pilots)
     {
         _competitions = competitions;
         _resultsFetcher = resultsFetcher;
         _resultsConverter = resultsConverter;
         _analyzer = analyzer;
         _mediator = mediator;
+        _pilots = pilots;
     }
 
     [DisableConcurrentExecution("Competition", 60)]
@@ -206,5 +209,42 @@ public class CompetitionService
         return _competitions
             .GetAll(c => c.State == CompetitionState.Started)
             .OrderByDescending(x => x.StartedOn);
+    }
+
+    public async Task PublishDayStreakAchievements()
+    {
+        var streaks = new[] { 10, 20, 50, 75, 100, 150, 200, 250, 300, 365, 500, 1000 };
+
+        var pilots = await _pilots
+            .GetAll(p => streaks.Any(s => s == p.DayStreak))
+            .ToListAsync();
+
+        if (pilots.Count == 0)
+            return;
+
+        await _mediator.Publish(new DayStreakAchievements(pilots));
+    }
+
+    public async Task DayStreakPotentialLoseNotification()
+    {
+        var activeCompetition = await GetCurrentCompetitions()
+            .FirstOrDefaultAsync();
+
+        if (activeCompetition is null)
+            return;
+
+        var leaderboard = GetLocalLeaderboard(activeCompetition)
+            .Select(r => r.PlayerName)
+            .ToArray();
+
+        var pilots = await _pilots
+            .GetAll(p => p.DayStreak > 10)
+            .Where(p => leaderboard.All(l => l != p.Name))
+            .ToListAsync();
+
+        if (pilots.Count == 0)
+            return;
+
+        await _mediator.Publish(new DayStreakPotentialLose(pilots));
     }
 }

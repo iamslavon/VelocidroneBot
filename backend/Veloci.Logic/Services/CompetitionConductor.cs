@@ -130,26 +130,15 @@ public class CompetitionConductor
 
             if (pilot is null)
             {
-                pilot = new Pilot
-                {
-                    Name = results.PlayerName,
-                    DayStreak = 1,
-                    LastRaceDate = today
-                };
-
+                pilot = new Pilot(results.PlayerName);
                 await _pilots.AddAsync(pilot);
-                continue;
             }
 
-            if (pilot.LastRaceDate == today.AddDays(-1))
-            {
-                pilot.DayStreak++;
-            }
-            else
-            {
-                pilot.DayStreak = 1;
-            }
+            pilot.IncreaseDayStreak(today);
         }
+
+        await _pilots.SaveChangesAsync();
+        await _pilots.GetAll().ResetDayStreaksAsync(today);
     }
 
     private async Task CancelAsync()
@@ -174,6 +163,13 @@ public class CompetitionConductor
             throw new Exception("There are no active competitions");
 
         var poll = _messageComposer.Poll(competition.Track.FullName);
+
+        if (competition.Track.Rating is null)
+        {
+            Log.Error("No poll to stop");
+            return;
+        }
+
         var telegramPoll = await TelegramBot.StopPollAsync(competition.Track.Rating.PollMessageId);
 
         if (telegramPoll is null)
