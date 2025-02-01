@@ -7,15 +7,15 @@ interface LeaderBoardProps {
 const LeaderBoard: React.FC<LeaderBoardProps> = ({ leaderBoard }) => {
     if (!leaderBoard) return <>Завантажуємо...</>;
 
-    if (!leaderBoard.length) return <>Немає даних</>;
+    if (!leaderBoard.length) return <><div className="text-green-200 text-center">Немає даних</div></>;
 
     return <>
 
         <div className="overflow-hidden">
             <div className="px-6 py-4 border-b border-slate-700/50 grid grid-cols-2 gap-4">
-            <div className="text-sm font-medium text-emerald-400">Пілот</div>
-            <div className="text-sm font-medium text-emerald-400 text-right">Очки</div>
-        </div>
+                <div className="text-sm font-medium text-emerald-400">Пілот</div>
+                <div className="text-sm font-medium text-emerald-400 text-right">Очки</div>
+            </div>
             <ul className="divide-y divide-slate-700/50">
                 {leaderBoard.map((res, index) => (
                     <li key={res.playerName} className="px-6 py-4 hover:bg-slate-700/30 transition-colors duration-150">

@@ -173,6 +173,15 @@
   "components": {
     "schemas": {
       "CompetitionModel": {
+        "required": [
+          "id",
+          "startedOn",
+          "state",
+          "mapName",
+          "trackName",
+          "trackId",
+          "mapId"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -201,19 +210,57 @@
           }
         }
       },
+      "CompetitionModel2": {
+        "required": [
+          "id",
+          "startedOn",
+          "state",
+          "mapName",
+          "trackName",
+          "trackId",
+          "mapId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "startedOn": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "state": {
+            "$ref": "#/components/schemas/CompetitionState"
+          },
+          "mapName": {
+            "type": "string"
+          },
+          "trackName": {
+            "type": "string"
+          },
+          "trackId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mapId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "nullable": true
+      },
       "CompetitionState": {
         "type": "integer"
       },
       "DashboardModel": {
         "required": [
-          "competition",
           "results",
           "leaderboard"
         ],
         "type": "object",
         "properties": {
           "competition": {
-            "$ref": "#/components/schemas/CompetitionModel"
+            "$ref": "#/components/schemas/CompetitionModel2"
           },
           "results": {
             "type": "array",
@@ -248,7 +295,8 @@
       },
       "SeasonResultModel": {
         "required": [
-          "playerName"
+          "playerName",
+          "points"
         ],
         "type": "object",
         "properties": {
@@ -263,7 +311,10 @@
       },
       "TrackTimeModel": {
         "required": [
-          "playerName"
+          "playerName",
+          "time",
+          "globalRank",
+          "localRank"
         ],
         "type": "object",
         "properties": {

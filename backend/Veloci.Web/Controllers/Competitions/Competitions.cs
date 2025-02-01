@@ -28,11 +28,9 @@ public class CompetitionsController : ControllerBase
     {
         var competition  = await _competitionService.GetCurrentCompetitions().FirstOrDefaultAsync();
 
-        if (competition is null) return null;
-
         var dashboardModel = new DashboardModel
         {
-            Competition = competition.MapToModel(),
+            Competition = competition?.MapToModel(),
             Results = GetCurrentResults(competition),
             Leaderboard = GetLeaderboard()
         };
@@ -40,8 +38,10 @@ public class CompetitionsController : ControllerBase
         return dashboardModel;
     }
 
-    private List<TrackTimeModel> GetCurrentResults(Competition competition)
+    private List<TrackTimeModel> GetCurrentResults(Competition? competition)
     {
+        if (competition == null) return new List<TrackTimeModel>();
+
         var currentResults = _competitionService.GetLocalLeaderboard(competition);
         return currentResults.MapToModel();
     }
