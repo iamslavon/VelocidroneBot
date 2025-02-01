@@ -2,7 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
-namespace Veloci.Logic.Bot;
+namespace Veloci.Logic.Bot.Telegram;
 
 public class TelegramBotHostedService : IHostedService, IDisposable
 {

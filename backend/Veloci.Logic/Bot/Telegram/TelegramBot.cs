@@ -7,7 +7,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Veloci.Logic.Services;
 
-namespace Veloci.Logic.Bot;
+namespace Veloci.Logic.Bot.Telegram;
 
 public class TelegramBot
 {
@@ -80,7 +80,7 @@ public class TelegramBot
         }
     }
 
-    public static async Task ReplyMessageAsync(string message, int messageId, string chatId)
+    public static async Task<int?> ReplyMessageAsync(string message, int messageId, string chatId)
     {
         try
         {
@@ -89,16 +89,19 @@ public class TelegramBot
                 replyToMessageId: messageId,
                 parseMode: ParseMode.MarkdownV2,
                 text: Isolate(message));
+
+            return result.MessageId;
         }
         catch (Exception ex)
         {
             Log.Error(ex, "Telegram. Failed to send a message '{Message}'", message);
+            return null;
         }
     }
 
-    public static async Task ReplyMessageAsync(string message, int messageId)
+    public static async Task<int?> ReplyMessageAsync(string message, int messageId)
     {
-        await ReplyMessageAsync(message, messageId, _channelId);
+        return await ReplyMessageAsync(message, messageId, _channelId);
     }
 
     public static async Task SendPhotoAsync(string fileUrl, string? message = null)
@@ -171,6 +174,23 @@ public class TelegramBot
             Log.Error(ex, "Telegram. Failed to stop the poll");
             return null;
         }
+    }
+
+    public static async Task RemoveMessageAsync(int messageId, string chatId)
+    {
+        try
+        {
+            await _client.DeleteMessageAsync(chatId, messageId);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Telegram. Failed to remove the message");
+        }
+    }
+
+    public static async Task RemoveMessageAsync(int messageId)
+    {
+        await RemoveMessageAsync(messageId, _channelId);
     }
 
     private static string Isolate(string message) => message

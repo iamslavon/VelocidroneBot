@@ -5,6 +5,7 @@ using Serilog;
 using Veloci.Data.Domain;
 using Veloci.Data.Repositories;
 using Veloci.Logic.Bot;
+using Veloci.Logic.Bot.Telegram;
 using Veloci.Logic.Helpers;
 using Veloci.Logic.Notifications;
 using Veloci.Logic.Services.Tracks;

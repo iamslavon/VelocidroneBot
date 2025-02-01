@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Veloci.Logic.Bot;
+namespace Veloci.Logic.Bot.Telegram;
 
 public static class TelegramBotServiceHelper
 {

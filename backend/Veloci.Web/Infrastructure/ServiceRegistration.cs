@@ -1,5 +1,6 @@
 using Veloci.Data.Repositories;
 using Veloci.Logic.Bot;
+using Veloci.Logic.Bot.Telegram;
 using Veloci.Logic.Helpers;
 using Veloci.Logic.Services;
 using Veloci.Logic.Services.Tracks;

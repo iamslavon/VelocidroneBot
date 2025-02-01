@@ -12,6 +12,9 @@ using Serilog.Formatting.Elasticsearch;
 using Serilog.Sinks.Elasticsearch;
 using Veloci.Data;
 using Veloci.Logic.Bot;
+using Veloci.Logic.Bot.Telegram;
+using Veloci.Logic.Bot.Telegram.Commands;
+using Veloci.Logic.Bot.Telegram.Commands.Core;
 using Veloci.Logic.Notifications;
 using Veloci.Web.Infrastructure.Hangfire;
 
@@ -83,6 +86,7 @@ public class Startup
             o.WorkerCount = 1;
         });
         services.RegisterCustomServices();
+        services.RegisterTelegramCommands();
         services.UseTelegramBotService();
         services.UseDiscordBotService();
 

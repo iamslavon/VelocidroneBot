@@ -1,0 +1,38 @@
+using Microsoft.Extensions.DependencyInjection;
+using Veloci.Logic.Bot.Telegram.Commands.Core;
+
+namespace Veloci.Logic.Bot.Telegram.Commands;
+
+public class HelpCommand : ITelegramCommand
+{
+    private readonly IServiceProvider _serviceProvider;
+
+    public HelpCommand(IServiceProvider serviceProvider)
+    {
+        _serviceProvider = serviceProvider;
+    }
+
+    public string[] Keywords => ["/help", "/?"];
+
+    public string Description => "`/help` або `/?` - Список усіх доступних команд";
+
+    public async Task<string> ExecuteAsync(string[]? parameters)
+    {
+        var descriptions = GetCommandDescriptions();
+        return string.Join(Environment.NewLine, descriptions.Select(CommandRow));
+    }
+
+    public bool RemoveMessageAfterDelay => true;
+
+    private string CommandRow(string description)
+    {
+        return $"▪️ {description}";
+    }
+
+    private IEnumerable<string> GetCommandDescriptions()
+    {
+        return _serviceProvider
+            .GetServices<ITelegramCommand>()
+            .Select(c => c.Description);
+    }
+}
