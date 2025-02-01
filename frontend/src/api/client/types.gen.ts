@@ -2,7 +2,7 @@
 
 export type CompetitionModel = {
     id?: string;
-    startedOn?: Date;
+    startedOn?: string;
     state?: CompetitionState;
     mapName?: string;
     trackName?: string;
@@ -18,6 +18,12 @@ export type DashboardModel = {
     leaderboard: Array<SeasonResultModel>;
 };
 
+export type PilotResult = {
+    date?: string;
+    points?: number;
+    trackTime?: number;
+};
+
 export type SeasonResultModel = {
     playerName: string;
     points?: number;
@@ -29,6 +35,40 @@ export type TrackTimeModel = {
     globalRank?: number;
     localRank?: number;
 };
+
+export type GetApiPilotsAllData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/pilots/All';
+};
+
+export type GetApiPilotsAllResponses = {
+    /**
+     * OK
+     */
+    200: Array<string>;
+};
+
+export type GetApiPilotsAllResponse = GetApiPilotsAllResponses[keyof GetApiPilotsAllResponses];
+
+export type GetApiResultsForPilotData = {
+    body?: never;
+    path?: never;
+    query?: {
+        pilotName?: string;
+    };
+    url: '/api/results/ForPilot';
+};
+
+export type GetApiResultsForPilotResponses = {
+    /**
+     * OK
+     */
+    200: Array<PilotResult>;
+};
+
+export type GetApiResultsForPilotResponse = GetApiResultsForPilotResponses[keyof GetApiResultsForPilotResponses];
 
 export type GetApiCompetitionsCurrentData = {
     body?: never;

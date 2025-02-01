@@ -1,31 +1,33 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import ClickableTrackName from './../components/ClickableTrackName'
 
-import api from './../api/api'
-import { DashboardModel } from './../api/client';
 import CurrentLeaderboard from './../components/CurrentLeaderBoard';
 import LeaderBoard from './../components/LeaderBoard';
 import VelocdroneResultLink from '../components/VelocidroneResultsLink';
 
+import { fetch, selectState, selectData } from './../lib/features/dashboard/dashboardSlice';
+import { useAppDispatch, useAppSelector } from '../lib/hooks';
+
 const PageDashboard: React.FC = () => {
 
-
-    const [dashboard, setDashboard] = useState<DashboardModel>();
+    const dispatch = useAppDispatch();
+    const state = useAppSelector(selectState);
+    const dashboard = useAppSelector(selectData);
 
     useEffect(() => {
-        api.getDashboard().then(r => {
-            if (r.error) {
-                console.error(r.error);
-            } else if (r.data) {
-                console.log(r.data);
-                setDashboard(r.data);
-            }
-        })
-    }, []);
+        dispatch(fetch());
+    }, [dispatch]);
 
-    //TODO: Add proper loading state and indicator
-    if (!dashboard) {
-        return <></>
+    if (state == 'Loading') {
+        return <>
+            <h2>Loading 🚁</h2>
+        </>
+    }
+
+    if (state == 'Error' || dashboard == null) {
+        return <>
+            <h2 className='text-2xl text-center text-red-400'>🤦 Error during data loading.</h2>
+        </>
     }
 
     return <>

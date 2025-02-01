@@ -17,6 +17,91 @@
         }
       }
     },
+    "/api/pilots/All": {
+      "get": {
+        "tags": [
+          "Pilots"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/results/ForPilot": {
+      "get": {
+        "tags": [
+          "PilotResults"
+        ],
+        "parameters": [
+          {
+            "name": "pilotName",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PilotResult"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PilotResult"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PilotResult"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/competitions/current": {
       "get": {
         "tags": [
@@ -144,6 +229,23 @@
           }
         }
       },
+      "PilotResult": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "points": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "trackTime": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "SeasonResultModel": {
         "required": [
           "playerName"
@@ -187,6 +289,12 @@
   "tags": [
     {
       "name": "Migration"
+    },
+    {
+      "name": "Pilots"
+    },
+    {
+      "name": "PilotResults"
     },
     {
       "name": "Competitions"

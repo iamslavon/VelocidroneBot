@@ -4,6 +4,7 @@ using Veloci.Logic.Bot.Telegram;
 using Veloci.Logic.Helpers;
 using Veloci.Logic.Services;
 using Veloci.Logic.Services.Tracks;
+using Veloci.Web.Controllers.Heatmap;
 
 namespace Veloci.Web.Infrastructure;
 
@@ -24,6 +25,7 @@ public static class ServiceRegistration
         //services.AddTransient<ITrackFetcher, WebTrackFetcher>();
         services.AddTransient<ITrackFetcher, ApiTrackFetcher>();
         services.AddTransient<TrackService>();
+        services.AddTransient<PilotResultsCalculator>();
 
         return services;
     }
