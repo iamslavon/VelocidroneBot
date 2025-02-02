@@ -7,7 +7,7 @@ public class RaceResultDeltaAnalyzer
     public List<TrackTimeDelta> CompareResults(TrackResults a, TrackResults b)
     {
         var deltas = new List<TrackTimeDelta>();
-        
+
         foreach (var trackTime in b.Times)
         {
             var existingTime = a.Times.FirstOrDefault(t => t.PlayerName == trackTime.PlayerName);
@@ -19,15 +19,16 @@ public class RaceResultDeltaAnalyzer
                     PlayerName = trackTime.PlayerName,
                     LocalRank = trackTime.LocalRank,
                     Rank = trackTime.GlobalRank,
-                    TrackTime = trackTime.Time
+                    TrackTime = trackTime.Time,
+                    DroneModelId = trackTime.ModelId
                 });
-                
+
                 continue;
             }
 
             if (existingTime.Time == trackTime.Time)
                 continue;
-            
+
             deltas.Add(new TrackTimeDelta
             {
                 PlayerName = trackTime.PlayerName,
@@ -36,7 +37,8 @@ public class RaceResultDeltaAnalyzer
                 Rank = trackTime.GlobalRank,
                 RankOld = existingTime.GlobalRank,
                 TrackTime = trackTime.Time,
-                TimeChange = trackTime.Time - existingTime.Time
+                TimeChange = trackTime.Time - existingTime.Time,
+                DroneModelId = trackTime.ModelId
             });
         }
 

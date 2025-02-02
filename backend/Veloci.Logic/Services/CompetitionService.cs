@@ -14,6 +14,7 @@ public class CompetitionService
 {
     private readonly IRepository<Competition> _competitions;
     private readonly IRepository<Pilot> _pilots;
+    private readonly IRepository<DroneModel> _models;
     private readonly ResultsFetcher _resultsFetcher;
     private readonly RaceResultsConverter _resultsConverter;
     private readonly RaceResultDeltaAnalyzer _analyzer;
@@ -25,7 +26,8 @@ public class CompetitionService
         RaceResultsConverter resultsConverter,
         RaceResultDeltaAnalyzer analyzer,
         IMediator mediator,
-        IRepository<Pilot> pilots)
+        IRepository<Pilot> pilots,
+        IRepository<DroneModel> models)
     {
         _competitions = competitions;
         _resultsFetcher = resultsFetcher;
@@ -33,6 +35,7 @@ public class CompetitionService
         _analyzer = analyzer;
         _mediator = mediator;
         _pilots = pilots;
+        _models = models;
     }
 
     [DisableConcurrentExecution("Competition", 60)]
@@ -67,11 +70,33 @@ public class CompetitionService
         if (!deltas.Any())
             return;
 
+        await MapModelsAsync(deltas);
+
         competition.CurrentResults = results;
         competition.TimeDeltas.AddRange(deltas);
         competition.ResultsPosted = false;
         await _competitions.SaveChangesAsync();
         await _mediator.Publish(new CurrentResultUpdateMessage(deltas));
+    }
+
+    private async Task MapModelsAsync(List<TrackTimeDelta> deltas)
+    {
+        foreach (var delta in deltas)
+        {
+            if (delta.DroneModelId is null)
+                continue;
+
+            var model = await _models.FindAsync(delta.DroneModelId);
+
+            if (model is null)
+            {
+                delta.UnknownDroneModelId = delta.DroneModelId;
+                delta.DroneModelId = null;
+                continue;
+            }
+
+            delta.DroneModel = model;
+        }
     }
 
     [DisableConcurrentExecution("Competition", 60)]

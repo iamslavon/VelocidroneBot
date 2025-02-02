@@ -178,8 +178,9 @@ public class MessageComposer
     {
         var timeChangePart = delta.TimeChange.HasValue ? $" ({MsToSec(delta.TimeChange.Value)}s)" : string.Empty;
         var rankOldPart = delta.RankOld.HasValue ? $" (#{delta.RankOld})" : string.Empty;
+        var modelPart = delta.DroneModel is not null ? $" {delta.DroneModel.Name}" : string.Empty;
 
-        return $"⏱ *{delta.PlayerName}* - {MsToSec(delta.TrackTime)}s{timeChangePart} / #{delta.Rank}{rankOldPart}";
+        return $"⏱ *{delta.PlayerName}* - {MsToSec(delta.TrackTime)}s{timeChangePart} / #{delta.Rank}{rankOldPart}{modelPart}";
     }
 
     private string TempLeaderboardRow(CompetitionResults time)

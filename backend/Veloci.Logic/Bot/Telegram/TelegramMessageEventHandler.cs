@@ -34,7 +34,7 @@ public class TelegramMessageEventHandler :
 
     public async Task Handle(CurrentResultUpdateMessage notification, CancellationToken cancellationToken)
     {
-        var message = _messageComposer.TimeUpdate(notification.Delatas);
+        var message = _messageComposer.TimeUpdate(notification.Deltas);
         await TelegramBot.SendMessageAsync(message);
     }
 
