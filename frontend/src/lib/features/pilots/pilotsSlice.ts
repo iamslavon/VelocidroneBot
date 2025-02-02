@@ -94,9 +94,30 @@ export const pilotsSlice = createAppSlice({
 
   selectors: {
     selectPilotsState: (state) => state.state,
+
     selectPilots: (state) => state.pilots,
+
     selectPilotResults: (state, pilotName: string | null) =>
       pilotName ? state.pilotResults[pilotName] : [],
+
+    selectPilotsResults: (state, pilots: (string | null)[]) => {
+      return pilots.map((p) => (p ? state.pilotResults[p] || [] : []));
+    },
+
+    selectPilotResultsLoadingState: (
+      state,
+      pilots: (string | null)[]
+    ): LoadingStates => {
+      const states = pilots
+        .filter((p) => p != null)
+        .map((p) => state.selectPilotResultLoadingState[p]);
+
+      if (states.length === 0) return "Idle";
+      if (states.find((s) => s === "Loading")) return "Loading";
+
+      return "Loaded";
+    },
+
     selectPilotResultLoadingState: (state, pilotName: string | null) =>
       pilotName ? state.selectPilotResultLoadingState[pilotName] : "Idle",
   },
@@ -109,4 +130,6 @@ export const {
   selectPilots,
   selectPilotResults,
   selectPilotResultLoadingState,
+  selectPilotsResults,
+  selectPilotResultsLoadingState,
 } = pilotsSlice.selectors;

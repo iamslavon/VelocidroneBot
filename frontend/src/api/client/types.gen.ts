@@ -2,8 +2,8 @@
 
 export type CompetitionModel = {
     id: string;
-    startedOn?: string;
-    state?: CompetitionState;
+    startedOn: string;
+    state: CompetitionState;
     mapName: string;
     trackName: string;
     trackId: number;
@@ -12,8 +12,8 @@ export type CompetitionModel = {
 
 export type CompetitionModel2 = {
     id: string;
-    startedOn?: string;
-    state?: CompetitionState;
+    startedOn: string;
+    state: CompetitionState;
     mapName: string;
     trackName: string;
     trackId: number;
@@ -29,21 +29,21 @@ export type DashboardModel = {
 };
 
 export type PilotResult = {
-    date?: string;
-    points?: number;
-    trackTime?: number;
+    date: string;
+    points: number;
+    trackTime: number;
 };
 
 export type SeasonResultModel = {
     playerName: string;
-    points?: number;
+    points: number;
 };
 
 export type TrackTimeModel = {
     playerName: string;
-    time?: number;
-    globalRank?: number;
-    localRank?: number;
+    time: number;
+    globalRank: number;
+    localRank: number;
 };
 
 export type GetApiMigrationPilotsData = {
