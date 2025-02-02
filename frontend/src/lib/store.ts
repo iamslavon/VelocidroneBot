@@ -4,10 +4,16 @@ import { setupListeners } from "@reduxjs/toolkit/query";
 import { dashboardSlice } from "./features/dashboard/dashboardSlice";
 import { pilotsSlice } from "./features/pilots/pilotsSlice";
 import { heatmapSlice } from "./features/heatmap/heatmapSlice";
+import { selectedPilotsSlice } from "./features/selectedPilots/selectedPilotsSlice";
 
 // `combineSlices` automatically combines the reducers using
 // their `reducerPath`s, therefore we no longer need to call `combineReducers`.
-const rootReducer = combineSlices(dashboardSlice, pilotsSlice, heatmapSlice);
+const rootReducer = combineSlices(
+  dashboardSlice,
+  pilotsSlice,
+  heatmapSlice,
+  selectedPilotsSlice
+);
 // Infer the `RootState` type from the root reducer
 export type RootState = ReturnType<typeof rootReducer>;
 

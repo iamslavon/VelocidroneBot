@@ -26,7 +26,7 @@ interface ComboBoxProps<TItem> {
     getLabel: (item: TItem) => string;
     getKey: (item: TItem) => string;
     onSelect: (item: TItem) => void;
-    value: TItem;
+    value: TItem | null;
 }
 
 const Combobox = <T,>({ items, value, defaultCaption, getKey, getLabel, onSelect }: ComboBoxProps<T>) => {

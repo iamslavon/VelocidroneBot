@@ -5,15 +5,15 @@ public class PilotResult
     /// <summary>
     /// Date, when points were earned.
     /// </summary>
-    public DateTime Date { get; set; }
+    public required DateTime Date { get; set; }
 
     /// <summary>
     /// Earned points.
     /// </summary>
-    public int Points { get; set; }
+    public required int Points { get; set; }
 
     /// <summary>
     /// Track time in milliseconds
     /// </summary>
-    public int TrackTime { get; set; }
+    public required int TrackTime { get; set; }
 }

@@ -277,6 +277,11 @@
         }
       },
       "PilotResult": {
+        "required": [
+          "date",
+          "points",
+          "trackTime"
+        ],
         "type": "object",
         "properties": {
           "date": {
