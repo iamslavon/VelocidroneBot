@@ -13,11 +13,11 @@ COPY ["Veloci.Web/Veloci.Web.csproj", "Veloci.Web/"]
 RUN dotnet restore "./Veloci.Web/./Veloci.Web.csproj"
 COPY . .
 WORKDIR "/src/Veloci.Web"
-RUN dotnet build "./Veloci.Web.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./Veloci.Web.csproj" -c $BUILD_CONFIGURATION /p:OpenApiGenerateDocuments=false -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Veloci.Web.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Veloci.Web.csproj" -c $BUILD_CONFIGURATION /p:OpenApiGenerateDocuments=false -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
