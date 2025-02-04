@@ -17,7 +17,7 @@ jobs:
       with:
         name: g0rsky1983/velocibot
         registry: docker.io
-        workdir: .
+        workdir: /backend
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         dockerfile: backend/Veloci.Web/Dockerfile
