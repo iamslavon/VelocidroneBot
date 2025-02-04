@@ -22,10 +22,8 @@ public class CurrentDayStreakCommand : ITelegramCommand
         if (parameters is null || parameters.Length == 0)
             return "все добре, але не вистачає імені пілота";
 
-        if (parameters.Length > 1)
-            return "все добре, але забагато параметрів";
-
-        var pilot = await _pilots.FindAsync(parameters[0]);
+        var pilotName = string.Join(' ', parameters);
+        var pilot = await _pilots.FindAsync(pilotName);
 
         return pilot is null
             ? $"Не знаю такого пілота 😕"

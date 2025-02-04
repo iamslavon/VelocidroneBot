@@ -70,7 +70,7 @@ public class DiscordMessageEventHandler :
 
         if (competition.CompetitionResults.Count == 0) return;
 
-        var resultsMessage = _messageComposer.Leaderboard(competition.CompetitionResults, competition.Track.FullName, false);
+        var resultsMessage = _messageComposer.Leaderboard(competition.CompetitionResults, competition.Track.FullName);
         await _discordBot.SendMessage(resultsMessage);
     }
 

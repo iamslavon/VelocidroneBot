@@ -8,10 +8,12 @@ namespace Veloci.Logic.Bot.Telegram.Commands;
 public class TotalFlightDaysCommand : ITelegramCommand
 {
     private readonly IRepository<Competition> _competitions;
+    private readonly IRepository<Pilot> _pilots;
 
-    public TotalFlightDaysCommand(IRepository<Competition> competitions)
+    public TotalFlightDaysCommand(IRepository<Competition> competitions, IRepository<Pilot> pilots)
     {
         _competitions = competitions;
+        _pilots = pilots;
     }
 
     public string[] Keywords => ["/total-flight-days"];
@@ -21,13 +23,16 @@ public class TotalFlightDaysCommand : ITelegramCommand
         if (parameters is null || parameters.Length == 0)
             return "все добре, але не вистачає імені пілота";
 
-        if (parameters.Length > 1)
-            return "все добре, але забагато параметрів";
+        var pilotName = string.Join(' ', parameters);
+        var pilot = await _pilots.FindAsync(pilotName);
+
+        if (pilot is null)
+            return $"Не знаю такого пілота 😕";
 
         var count = await _competitions
             .GetAll()
             .NotCancelled()
-            .Where(comp => comp.CompetitionResults.Any(res => res.PlayerName == parameters[0]))
+            .Where(comp => comp.CompetitionResults.Any(res => res.PlayerName == pilotName))
             .CountAsync();
 
         return $"Загальна кількість днів: {count}";
