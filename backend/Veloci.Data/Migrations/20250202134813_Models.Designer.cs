@@ -2,17 +2,20 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Veloci.Data;
 
 #nullable disable
 
-namespace Veloci.Web.Data.Migrations
+namespace Veloci.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250202134813_Models")]
+    partial class Models
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -287,7 +290,7 @@ namespace Veloci.Web.Data.Migrations
                     b.ToTable("CompetitionResults", (string)null);
                 });
 
-            modelBuilder.Entity("Veloci.Data.Domain.DroneModel", b =>
+            modelBuilder.Entity("Veloci.Data.Domain.Model", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -433,9 +436,6 @@ namespace Veloci.Web.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("DroneModelId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("LocalRank")
                         .HasColumnType("INTEGER");
 
@@ -458,14 +458,9 @@ namespace Veloci.Web.Data.Migrations
                     b.Property<int>("TrackTime")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("UnknownDroneModelId")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CompetitionId");
-
-                    b.HasIndex("DroneModelId");
 
                     b.ToTable("TrackTimeDeltas", (string)null);
                 });
@@ -587,13 +582,7 @@ namespace Veloci.Web.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Veloci.Data.Domain.DroneModel", "DroneModel")
-                        .WithMany()
-                        .HasForeignKey("DroneModelId");
-
                     b.Navigation("Competition");
-
-                    b.Navigation("DroneModel");
                 });
 
             modelBuilder.Entity("Veloci.Data.Domain.Competition", b =>

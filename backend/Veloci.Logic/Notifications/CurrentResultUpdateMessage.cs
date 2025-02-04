@@ -3,4 +3,4 @@ using Veloci.Data.Domain;
 
 namespace Veloci.Logic.Notifications;
 
-public record CurrentResultUpdateMessage(List<TrackTimeDelta> Delatas) : INotification;
+public record CurrentResultUpdateMessage(List<TrackTimeDelta> Deltas) : INotification;
