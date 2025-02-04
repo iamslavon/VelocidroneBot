@@ -10,6 +10,9 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Veloci.Web/Veloci.Web.csproj", "Veloci.Web/"]
+COPY ["Veloci.Web/Veloci.Data.csproj", "Veloci.Web/"]
+COPY ["Veloci.Web/Veloci.Logic.csproj", "Veloci.Web/"]
+COPY ["Veloci.Web/Veloci.Tests.csproj", "Veloci.Web/"]
 RUN dotnet restore "./Veloci.Web/./Veloci.Web.csproj"
 COPY . .
 WORKDIR "/src/Veloci.Web"
