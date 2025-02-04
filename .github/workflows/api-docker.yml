@@ -20,5 +20,5 @@ jobs:
         workdir: .
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
-        dockerfile: Dockerfile
+        dockerfile: Dbackend/Veloci.We/bockerfile
         tags: "latest"
