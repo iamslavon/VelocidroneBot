@@ -64,10 +64,10 @@ public class MessageComposer
                $"{string.Join($"{Environment.NewLine}", rows)}";
     }
 
-    public string Leaderboard(IEnumerable<CompetitionResults> results, string trackName)
+    public string Leaderboard(IEnumerable<CompetitionResults> results, string trackName, bool includeExtraNewLine = true)
     {
         var rows = results.Select(LeaderboardRow);
-        var divider = Environment.NewLine;
+        var divider = includeExtraNewLine ? $"{Environment.NewLine}{Environment.NewLine}" : Environment.NewLine;
         return $"🏆 Результати дня{Environment.NewLine}" +
                $"Трек: *{trackName}*{Environment.NewLine}{Environment.NewLine}" +
                $"{string.Join($"{divider}", rows)}" +
@@ -178,9 +178,10 @@ public class MessageComposer
     {
         var timeChangePart = delta.TimeChange.HasValue ? $" ({MsToSec(delta.TimeChange.Value)}s)" : string.Empty;
         var rankOldPart = delta.RankOld.HasValue ? $" (#{delta.RankOld})" : string.Empty;
-        var modelPart = delta.DroneModel is not null ? $"{Environment.NewLine}🛩{delta.DroneModel.Name}" : string.Empty;
+        var modelPart = delta.DroneModel is not null ? $" / {delta.DroneModel.Name}" : string.Empty;
 
-        return $"⏱ *{delta.PlayerName}* - {MsToSec(delta.TrackTime)}s{timeChangePart} / #{delta.Rank}{rankOldPart}{modelPart}";
+        return $"🎮 *{delta.PlayerName}*{modelPart} +" +
+               $"⏱️ {MsToSec(delta.TrackTime)}s{timeChangePart} / #{delta.Rank}{rankOldPart}";
     }
 
     private string TempLeaderboardRow(CompetitionResults time)
