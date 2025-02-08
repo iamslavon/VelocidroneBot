@@ -4,13 +4,14 @@ import PilotsChartProps from './PilotChartProps';
 
 const PilotsChartRelative = ({ pilots, results }: PilotsChartProps) => {
 
-    if (pilots.length < 2 || results.length < 2 || results.some(r => r.length == 0)) return <></>;
+    if (pilots.length < 2 || results.length < 2 || results.some(r => r.length == 0)) return <>
+        <h2>No data</h2>
+    </>;
 
     const referencePilot = 0;
 
     const fromDate = new Date();
     fromDate.setMonth(fromDate.getMonth() - 2); // Get date from 2 months ago
-
 
     let chartData: Serie[] = pilots.map((pilot, index) => ({
         id: pilot!,
@@ -27,6 +28,10 @@ const PilotsChartRelative = ({ pilots, results }: PilotsChartProps) => {
     for (const pilotData of chartData) {
         pilotData.data = pilotData.data.filter(i => dates[(i.x as Date).valueOf()] == chartData.length);
     }
+
+    if (chartData.some(r => r.data.length == 0)) return <>
+        <h2>Insufficient data</h2>
+    </>
 
     const t = [];
 

@@ -25,10 +25,16 @@ const PilotsChartAbsolute = ({ pilots, results }: PilotsChartProps) => {
         pilotData.data = pilotData.data.filter(i => dates[(i.x as Date).valueOf()] == chartData.length);
     }
 
+    const data = chartData.filter(d => d.data.length > 0);
+
+    if (data.length == 0) return <>
+        <h2>No data</h2>
+    </>
+
 
     return (
         <ResponsiveLine
-            data={chartData}
+            data={data}
             margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
             areaOpacity={0.07}
             colors={[
