@@ -49,18 +49,19 @@ const PagePilots = () => {
                     onSelect={pilotChanged(index)}
                     value={sp}></ComboBox>
             </div>)}
-            <div className='flex-row'>
-                <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => {
-                        dispatch(addPilot())
-                    }}
-                    className="h-10 w-10"
-                >
-                    <Plus className="h-4 w-4" />
-                </Button>
-            </div>
+            {!maxPilotsReached &&
+                <div className='flex-row'>
+                    <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => {
+                            dispatch(addPilot())
+                        }}
+                        className="h-10 w-10"
+                    >
+                        <Plus className="h-4 w-4" />
+                    </Button>
+                </div>}
         </div>
 
 
