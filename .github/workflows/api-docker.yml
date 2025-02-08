@@ -1,0 +1,24 @@
+name: VelociBot Docker
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Build and publish to Registry
+      uses: elgohr/Publish-Docker-Github-Action@v4
+      with:
+        name: g0rsky1983/velocibot
+        registry: docker.io
+        workdir: backend
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        dockerfile: Veloci.Web/Dockerfile
+        tags: "latest"
