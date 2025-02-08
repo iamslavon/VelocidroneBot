@@ -7,7 +7,9 @@ interface HeatmapChartProps {
 }
 
 const theme: Theme = {
-
+    text: {
+        fill: "#94a3b8"
+    }
 };
 
 const HeatmapChart = ({ data }: HeatmapChartProps) => {
@@ -21,13 +23,13 @@ const HeatmapChart = ({ data }: HeatmapChartProps) => {
             data={d}
             from={d[0].day}
             to={d[d.length - 1].day}
-            emptyColor="#eeeeee"
-            colors={['#A8E6CF', '#77DD77']}
-            margin={{ top: 40, right: 40, bottom: 40, left: 40 }}
-            yearSpacing={40}
-            monthBorderColor="#ffffff"
-            dayBorderWidth={2}
-            dayBorderColor="#ffffff"
+            emptyColor="#0000"
+            colors={['#125348', '#156154', '#1d8775', '#22a18b', '#2ed3b8']}
+            margin={{ top: 0, right: 20, bottom: 40, left: 20 }}
+            yearSpacing={70}
+            dayBorderWidth={1}
+            dayBorderColor="#516585"
+            
             theme={
                 theme
             }
@@ -35,7 +37,7 @@ const HeatmapChart = ({ data }: HeatmapChartProps) => {
                 {
                     anchor: 'bottom-right',
                     direction: 'row',
-                    translateY: 36,
+                    translateY: 0,
                     itemCount: 4,
                     itemWidth: 42,
                     itemHeight: 36,

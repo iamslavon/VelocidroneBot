@@ -3,7 +3,7 @@ import SideMenu from "./SideMenu";
 
 const PageStatistics: React.FC = () => {
     return <>
-        <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800">
+        <div className="min-h-screen ">
             <div className="max-w-[1800px] mx-auto px-4 py-8 sm:px-6 lg:px-8">
 
                 <h2 className="text-3xl font-bold text-slate-200 mb-2">Statistics</h2>

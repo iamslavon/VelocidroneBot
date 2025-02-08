@@ -16,13 +16,13 @@ const PageDashboard: React.FC = () => {
 
     if (state == 'Loading') {
         return <>
-            <h2 className='text-2xl text-center text-gray-400'>Завантажуємо... 🚁</h2>
+            <h2 className='text-2xl text-center text-gray-400'>Loading... 🚁</h2>
         </>
     }
 
     if (state == 'Error' || dashboard == null) {
         return <>
-            <h2 className='text-2xl text-center text-red-400'>🤦 Трапилась якась помилка.</h2>
+            <h2 className='text-2xl text-center text-red-400'>🤦 something happened</h2>
         </>
     }
 
@@ -37,7 +37,7 @@ const PageDashboard: React.FC = () => {
             <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700 overflow-hidden">
                 <div className="px-6 py-8 border-b border-slate-700/50">
                     <h3 className="text-sm uppercase tracking-wider text-emerald-400 font-medium">
-                        ПОТОЧНА ТУРНІРНА ТАБЛИЦЯ
+                        LEADERBOARD
                     </h3>
                 </div>
                 <LeaderBoard leaderBoard={dashboard.leaderboard}></LeaderBoard>

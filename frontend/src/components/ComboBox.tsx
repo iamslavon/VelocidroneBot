@@ -41,7 +41,7 @@ const Combobox = <T,>({ items, value, defaultCaption, getKey, getLabel, onSelect
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className="w-[200px] justify-between"
+                    className="w-[200px] justify-between bg-slate-800/50 hover:bg-slate-700/50 text-slate-200 hover:text-slate-200 border-slate-700"
                 >
                     {caption}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -49,9 +49,9 @@ const Combobox = <T,>({ items, value, defaultCaption, getKey, getLabel, onSelect
             </PopoverTrigger>
             <PopoverContent className="w-[200px] p-0">
                 <Command>
-                    <CommandInput placeholder="Search ..." />
+                    <CommandInput placeholder="Search ..."/>
                     <CommandList>
-                        <CommandEmpty>Nothing found.</CommandEmpty>
+                        <CommandEmpty>Nothing found</CommandEmpty>
                         <CommandGroup>
                             {items.map((item) => (
                                 <CommandItem

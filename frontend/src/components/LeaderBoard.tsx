@@ -5,16 +5,16 @@ interface LeaderBoardProps {
 }
 
 const LeaderBoard: React.FC<LeaderBoardProps> = ({ leaderBoard }) => {
-    if (!leaderBoard) return <>Завантажуємо...</>;
+    if (!leaderBoard) return <><div className="p-4 text-slate-400 text-center">loading...</div></>;
 
-    if (!leaderBoard.length) return <><div className="text-green-200 text-center">Немає даних</div></>;
+    if (!leaderBoard.length) return <><div className="p-4 text-slate-400 text-center">no data</div></>;
 
     return <>
 
         <div className="overflow-hidden">
             <div className="px-6 py-4 border-b border-slate-700/50 grid grid-cols-2 gap-4">
-                <div className="text-sm font-medium text-emerald-400">Пілот</div>
-                <div className="text-sm font-medium text-emerald-400 text-right">Очки</div>
+                <div className="text-sm font-medium text-emerald-400">Pilot</div>
+                <div className="text-sm font-medium text-emerald-400 text-right">Points</div>
             </div>
             <ul className="divide-y divide-slate-700/50">
                 {leaderBoard.map((res, index) => (

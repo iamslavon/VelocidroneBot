@@ -53,7 +53,7 @@ const PageHeatmap = () => {
             }
 
             {pilotResultsState == 'Loaded' && <>
-                <div className='bg-slate-200 rounded-lg' style={{ height: '600px' }}>
+                <div className='bg-none rounded-lg' style={{ height: '600px' }}>
                     <Suspense fallback={<div>Loading...</div>}>
                         <HeatmapChart data={heatMap} />
                     </Suspense>

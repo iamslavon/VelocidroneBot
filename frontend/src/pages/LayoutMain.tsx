@@ -1,4 +1,5 @@
 import { Link, NavLink, Outlet } from "react-router-dom"
+import { ExternalLink } from "lucide-react";
 
 /**
  * Defines main layout that is applied to all top level pages
@@ -13,15 +14,18 @@ const LayoutMain: React.FC = () => {
                         <Link to={'/'}>UA Velocidrone Battle</Link>
                     </h1>
                     <nav className="flex justify-center space-x-10">
-                        <Link to="https://t.me/fpv_velocidrone_ua" className="text-slate-300 hover:text-emerald-400 transition-colors flex items-center space-x-2">
-                            <span>Telegram Bot</span>
-                        </Link>
+                        <NavLink to="/" className="text-slate-300 hover:text-emerald-400 transition-colors flex items-center space-x-2">
+                            Dashboard
+                        </NavLink>
                         <NavLink to="/rules" className="text-slate-300 hover:text-emerald-400 transition-colors flex items-center space-x-2">
-                            <span>Правила та інструкції</span>
+                            Instructions
                         </NavLink>
                         <NavLink to={'/statistics'} className="text-slate-300 hover:text-emerald-400 transition-colors flex items-center space-x-2">
-                            <span>Статистика</span>
+                            Statistics
                         </NavLink>
+                        <Link to="https://t.me/fpv_velocidrone_ua" className="text-slate-300 hover:text-emerald-400 transition-colors inline-flex items-center">
+                            Telegram Bot <ExternalLink className="h-4 w-4 ml-2" />
+                        </Link>
                     </nav>
                 </header>
                 <Outlet></Outlet>
