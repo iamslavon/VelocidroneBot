@@ -1,4 +1,4 @@
-import { Calendar, BarChart, Trophy, Users } from "lucide-react";
+import { Calendar, Users } from "lucide-react";
 import SideMenuItem from "./SideMenuItem";
 
 const SideMenu = () => {
