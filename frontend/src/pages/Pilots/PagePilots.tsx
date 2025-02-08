@@ -7,7 +7,8 @@ import { addPilot, selectSelectedPilots, selectIsMaxPilotsReached, selectPilot }
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 
-const PilotsChart = lazy(() => import('@/pages/Pilots/PilotsChart'))
+const PilotsChartAbsolute = lazy(() => import('@/pages/Pilots/PilotsChartAbsolute'))
+const PilotsChartRelative = lazy(() => import('@/pages/Pilots/PilotsChartRelative'))
 
 const pilotKey = (pilot: string) => pilot;
 const pilotLabel = (pilot: string) => pilot;
@@ -77,11 +78,10 @@ const PagePilots = () => {
                 <div className='bg-slate-200 rounded-lg' style={{ height: '600px' }}>
                     <Suspense fallback={<div>Loading...</div>}>
                         <div className='bg-slate-200 rounded-lg' style={{ height: '600px' }}>
-
-                            <PilotsChart pilots={selectedPilots} results={pilotData} relativeMode={true}></PilotsChart>
+                            <PilotsChartRelative pilots={selectedPilots} results={pilotData}></PilotsChartRelative>
                         </div>
                         <div className='bg-slate-200 rounded-lg mt-4' style={{ height: '600px' }}>
-                            <PilotsChart pilots={selectedPilots} results={pilotData} relativeMode={false}></PilotsChart>
+                            <PilotsChartAbsolute pilots={selectedPilots} results={pilotData}></PilotsChartAbsolute>
 
                         </div>
                     </Suspense>

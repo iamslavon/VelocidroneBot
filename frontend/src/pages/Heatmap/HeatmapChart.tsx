@@ -18,6 +18,8 @@ const HeatmapChart = ({ data }: HeatmapChartProps) => {
         value: i.points
     } as CalendarDatum));
 
+    if (data.length == 0) return <></>;
+
     return <>
         <ResponsiveCalendarCanvas
             data={d}

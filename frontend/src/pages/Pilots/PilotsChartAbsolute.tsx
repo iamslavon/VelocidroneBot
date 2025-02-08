@@ -1,21 +1,15 @@
-import { PilotResult } from '@/api/client';
-import { ResponsiveLine } from '@nivo/line'
+import { ResponsiveLine, Serie } from '@nivo/line'
+import PilotsChartProps from './PilotChartProps';
 
-interface PilotsChartProps {
-    pilots: (string | null)[];
-    results: PilotResult[][];
-    relativeMode: boolean;
-}
+const PilotsChartAbsolute = ({ pilots, results }: PilotsChartProps) => {
 
-const PilotsChart = ({ pilots, results, relativeMode }: PilotsChartProps) => {
-
-    const referencePilot = 0;
+    if (pilots.length < 1 || results.length < 1 || results.some(r => r.length == 0)) return <></>;
 
     const fromDate = new Date();
     fromDate.setMonth(fromDate.getMonth() - 2); // Get date from 2 months ago
 
 
-    let chartData = pilots.map((pilot, index) => ({
+    const chartData: Serie[] = pilots.map((pilot, index) => ({
         id: pilot!,
         data: results[index].map(r => ({ x: new Date(r.date), y: r.trackTime / 1000 })).filter(i => i.x >= fromDate)
     }));
@@ -23,36 +17,25 @@ const PilotsChart = ({ pilots, results, relativeMode }: PilotsChartProps) => {
     const dates: Record<number, number> = {};
     for (const pilotData of chartData) {
         for (const result of pilotData.data) {
-            dates[result.x.valueOf()] = (dates[result.x.valueOf()] || 0) + 1;
+            dates[(result.x as Date).valueOf()] = (dates[(result.x as Date).valueOf()] || 0) + 1;
         }
     }
 
     for (const pilotData of chartData) {
-        pilotData.data = pilotData.data.filter(i => dates[i.x.valueOf()] == chartData.length);
+        pilotData.data = pilotData.data.filter(i => dates[(i.x as Date).valueOf()] == chartData.length);
     }
 
-    if (relativeMode) {
-
-        const t = [];
-
-        for (let pilotIndex = 0; pilotIndex < chartData.length; pilotIndex++) {
-            if (pilotIndex == referencePilot) continue;
-            t.push(chartData[pilotIndex]);
-            const pilotData = chartData[pilotIndex];
-            for (let i = 0; i < pilotData.data.length; i++) {
-                const v = pilotData.data[i];
-                v.y = (chartData[referencePilot].data[i].y - v.y) / chartData[referencePilot].data[i].y;
-                //console.log(v.y);
-            }
-        }
-
-        chartData = t;
-    }
 
     return (
         <ResponsiveLine
             data={chartData}
             margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
+            areaOpacity={0.07}
+            colors={[
+                'rgb(97, 205, 187)',
+                'rgb(244, 117, 96)'
+            ]}
+            curve="monotoneX"
             xScale={{
                 format: '%Y-%m-%d',
                 precision: 'day',
@@ -129,4 +112,4 @@ const PilotsChart = ({ pilots, results, relativeMode }: PilotsChartProps) => {
     );
 }
 
-export default PilotsChart;
+export default PilotsChartAbsolute;
