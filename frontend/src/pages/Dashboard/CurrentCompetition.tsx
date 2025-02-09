@@ -23,7 +23,7 @@ const CurrentCompetition = ({ dashboard }: ICurrentCompetitionProps) => {
 
     return <>
         <div className="px-6 py-8 border-b border-slate-700/50">
-            <div className="flex flex-col space-y-1">
+            <div className="flex flex-col space-y-2">
                 <h3 className="text-sm uppercase tracking-wider text-emerald-400 font-medium mb-2">
                     Today's track:
                 </h3>

@@ -21,7 +21,7 @@ const ClickableTrackName: React.FC<ClickableTrackNameProps> = ({ mapName, trackN
 
     return (
         <div className="flex flex-col">
-            <span className="text-sm text-slate-400">{mapName}</span>
+            <span className="text-slate-400">{mapName}</span>
             <button
                 onClick={copyToClipboard}
                 className="text-2xl font-semibold text-white flex items-center gap-2 hover:text-emerald-400 transition-colors duration-200 group"
