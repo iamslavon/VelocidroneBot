@@ -2,7 +2,7 @@ const PageRules: React.FC = () => {
     return <>
         <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700 overflow-hidden p-6 max-w-4xl mx-auto">
           <div className="space-y-8 text-slate-200">
-            <h2 className="text-2xl font-bold text-emerald-400 mb-6">Інструкція:</h2>
+            <h2 className="text-xl font-bold text-emerald-400 mb-6">Інструкція:</h2>
             
             <ol className="list-decimal list-inside space-y-6">
               <li className="pl-2">
@@ -51,6 +51,18 @@ const PageRules: React.FC = () => {
                 Якщо у вас зазначена інша країна, треба писати в сапорт (Raise a ticket) і просити їх змінити країну.
               </li>
             </ol>
+
+<h2 className="text-xl font-bold text-emerald-400 ">Підтримка</h2>
+
+            <div>
+            <p>🫙 Ви можете 
+            <a href="https://send.monobank.ua/jar/38JbBCjZr9" 
+                   className="text-emerald-400 hover:text-emerald-300 transition-colors"
+                   target="_blank"
+                   rel="noopener noreferrer"> підтримати нас </a>
+               фінансово для покриття різних витрат (хостинг, домен, тощо).</p>
+            <p>Однак пам'ятайте, що наша потреба не настільки велика, і якщо у вас є можливість, краще підтримайте Збройні Сили України</p>
+            </div>
 
             <p className="text-xl font-bold text-emerald-400 text-center mt-8">Полетіли! 🚀</p>
           </div>
