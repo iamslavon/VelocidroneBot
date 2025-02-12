@@ -52,7 +52,7 @@ const PageRules: React.FC = () => {
               </li>
             </ol>
 
-<h2 className="text-xl font-bold text-emerald-400 ">Підтримка</h2>
+            <h2 className="text-xl font-bold text-emerald-400">Підтримка</h2>
 
             <div>
             <p>🫙 Ви можете 
