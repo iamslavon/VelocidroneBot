@@ -102,7 +102,7 @@ public class CompetitionService
     [DisableConcurrentExecution("Competition", 1)]
     public async Task PublishCurrentLeaderboardAsync()
     {
-        var activeCompetitions = GetCurrentCompetitions();
+        var activeCompetitions = await GetCurrentCompetitions().ToListAsync();
 
         foreach (var activeCompetition in activeCompetitions)
         {
