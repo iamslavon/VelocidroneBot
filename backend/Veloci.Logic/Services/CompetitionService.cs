@@ -99,7 +99,7 @@ public class CompetitionService
         }
     }
 
-    [DisableConcurrentExecution("Competition", 60)]
+    [DisableConcurrentExecution("Competition", 1)]
     public async Task PublishCurrentLeaderboardAsync()
     {
         var activeCompetitions = GetCurrentCompetitions();

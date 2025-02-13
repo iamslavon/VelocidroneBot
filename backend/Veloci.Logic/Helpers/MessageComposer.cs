@@ -57,11 +57,11 @@ public class MessageComposer
         return "😔 Бачу трек не сподобався. Більше його не буде";
     }
 
-    public string TempLeaderboard(IEnumerable<CompetitionResults> results)
+    public string TempLeaderboard(List<CompetitionResults> results)
     {
-        var rows = results.Select(TempLeaderboardRow);
+        var rows = TempLeaderboardRows(results);
         return $"🧐 Проміжні результати:{Environment.NewLine}{Environment.NewLine}" +
-               $"{string.Join($"{Environment.NewLine}", rows)}";
+               $"`{string.Join($"{Environment.NewLine}", rows)}`";
     }
 
     public string Leaderboard(IEnumerable<CompetitionResults> results, string trackName, bool includeExtraNewLine = true)
@@ -184,9 +184,25 @@ public class MessageComposer
                $"⏱️ {MsToSec(delta.TrackTime)}s{timeChangePart} / #{delta.Rank}{rankOldPart}";
     }
 
-    private string TempLeaderboardRow(CompetitionResults time)
+    private List<string> TempLeaderboardRows(List<CompetitionResults> results)
     {
-        return $"{time.LocalRank} - *{time.PlayerName}* ({MsToSec(time.TrackTime)}s)";
+        var positionLength = results.Count().ToString().Length + 2;
+        var pilotNameLength = results.Max(r => r.PlayerName.Length) + 2;
+        var rows = new List<string>();
+
+        foreach (var result in results)
+        {
+            rows.Add($"{FillWithSpaces(result.LocalRank, positionLength)}{FillWithSpaces(result.PlayerName, pilotNameLength)}{MsToSec(result.TrackTime)} s");
+        }
+
+        return rows;
+    }
+
+    private string FillWithSpaces(object text, int length)
+    {
+        var textString = text.ToString();
+        var spaces = new string(' ', length - textString.Length);
+        return textString + spaces;
     }
 
     private string LeaderboardRow(CompetitionResults time)
