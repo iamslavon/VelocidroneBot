@@ -192,7 +192,7 @@ public class MessageComposer
 
         foreach (var result in results)
         {
-            rows.Add($"{FillWithSpaces(result.LocalRank, positionLength)}{FillWithSpaces(result.PlayerName, pilotNameLength)}{MsToSec(result.TrackTime)} s");
+            rows.Add($"{FillWithSpaces(result.LocalRank, positionLength)}{FillWithSpaces(result.PlayerName, pilotNameLength)}{MsToSec(result.TrackTime)}s");
         }
 
         return rows;
